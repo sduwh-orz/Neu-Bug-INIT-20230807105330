@@ -1,16 +1,15 @@
 package com.neusoft.core.common;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.myframework.jdbc.sqltemplate.impl.VelocitySqlTemplate;
-import org.myframework.util.StringUtil;
-import org.myframework.util.StringUtils;
+//import org.myframework.jdbc.sqltemplate.impl.VelocitySqlTemplate;
+//import org.myframework.util.StringUtil;
+//import org.myframework.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -816,8 +815,19 @@ public class BaseDAO extends BaseObject {
 				requiredType, paramMap);
 	}
 
-	
-
+	private String asString(Object obj) {
+		if (obj == null) {
+			return null; // or return ""; based on your requirement
+		} else if (obj instanceof Date) {
+			// Format Date to a specific format
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			return sdf.format((Date) obj);
+		} else if (obj instanceof Number) {
+			// Handle Number types if needed
+			return String.valueOf(obj); // or format it as needed
+		}
+		return obj.toString(); // Default conversion to string
+	}
 	
 	/**
 	 * @Title: sqlConvert
@@ -836,7 +846,7 @@ public class BaseDAO extends BaseObject {
 			List<String> params = getReplaceParameterList(sql);
 			for (String param : params) {
 				sql = StringUtils.replaceOnce(sql, "#" + param,
-						StringUtil.asString(qryMap.get(param)));
+						asString(qryMap.get(param)));
 			}
 		}
 		return sql;
