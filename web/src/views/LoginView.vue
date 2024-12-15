@@ -1,5 +1,6 @@
 <script lang="ts">
 import { reactive } from 'vue'
+import { ElMessage } from "element-plus";
 export default {
   setup() {
     const form = reactive({
@@ -14,6 +15,7 @@ export default {
     login() {
       localStorage['username'] = this.form.username
       localStorage['password'] = this.form.password
+      ElMessage.success('登录成功')
       this.$router.push('/project/list')
     }
   }
