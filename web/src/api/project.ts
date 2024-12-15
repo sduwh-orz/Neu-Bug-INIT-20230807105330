@@ -19,6 +19,9 @@ export default {
   createProject: function (project: Project) {
     // Do something
   },
+  editProject: function (project: Project) {
+    // Do something
+  },
   deleteProject: function (id: number) {
     // Do something
   },

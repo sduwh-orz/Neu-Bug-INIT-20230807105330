@@ -96,7 +96,7 @@ export default {
         <el-input v-model="formData.username"/>
       </el-form-item>
       <el-form-item label="密码" prop="password">
-        <el-input v-model="formData.password"/>
+        <el-input v-model="formData.password" type="password" show-password/>
       </el-form-item>
       <el-form-item label="真实姓名" prop="realName">
         <el-input v-model="formData.realName"/>

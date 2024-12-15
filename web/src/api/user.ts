@@ -4,28 +4,13 @@ import type { User } from '@/types/user'
 
 export default {
   roles: [
-    {
-      'name': '普通用户',
-      'value': '普通用户'
-    },
-    {
-      'name': '管理员',
-      'value': '管理员'
-    }
+    {'name': '普通用户', 'value': '普通用户'},
+    {'name': '管理员', 'value': '管理员'}
   ],
   rolesForQuery: [
-    {
-      'name': '全部',
-      'value': ''
-    },
-    {
-      'name': '普通用户',
-      'value': '普通用户'
-    },
-    {
-      'name': '管理员',
-      'value': '管理员'
-    }
+    {'name': '全部', 'value': ''},
+    {'name': '普通用户', 'value': '普通用户'},
+    {'name': '管理员', 'value': '管理员'}
   ],
   getData: function (
     username: string,
@@ -53,7 +38,17 @@ export default {
   getAllUsers: function () {
     return fakeData.users
   },
+  getUserById: function (id: number) {
+    if (id)
+      return fakeData.users.find(user => {
+        return user.id == id
+      })
+    return undefined
+  },
   createUser: function (user: User) {
+    // Do something
+  },
+  editUser: function (user: User) {
     // Do something
   },
   deleteUser: function (id: number) {
