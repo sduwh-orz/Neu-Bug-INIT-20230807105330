@@ -398,7 +398,7 @@ const projects: Project[] = [
         features: [],
       },
     ],
-  },{
+  }, {
     id: 2,
     keyword: 'Bug',
     name: '软件缺陷管理系统',
