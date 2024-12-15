@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CreditCard, Message, Tickets, UserFilled } from '@element-plus/icons-vue';
+import {CreditCard, Guide, Message, Tickets, User} from '@element-plus/icons-vue';
 import { reactive } from 'vue';
 
 const currentUser = reactive({
