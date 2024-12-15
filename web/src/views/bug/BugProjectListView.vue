@@ -1,21 +1,24 @@
 <script lang="ts">
-import { FolderChecked, Search } from '@element-plus/icons-vue'
+import { TrendCharts, Operation, Search } from '@element-plus/icons-vue'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import { defineComponent, reactive, ref } from 'vue'
-import task from '@/api/task.ts'
+import bug from '@/api/bug.ts'
 import type { Project } from '@/types/project'
 
-const moduleName = 'task'
+const moduleName = 'bug'
 const defaultPageSize = 10
 const pageSizes = [10, 25]
 
 export default defineComponent({
   computed: {
-    FolderChecked() {
-      return FolderChecked
+    Operation() {
+      return Operation
     },
+    TrendCharts() {
+      return TrendCharts
+    }
   },
-  components: { FolderChecked, BreadCrumbNav, Search },
+  components: { TrendCharts, Operation, BreadCrumbNav, Search },
   mounted() {
     this.updateData()
   },
@@ -36,7 +39,7 @@ export default defineComponent({
   },
   methods: {
     updateData() {
-      let result = task.getData(this.keyword, this.page, this.size)
+      let result = bug.getData(this.keyword, this.page, this.size)
       this.total = result.total
       this.start = result.start
       this.end = result.end
@@ -55,8 +58,12 @@ export default defineComponent({
       this.updateUrl()
       this.updateData()
     },
-    handleEdit(_: number, row: Project) {
-      let url = '/' + moduleName + '/edit?id=' + row.id
+    handleManage(_: number, row: Project) {
+      let url = '/' + moduleName + '/bugs?id=' + row.id
+      this.$router.push(url)
+    },
+    handleStats(_: number, row: Project) {
+      let url = '/' + moduleName + '/stats?id=' + row.id
       this.$router.push(url)
     },
     handlePageChange(page: number) {
@@ -74,7 +81,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <BreadCrumbNav :page-paths="['任务分配', '项目列表']"></BreadCrumbNav>
+  <BreadCrumbNav :page-paths="['bug管理', '项目列表']"></BreadCrumbNav>
   <el-card class="info-card" shadow="never">
     <template #header>
       <div class="card-header">
@@ -91,7 +98,6 @@ export default defineComponent({
       <el-row class="row-bg" justify="end">
         <div class="flex-grow" />
         <el-button type="primary" @click="handleSearch" round>查询</el-button>
-        <el-button type="primary" @click="handleCreate" round>添加</el-button>
       </el-row>
     </template>
   </el-card>
@@ -106,20 +112,32 @@ export default defineComponent({
       <el-table-column align="center" prop="id" label="序号" width="80"/>
       <el-table-column align="center" prop="name" label="项目名称"/>
       <el-table-column align="center" prop="owner" label="项目负责人"/>
-      <el-table-column align="center" prop="features" label="功能数"/>
-      <el-table-column align="center" prop="developers" label="开发人数"/>
-      <el-table-column align="center" label="操作" width="80">
+      <el-table-column align="center" prop="bugs" label="Bug 总数"/>
+      <el-table-column align="center" label="操作" width="100">
         <template #default="scope">
           <el-tooltip
               class="box-item"
-              content="任务分配"
+              content="Bug 管理"
               placement="top"
           >
             <el-button
-                :icon="FolderChecked"
+                :icon="Operation"
                 size="small"
-                type="success"
-                @click="handleEdit(scope.$index, scope.row)"
+                type="primary"
+                @click="handleManage(scope.$index, scope.row)"
+                circle
+            />
+          </el-tooltip>
+          <el-tooltip
+              class="box-item"
+              content="Bug 统计"
+              placement="top"
+          >
+            <el-button
+                :icon="TrendCharts"
+                size="small"
+                type="warning"
+                @click="handleStats(scope.$index, scope.row)"
                 circle
             />
           </el-tooltip>

@@ -81,6 +81,14 @@ const router = createRouter({
       children: [
         {
           path: 'list',
+          component: () => import('@/views/bug/BugProjectListView.vue'),
+        },
+        {
+          path: 'stats',
+          component: () => import('@/views/bug/BugStatsView.vue'),
+        },
+        {
+          path: 'bugs',
           component: () => import('@/views/bug/BugListView.vue'),
         },
       ]
