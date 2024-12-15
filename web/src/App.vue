@@ -8,10 +8,10 @@ import PageHeader from "@/components/PageHeader.vue";
   <div class="main">
     <el-container style="height: 100%;">
       <el-header padding="0">
-        <PageHeader />
+        <PageHeader/>
       </el-header>
       <el-container>
-        <el-aside width="200px">
+        <el-aside width="200px" v-if="!$route.meta.notLoggedIn">
           <Navigation />
         </el-aside>
         <el-main>
@@ -20,6 +20,9 @@ import PageHeader from "@/components/PageHeader.vue";
       </el-container>
     </el-container>
   </div>
-
-
 </template>
+
+<script lang="ts">
+export default {
+}
+</script>
