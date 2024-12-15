@@ -2,20 +2,20 @@
 import { EditPen } from '@element-plus/icons-vue';
 import BreadCrumbNav from "@/components/BreadCrumbNav.vue";
 import { reactive, ref } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage, ElMessageBox, FormInstance } from 'element-plus';
 const formData = reactive({
   oldPassword: '',
   newPassword: '',
   confirmPassword: '',
 })
-const formDataRef = ref();
+const formDataRef = ref<FormInstance>();
 export default {
   components: {EditPen, BreadCrumbNav},
   setup() {
     return {
       formData: formData,
       formDataRef: formDataRef,
-      formRules: reactive({
+      formRules: reactive<FormRules<RuleForm>>({
         oldPassword: [
           {
             required: true,
@@ -42,7 +42,7 @@ export default {
             trigger: 'blur'
           },
           {
-            validator: (_rule: any, value: string, callback: any) => {
+            validator: (_rule, value, callback) => {
               if (value !== formData.newPassword) {
                 callback(new Error('两次输入的密码不一致'))
               } else {
@@ -69,9 +69,8 @@ export default {
             }
         ).then(() => {
           ElMessage.success('密码修改成功')
-          formDataRef.value.resetFields()
-          localStorage.clear()
-          this.$router.push('/login')
+          localStorage.clear();
+          this.$router.push('/login');
         }).catch(() => {
           ElMessage.info('已取消密码修改')
         });

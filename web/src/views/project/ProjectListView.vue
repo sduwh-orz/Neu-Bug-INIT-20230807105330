@@ -42,7 +42,7 @@ export default defineComponent({
   },
   methods: {
     updateData() {
-      let result = JSON.parse(project.getProjects(this.keyword, this.page, this.size))
+      let result = project.getProjects(this.keyword, this.page, this.size)
       this.total = result.total
       this.start = result.start
       this.end = result.end
@@ -133,33 +133,51 @@ export default defineComponent({
       <el-table-column align="center" prop="created" label="创建日期"/>
       <el-table-column align="center" label="操作" width="130">
         <template #default="scope">
-          <el-button
-              :icon="Operation"
-              size="small"
-              @click="handleManage(scope.$index, scope.row)"
-              circle
-          />
-          <el-button
-              :icon="Edit"
-              size="small"
-              type="primary"
-              @click="handleEdit(scope.$index, scope.row)"
-              circle
-          />
-          <el-button
-              :icon="Delete"
-              size="small"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-              circle
-          />
+          <el-tooltip
+              class="box-item"
+              content="模块管理"
+              placement="top"
+          >
+            <el-button
+                :icon="Operation"
+                size="small"
+                @click="handleManage(scope.$index, scope.row)"
+                circle
+            />
+          </el-tooltip>
+          <el-tooltip
+              class="box-item"
+              content="修改"
+              placement="top"
+          >
+            <el-button
+                :icon="Edit"
+                size="small"
+                type="primary"
+                @click="handleEdit(scope.$index, scope.row)"
+                circle
+            />
+          </el-tooltip>
+          <el-tooltip
+              class="box-item"
+              content="删除"
+              placement="top"
+          >
+            <el-button
+                :icon="Delete"
+                size="small"
+                type="danger"
+                @click="handleDelete(scope.$index, scope.row)"
+                circle
+            />
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>
     <template #footer>
       <el-row class="row-bg" justify="space-between">
         <el-col>
-          <el-text size="small">显示第 {{ start }} 到第 {{ end }} 条记录，总共 {{ total }} 条记录，每页显示</el-text>
+          <el-text size="small">显示第 {{ start }} 到第 {{ end }} 条记录，总共 {{ total }} 条记录，每页显示 </el-text>
           <el-select
               v-model="size"
               size="small"
