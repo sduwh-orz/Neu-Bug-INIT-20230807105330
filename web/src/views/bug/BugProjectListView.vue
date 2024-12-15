@@ -81,7 +81,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <BreadCrumbNav :page-paths="['bug管理', '项目列表']"></BreadCrumbNav>
+  <BreadCrumbNav :page-paths="['Bug 管理', '项目列表']"></BreadCrumbNav>
   <el-card class="info-card" shadow="never">
     <template #header>
       <div class="card-header">
