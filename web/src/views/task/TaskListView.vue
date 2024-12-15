@@ -133,7 +133,7 @@ export default defineComponent({
               v-model="size"
               size="small"
               style="width: 60px"
-              :placeholder="defaultPageSize"
+              :placeholder="defaultPageSize.toString()"
               @change="handleSizeChange"
           >
             <el-option
