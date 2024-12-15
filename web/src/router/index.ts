@@ -46,6 +46,18 @@ const router = createRouter({
         {
           path: 'list',
           component: () => import('@/views/project/ProjectListView.vue'),
+        },
+        {
+          path: 'create',
+          component: () => import('@/views/project/ProjectCreateView.vue'),
+        },
+        {
+          path: 'modules',
+          component: () => import('@/views/project/ProjectModulesView.vue'),
+        },
+        {
+          path: 'edit',
+          component: () => import('@/views/project/ProjectEditView.vue'),
         }
       ]
     },
