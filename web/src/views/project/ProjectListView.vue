@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Delete, Edit, Operation, Search } from '@element-plus/icons-vue'
+import {Delete, Edit, List, Operation, Search} from '@element-plus/icons-vue'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import { defineComponent, reactive, ref } from 'vue'
 import project from '@/api/project.ts'
@@ -21,7 +21,7 @@ export default defineComponent({
       return Edit
     }
   },
-  components: { Delete, Edit, Operation, BreadCrumbNav, Search },
+  components: {List, Delete, Edit, Operation, BreadCrumbNav, Search },
   mounted() {
     this.updateData()
   },
@@ -120,7 +120,7 @@ export default defineComponent({
   <el-card class="info-card" shadow="never">
     <template #header>
       <div class="card-header">
-        <el-icon><Search /></el-icon>&nbsp;&nbsp;
+        <el-icon><List /></el-icon>&nbsp;&nbsp;
         <span>列表信息</span>
       </div>
     </template>

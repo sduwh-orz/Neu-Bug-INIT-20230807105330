@@ -1,5 +1,5 @@
 <script lang="ts">
-import { FolderChecked, Search } from '@element-plus/icons-vue'
+import {FolderChecked, List, Search} from '@element-plus/icons-vue'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import { defineComponent, reactive, ref } from 'vue'
 import task from '@/api/task.ts'
@@ -15,7 +15,7 @@ export default defineComponent({
       return FolderChecked
     },
   },
-  components: { FolderChecked, BreadCrumbNav, Search },
+  components: {List, FolderChecked, BreadCrumbNav, Search },
   mounted() {
     this.updateData()
   },
@@ -97,7 +97,7 @@ export default defineComponent({
   <el-card class="info-card" shadow="never">
     <template #header>
       <div class="card-header">
-        <el-icon><Search /></el-icon>&nbsp;&nbsp;
+        <el-icon><List /></el-icon>&nbsp;&nbsp;
         <span>列表信息</span>
       </div>
     </template>
