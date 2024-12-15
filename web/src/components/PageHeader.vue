@@ -1,18 +1,17 @@
 <script lang="ts">
-import { Expand, Fold, UserFilled } from "@element-plus/icons-vue";
+import {defineComponent} from 'vue'
 
-export default {
-  name: "PageHeader",
-  components: { UserFilled, Fold, Expand },
-}
+export default defineComponent({
+  name: "PageHeader"
+})
 </script>
 
 <template>
 <el-menu
     :router="true"
-    :ellipsis="false"
     class="el-menu"
     mode="horizontal"
+    :ellipsis="false"
     @select="handleSelect"
 >
   <el-menu-item id="page-title" index="0" disabled>

@@ -1,12 +1,7 @@
-<script lang="ts">
+<script setup lang="ts">
 import { RouterView } from 'vue-router'
 import Navigation from './components/Navigation.vue'
-import PageHeader from './components/PageHeader.vue'
-export default {
-  components: {
-    Navigation, PageHeader, RouterView
-  }
-}
+import PageHeader from "@/components/PageHeader.vue";
 </script>
 
 <template>
@@ -16,8 +11,8 @@ export default {
         <PageHeader/>
       </el-header>
       <el-container>
-        <el-aside width="collapse" v-if="!$route.meta.notLoggedIn">
-          <Navigation/>
+        <el-aside width="200px" v-if="!$route.meta.notLoggedIn">
+          <Navigation />
         </el-aside>
         <el-main>
           <RouterView />
@@ -26,3 +21,8 @@ export default {
     </el-container>
   </div>
 </template>
+
+<script lang="ts">
+export default {
+}
+</script>
