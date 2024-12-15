@@ -1,7 +1,9 @@
-import fakeData from "@/api/fakeData.ts";
-import pagination from "@/api/pagination.ts"
+import fakeData from '@/api/fakeData.ts';
+import pagination from '@/api/pagination.ts'
+import type { User } from '@/types/user'
 
 export default {
+  roles: ['普通用户', '管理员'],
   getData: function (
     username: string,
     realName: string,
@@ -25,7 +27,26 @@ export default {
     })
     return pagination.getDataWithPageInfo(filtered, page, size)
   },
+  getAllUsers: function () {
+    return fakeData.users
+  },
+  getUserById: function (id: number) {
+    if (id)
+      return fakeData.users.find(user => {
+        return user.id == id
+      })
+    return undefined
+  },
+  createUser: function (user: User) {
+    // Do something
+  },
+  editUser: function (user: User) {
+    // Do something
+  },
   deleteUser: function (id: number) {
     // Do something
+  },
+  getLoggedInUser: function () {
+    return fakeData.users.find(u => { return u.realName == '管理员' })
   }
 }

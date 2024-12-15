@@ -1,27 +1,14 @@
 <script lang="ts">
-import { Delete, Edit, Search } from '@element-plus/icons-vue'
+import {Delete, Edit, List, Search} from '@element-plus/icons-vue'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import user from '@/api/user.ts'
 import { User } from '@/types/user'
 import { defineComponent, reactive, ref } from 'vue'
+import utils from '@/api/utils.ts'
 
 const moduleName = 'user'
 const defaultPageSize = 10
 const pageSizes = [10, 25]
-const roles = [
-  {
-    'name': '全部',
-    'value': ''
-  },
-  {
-    'name': '普通用户',
-    'value': '普通用户'
-  },
-  {
-    'name': '管理员',
-    'value': '管理员'
-  }
-]
 
 export default defineComponent({
   computed: {
@@ -32,7 +19,7 @@ export default defineComponent({
       return Edit
     }
   },
-  components: { Delete, Edit, BreadCrumbNav, Search },
+  components: {List, Delete, Edit, BreadCrumbNav, Search },
   mounted() {
     this.updateData()
   },
@@ -52,7 +39,7 @@ export default defineComponent({
       data: reactive([]),
       defaultPageSize: defaultPageSize,
       pageSizes: pageSizes,
-      roles: roles
+      roles: utils.toOptions(user.roles)
     }
   },
   methods: {
@@ -124,24 +111,23 @@ export default defineComponent({
     <el-form>
       <el-row justify="space-between">
         <el-col :span="11">
-          <el-form-item label="&emsp;用户名" class="disable-select">
+          <el-form-item label="用户名" class="disable-select" label-width="80">
             <el-input v-model="username" />
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="真实姓名" class="disable-select">
+          <el-form-item label="真实姓名" class="disable-select" label-width="80">
             <el-input v-model="realName" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row justify="space-between">
         <el-col :span="11">
-          <el-form-item label="&emsp;&emsp;角色" class="disable-select">
+          <el-form-item label="角色" class="disable-select" label-width="80">
             <el-select
                 v-model="role"
                 class="m-2"
                 placeholder="全部"
-                size="large"
             >
               <el-option
                   v-for="role in roles"
@@ -153,7 +139,7 @@ export default defineComponent({
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="&emsp;&emsp;邮箱" class="disable-select">
+          <el-form-item label="邮箱" class="disable-select" label-width="80">
             <el-input v-model="email" />
           </el-form-item>
         </el-col>
@@ -170,7 +156,7 @@ export default defineComponent({
   <el-card class="info-card" shadow="never">
     <template #header>
       <div class="card-header">
-        <el-icon><Search /></el-icon>&nbsp;&nbsp;
+        <el-icon><List /></el-icon>&nbsp;&nbsp;
         <span>列表信息</span>
       </div>
     </template>

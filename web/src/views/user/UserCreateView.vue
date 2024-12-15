@@ -4,64 +4,63 @@ import BreadCrumbNav from "@/components/BreadCrumbNav.vue";
 import { reactive, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import user from '@/api/user.ts'
-import project from '@/api/project.ts'
+import utils from '@/api/utils.ts'
 
-const moduleName = 'project'
+const moduleName = 'user'
 const formData = reactive({
-  name: '',
-  keyword: '',
-  description: '',
-  owner: ''
+  username: '',
+  password: '',
+  realName: '',
+  role: '',
+  email: ''
 })
 const formDataRef = ref()
 
 export default {
   components: {EditPen, BreadCrumbNav},
-  mounted() {
-    this.id = this.$route.query.id ? Number(this.$route.query.id): 1
-    let projectInfo = project.getProject(this.id)
-    formData.name = projectInfo?.name
-    formData.keyword = projectInfo?.keyword
-    formData.description = projectInfo?.description
-    formData.owner = projectInfo?.owner
-  },
   setup() {
     return {
-      id: ref(1),
+      roles: utils.toOptions(user.roles, true),
       formData: formData,
       formDataRef: formDataRef,
       formRules: reactive({
-        name: [
+        username: [
           {
             required: true,
-            message: '请输入项目名称',
+            message: '请输入用户名',
             trigger: 'blur'
           }
         ],
-        keyword: [
+        password: [
           {
             required: true,
-            message: '请输入项目关键字',
+            message: '请输入密码',
             trigger: 'blur'
           }
         ],
-        owner: [
+        realName: [
           {
             required: true,
-            message: '请选择项目负责人',
+            message: '请选择真实姓名',
             trigger: 'blur'
           }
-        ]
-      }),
-      users: user.getAllUsers()
+        ],
+        role: [
+          {
+            required: true,
+            message: '请选择角色',
+            trigger: 'blur'
+          }
+        ],
+      })
     }
   },
   methods: {
     handleSubmit() {
       try {
         formDataRef.value.validate().then(() => {
-          project.editProject(formData)
-          ElMessage.success('修改成功')
+          user.createUser(formData)
+          ElMessage.success('添加成功')
           formDataRef.value.resetFields()
           localStorage.clear()
           this.$router.push('/' + moduleName + '/list')
@@ -79,13 +78,13 @@ export default {
 </script>
 
 <template>
-  <BreadCrumbNav :page-paths="['项目管理', '项目列表', '项目修改']"></BreadCrumbNav>
+  <BreadCrumbNav :page-paths="['用户管理', '用户列表', '用户添加']"></BreadCrumbNav>
   <el-card class="info-card" shadow="never">
     <template #header>
       <div class="card-header">
         <el-icon>
           <EditPen/>
-        </el-icon>&nbsp;&nbsp;项目修改
+        </el-icon>&nbsp;&nbsp;用户添加
       </div>
     </template>
     <el-form
@@ -94,30 +93,33 @@ export default {
         :rules="formRules"
         label-width="100px"
     >
-      <el-form-item label="项目名称" prop="name">
-        <el-input v-model="formData.name"/>
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="formData.username"/>
       </el-form-item>
-      <el-form-item label="项目关键字" prop="keyword">
-        <el-input v-model="formData.keyword"/>
+      <el-form-item label="密码" prop="password">
+        <el-input v-model="formData.password" type="password" show-password/>
       </el-form-item>
-      <el-form-item label="项目描述信息" prop="description">
-        <el-input v-model="formData.description" type="textarea"/>
+      <el-form-item label="真实姓名" prop="realName">
+        <el-input v-model="formData.realName"/>
       </el-form-item>
-      <el-form-item label="项目负责人" prop="owner">
-        <el-select v-model="formData.owner" placeholder="请选择..." no-data-text="暂无用户">
+      <el-form-item label="角色" prop="role">
+        <el-select v-model="formData.role" placeholder="请选择..." no-data-text="暂无角色">
           <el-option
-              v-for="user in users"
-              :key="user.id"
-              :label="user.realName"
-              :value="user.id"
+              v-for="role in roles"
+              :key="role.value"
+              :label="role.name"
+              :value="role.value"
           />
         </el-select>
+      </el-form-item>
+      <el-form-item label="邮箱" prop="email">
+        <el-input v-model="formData.email"/>
       </el-form-item>
     </el-form>
     <template #footer>
       <el-row class="row-bg" justify="end">
         <div class="flex-grow" />
-        <el-button type="info" @click="handleReturn" round>返回项目列表</el-button>
+        <el-button type="info" @click="handleReturn" round>返回用户列表</el-button>
         <el-button type="primary" @click="handleSubmit" round>提交</el-button>
       </el-row>
     </template>

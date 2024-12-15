@@ -1,5 +1,5 @@
 <script lang="ts">
-import { FolderChecked, Search } from '@element-plus/icons-vue'
+import {FolderChecked, List, Search} from '@element-plus/icons-vue'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import { defineComponent, reactive, ref } from 'vue'
 import task from '@/api/task.ts'
@@ -15,7 +15,7 @@ export default defineComponent({
       return FolderChecked
     },
   },
-  components: { FolderChecked, BreadCrumbNav, Search },
+  components: {List, FolderChecked, BreadCrumbNav, Search },
   mounted() {
     this.updateData()
   },
@@ -82,8 +82,8 @@ export default defineComponent({
         <span>查询信息</span>
       </div>
     </template>
-    <el-form label-width="auto" style="max-width: 600px">
-      <el-form-item label="项目名称">
+    <el-form label-width="auto">
+      <el-form-item label="项目名称" style="max-width: 60%" label-width="100">
         <el-input v-model="keyword" />
       </el-form-item>
     </el-form>
@@ -91,14 +91,13 @@ export default defineComponent({
       <el-row class="row-bg" justify="end">
         <div class="flex-grow" />
         <el-button type="primary" @click="handleSearch" round>查询</el-button>
-        <el-button type="primary" @click="handleCreate" round>添加</el-button>
       </el-row>
     </template>
   </el-card>
   <el-card class="info-card" shadow="never">
     <template #header>
       <div class="card-header">
-        <el-icon><Search /></el-icon>&nbsp;&nbsp;
+        <el-icon><List /></el-icon>&nbsp;&nbsp;
         <span>列表信息</span>
       </div>
     </template>
