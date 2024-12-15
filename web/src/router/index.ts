@@ -1,13 +1,25 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import ProjectListView from "@/views/project/ProjectListView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      component: HomeView,
+      redirect: '/project/list',
+    },
+    {
+      path: '/login',
+      component: () => import('@/views/LoginView.vue'),
+      meta: {
+        notLoggedIn: true,
+      }
+    },
+    {
+      path: '/logout',
+      redirect: '/login',
+      meta: {
+        notLoggedIn: true,
+      }
     },
     {
       path: '/user',
