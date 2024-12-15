@@ -1,5 +1,5 @@
 <script lang="ts">
-import {TrendCharts, Operation, Search, List} from '@element-plus/icons-vue'
+import { TrendCharts, Operation, Search } from '@element-plus/icons-vue'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import { defineComponent, reactive, ref } from 'vue'
 import bug from '@/api/bug.ts'
@@ -18,7 +18,7 @@ export default defineComponent({
       return TrendCharts
     }
   },
-  components: {List, TrendCharts, Operation, BreadCrumbNav, Search },
+  components: { TrendCharts, Operation, BreadCrumbNav, Search },
   mounted() {
     this.updateData()
   },
@@ -81,7 +81,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <BreadCrumbNav :page-paths="['Bug 管理', '项目列表']"></BreadCrumbNav>
+  <BreadCrumbNav :page-paths="['bug管理', '项目列表']"></BreadCrumbNav>
   <el-card class="info-card" shadow="never">
     <template #header>
       <div class="card-header">
@@ -89,8 +89,8 @@ export default defineComponent({
         <span>查询信息</span>
       </div>
     </template>
-    <el-form label-width="auto">
-      <el-form-item label="项目名称" style="max-width: 60%">
+    <el-form label-width="auto" style="max-width: 600px">
+      <el-form-item label="项目名称">
         <el-input v-model="keyword" />
       </el-form-item>
     </el-form>
@@ -104,7 +104,7 @@ export default defineComponent({
   <el-card class="info-card" shadow="never">
     <template #header>
       <div class="card-header">
-        <el-icon><List /></el-icon>&nbsp;&nbsp;
+        <el-icon><Search /></el-icon>&nbsp;&nbsp;
         <span>列表信息</span>
       </div>
     </template>

@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <h1>Bug Stats</h1>
+<h1>Bug Stats</h1>
 </template>
 
 <style>
