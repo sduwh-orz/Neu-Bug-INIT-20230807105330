@@ -12,6 +12,9 @@ export default {
     })
     return pagination.getDataWithPageInfo(filtered, page, size)
   },
+  getProject: function (id: number) {
+    return fakeData.projects.find(data => data.id == id)
+  },
   deleteProject: function (id: number) {
     // Do something
   }
