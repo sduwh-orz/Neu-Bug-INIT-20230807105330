@@ -33,30 +33,22 @@ export default {
     return result
   },
   searchData: function (
-    projectId: number,
-    name: string,
-    grade: string,
-    module: string,
-    feature: string,
-    owner: number,
-    reporter: number,
-    status: string,
-    solveType: string,
+    now,
     page: number,
     size: number
   ) {
     let users = fakeData.users
     let project = fakeData.projects.find(p => {
-      return p.id == projectId
+      return p.id == now.id
     })
-    let modules: Module[] = module ? [
-      project ?.modules?.find(m => m.name == module)
+    let modules: Module[] = now.module ? [
+      project ?.modules?.find(m => m.name == now.module)
     ] : project ?.modules
-    let features: Feature[] = feature ? modules ?.map(m => {
-      return m?.features?.find(f => f.name == feature)
+    let features: Feature[] = now.feature ? modules ?.map(m => {
+      return m?.features?.find(f => f.name == now.feature)
     }) ?.flat() : modules?.map(p => p?.features) ?.flat()
-    features = owner ? features ?.filter(f => {
-      return f.owner == users.find(u => { return u.id == owner })?.realName
+    features = now.owner ? features ?.filter(f => {
+      return f.owner == users.find(u => { return u.id == now.owner })?.realName
     }) : features
     let filtered: Bug[] = features ?.map(f => {
       return f?.bugs?.map(b => {
@@ -64,21 +56,30 @@ export default {
         return b
       })
     }) ?.flat() ?.filter(f => f)
-    filtered = name ? filtered ?.filter(b => {
-      return b.name.indexOf(name) > -1
+    filtered = now.name ? filtered ?.filter(b => {
+      return b.name.indexOf(now.name) > -1
     }) : filtered
-    filtered = grade ? filtered ?.filter(b => {
-      return b.grade == grade
+    filtered = now.grade ? filtered ?.filter(b => {
+      return b.grade == now.grade
     }) : filtered
-    filtered = reporter ? filtered ?.filter(b => {
-      return b.reporter == users.find(u => { return u.id == reporter })?.realName
+    filtered = now.reporter ? filtered ?.filter(b => {
+      return b.reporter == users.find(u => { return u.id == now.reporter })?.realName
     }) : filtered
-    filtered = status ? filtered ?.filter(b => {
-      return b.status == status
+    filtered = now.status ? filtered ?.filter(b => {
+      return b.status == now.status
     }) : filtered
-    filtered = solveType ? filtered ?.filter(b => {
-      return b.solveType == solveType
+    filtered = now.solveType ? filtered ?.filter(b => {
+      return b.solveType == now.solveType
     }) : filtered
     return pagination.getDataWithPageInfo(filtered, page, size)
+  },
+  updateBug: function(
+    id: string,
+    status: string,
+    solveType: string,
+    comment: string,
+    user: number
+  ) {
+
   },
 }

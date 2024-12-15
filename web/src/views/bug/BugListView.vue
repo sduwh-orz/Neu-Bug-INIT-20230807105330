@@ -3,20 +3,35 @@ import { Edit, Select, Memo, SwitchButton, Search, List } from '@element-plus/ic
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import user from '@/api/user.ts'
 import bug from '@/api/bug.ts'
-import { defineComponent, reactive, ref } from 'vue'
+import {defineComponent, reactive, ref} from 'vue'
 import utils from '@/api/utils.ts'
 import project from '@/api/project.ts'
 import type {Bug} from "@/types/bug";
+import {ElMessage} from "element-plus";
 
 const moduleName = 'bug'
 const defaultPageSize = 10
 const pageSizes = [10, 25]
+const gradeColor = {
+  '轻微': 'success',
+  '次要': 'info',
+  '一般': 'primary',
+  '紧急': 'warning',
+  '严重': 'danger',
+}
+const statusColor = {
+  '已关闭': 'warning',
+  '已解决': 'success',
+  '开放中': 'primary'
+}
+
+const refComment = ref()
 
 export default defineComponent({
   computed: {
     features() {
-      if (this.module) {
-        let m = this.project.modules.find(m => { return m.name == this.module })
+      if (this.query.module) {
+        let m = this.project.modules.find(m => { return m.name == this.query.module })
         return utils.toOptions(m.features.map(f => f.name))
       }
       return utils.toOptions([])
@@ -39,47 +54,104 @@ export default defineComponent({
   },
   components: {List, BreadCrumbNav, Edit, Select, Memo, SwitchButton, Search },
   mounted() {
+    this.initParams()
     this.updateData()
   },
-  data() {
+  setup() {
     return {
-      id: ref(this.$route.query.id ? Number(this.$route.query.id): 1),
-      name: ref(this.$route.query.name ? this.$route.query.name.toString(): ''),
-      grade: ref(this.$route.query.grade ? this.$route.query.grade.toString(): ''),
-      module: ref(this.$route.query.module ? this.$route.query.module.toString(): ''),
-      feature: ref(this.$route.query.feature ? this.$route.query.feature.toString(): ''),
-      owner: ref(this.$route.query.owner ? Number(this.$route.query.owner): undefined),
-      reporter: ref(this.$route.query.reporter ? Number(this.$route.query.reporter): undefined),
-      status: ref(this.$route.query.status ? this.$route.query.status.toString(): ''),
-      solveType: ref(this.$route.query.solveType ? this.$route.query.solveType.toString(): ''),
-      page: ref(this.$route.query.page ? Number(this.$route.query.page) : 1),
-      size: ref(this.$route.query.size ? Number(this.$route.query.size) : defaultPageSize),
-      total: ref(0),
-      start: ref(0),
-      end: ref(0),
-      itemToDelete: undefined,
-      data: reactive([]),
+      dialogs: reactive({
+        solve: {
+          solveType: '解决',
+          comment: '',
+          toggle: false,
+          rules: reactive({
+            solveType: [
+              {
+                required: true,
+                message: '请选择解决类型',
+                trigger: 'blur'
+              }
+            ],
+          }),
+        },
+        comment: {
+          comment: '',
+          toggle: false,
+          rules: reactive({
+            comment: [
+              {
+                required: true,
+                message: '请填写备注',
+                trigger: 'blur'
+              }
+            ],
+          }),
+        },
+        close: {
+          comment: '',
+          toggle: false,
+        },
+      }),
+      refComment: refComment,
+    }
+  },
+  data() {
+    let params = this.$route.query
+    return {
       defaultPageSize: defaultPageSize,
       pageSizes: pageSizes,
+      gradeColor: gradeColor,
+      statusColor: statusColor,
       grades: utils.toOptions(bug.grades),
       statusTypes: utils.toOptions(bug.statusTypes),
       solveTypes: utils.toOptions(bug.solveTypes),
+      data: reactive([]),
       project: reactive([]),
       modules: reactive([]),
       users: reactive([]),
+      pageInfo: reactive({
+        page: params.page ? Number(params.page) : 1,
+        size: params.size ? Number(params.size) : defaultPageSize,
+        total: 0,
+        start: 0,
+        end: 0,
+      }),
+      query: reactive({
+        id: 1,
+        name: '',
+        grade: '',
+        module: '',
+        feature: '',
+        owner: undefined,
+        reporter: undefined,
+        status: '',
+        solveType: '',
+      }),
+      selectedItem: undefined,
     }
   },
   methods: {
+    initParams() {
+      let params = this.$route.query
+      for (const param in this.query) {
+        if (this.query.hasOwnProperty(param) && params[param]) {
+          let type = typeof this.query[param]
+          if (type === 'number' || type == 'undefined')
+            this.query[param] = Number(params[param])
+          else
+            this.query[param] = params[param]
+        }
+      }
+    },
     updateData() {
-      let result = bug.searchData(this.id, this.name, this.grade, this.module, this.feature, this.owner,
-          this.reporter, this.status, this.solveType, this.page, this.size)
+      let result = bug.searchData(this.query, this.pageInfo.page, this.pageInfo.size)
       this.data.length = 0
       Object.assign(this.data, result.data ?.map( (b, index) => {
         b.index = index + 1
         return b
       }))
 
-      let p = project.getProject(this.id)
+      let p = project.getProject(this.query.id)
       this.project = p
       this.modules.length = 0
       Object.assign(this.modules, utils.toOptions(p.modules.map( m => m.name )))
@@ -88,46 +160,33 @@ export default defineComponent({
       this.users.length = 0
       Object.assign(this.users, [{id: '', realName: '全部'}].concat(users))
 
-      this.total = result.total
-      this.start = result.start
-      this.end = result.end
+      this.pageInfo.total = result.total
+      this.pageInfo.start = result.start
+      this.pageInfo.end = result.end
     },
     updateUrl() {
-      let url = '/' + moduleName + '/bugs?id=' + this.id
-      if (this.page != 1)
-        url += '&page=' + this.page
-      if (this.size != defaultPageSize)
-        url += '&size=' + this.size;
-      if (this.name)
-        url += '&name=' + this.name
-      if (this.grade)
-        url += '&grade=' + this.grade
-      if (this.module)
-        url += '&module=' + this.module
-      if (this.feature)
-        url += '&feature=' + this.feature
-      if (this.owner)
-        url += '&owner=' + this.owner
-      if (this.reporter)
-        url += '&reporter=' + this.reporter
-      if (this.status)
-        url += '&status=' + this.status
-      if (this.solveType)
-        url += '&solveType=' + this.solveType
+      let params = []
+      for (const param in this.query) {
+        if (this.query.hasOwnProperty(param) && this.query[param]) {
+          params.push(param + '=' + this.query[param])
+        }
+      }
+      let url = '/' + moduleName + '/bugs?' + params.join('&')
       this.$router.push(url)
     },
     clearFeature() {
-      this.feature =''
+      this.query.feature =''
     },
     clearAll() {
-      this.name = ''
-      this.grade = ''
-      this.module = ''
-      this.feature = ''
-      this.owner = ''
-      this.reporter = ''
-      this.status = ''
-      this.solveType = ''
+      for (const param in this.query) {
+        if (param != 'id' && this.query.hasOwnProperty(param)) {
+          let type = typeof this.query[param]
+          if (type === 'number' || type == 'undefined')
+            this.query[param] = undefined
+          else
+            this.query[param] = ''
+        }
+      }
     },
     handleSearch() {
       this.updateUrl()
@@ -142,20 +201,47 @@ export default defineComponent({
       this.$router.push(url)
     },
     handleSolve(_: number, row: Bug) {
-
+      this.dialogs.solve.toggle = true
+      this.selectedItem = row
     },
     handleComment(_: number, row: Bug) {
-
+      this.dialogs.comment.toggle = true
+      this.selectedItem = row
     },
     handleClose(_: number, row: Bug) {
-
+      this.dialogs.close.toggle = true
+      this.selectedItem = row
+    },
+    handleSubmitSolve() {
+      bug.updateBug(this.selectedItem.id, '已解决', this.dialogs.solve.solveType, this.dialogs.solve.comment)
+      this.dialogs.solve.toggle = false
+      ElMessage.success('提交成功')
+      this.$router.go(0)
+    },
+    handleSubmitComment() {
+      try {
+        refComment.value.validate().then(() => {
+          bug.updateBug(this.selectedItem.id, undefined, undefined, this.dialogs.comment.comment)
+          this.dialogs.comment.toggle = false
+          ElMessage.success('提交成功')
+          this.$router.go(0)
+        })
+      } catch (error) {
+        ElMessage.error('请输入备注')
+      }
+    },
+    handleSubmitClose() {
+      bug.updateBug(this.selectedItem.id, '已关闭', undefined, this.dialogs.close.comment)
+      this.dialogs.close.toggle = false
+      ElMessage.success('提交成功')
+      this.$router.go(0)
     },
     handleView(_: number, row: Bug) {
       let url = '/' + moduleName + '/info?id=' + row.id
       this.$router.push(url)
     },
     handlePageChange(page: number) {
-      this.page = page
+      this.pageInfo.page = page
       this.updateUrl()
       this.updateData()
     },
@@ -171,14 +257,14 @@ export default defineComponent({
     handleMyBugs() {
       let nowUser = user.getLoggedInUser()
       this.clearAll()
-      this.owner = nowUser.id
+      this.query.owner = nowUser.id
       this.updateUrl()
       this.updateData()
     },
     handleMyReports() {
       let nowUser = user.getLoggedInUser()
       this.clearAll()
-      this.reporter = nowUser.id
+      this.query.reporter = nowUser.id
       this.updateUrl()
       this.updateData()
     },
@@ -199,14 +285,14 @@ export default defineComponent({
     <el-form>
       <el-row justify="space-between">
         <el-col :span="11">
-          <el-form-item label="Bug 标题" class="disable-select">
-            <el-input v-model="name" />
+          <el-form-item label="Bug 标题" label-width="70">
+            <el-input v-model="query.name" />
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="Bug 等级" class="disable-select">
+          <el-form-item label="Bug 等级" label-width="70">
             <el-select
-                v-model="grade"
+                v-model="query.grade"
                 class="m-2"
                 placeholder="全部"
             >
@@ -222,9 +308,9 @@ export default defineComponent({
       </el-row>
       <el-row justify="space-between">
         <el-col :span="11">
-          <el-form-item label="所属模块" class="disable-select">
+          <el-form-item label="所属模块" label-width="70">
             <el-select
-                v-model="module"
+                v-model="query.module"
                 class="m-2"
                 placeholder="全部"
                 @change="clearFeature()"
@@ -239,9 +325,9 @@ export default defineComponent({
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="所属功能" class="disable-select">
+          <el-form-item label="所属功能" label-width="70">
             <el-select
-                v-model="feature"
+                v-model="query.feature"
                 class="m-2"
                 placeholder="全部"
             >
@@ -257,9 +343,9 @@ export default defineComponent({
       </el-row>
       <el-row justify="space-between">
         <el-col :span="11">
-          <el-form-item label="&emsp;开发人" class="disable-select">
+          <el-form-item label="开发人" label-width="70">
             <el-select
-                v-model="owner"
+                v-model="query.owner"
                 class="m-2"
                 placeholder="全部"
             >
@@ -273,9 +359,9 @@ export default defineComponent({
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="&emsp;报告人" class="disable-select">
+          <el-form-item label="报告人" label-width="70">
             <el-select
-                v-model="reporter"
+                v-model="query.reporter"
                 class="m-2"
                 placeholder="全部"
             >
@@ -291,9 +377,9 @@ export default defineComponent({
       </el-row>
       <el-row justify="space-between">
         <el-col :span="11">
-          <el-form-item label="Bug 状态" class="disable-select">
+          <el-form-item label="Bug 状态" label-width="70">
             <el-select
-                v-model="status"
+                v-model="query.status"
                 class="m-2"
                 placeholder="全部"
             >
@@ -307,9 +393,9 @@ export default defineComponent({
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="解决形式" class="disable-select">
+          <el-form-item label="解决形式" label-width="70">
             <el-select
-                v-model="solveType"
+                v-model="query.solveType"
                 class="m-2"
                 placeholder="全部"
             >
@@ -345,10 +431,28 @@ export default defineComponent({
     <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录">
       <el-table-column align="center" prop="index" label="序号" width="80"/>
       <el-table-column align="center" prop="name" label="Bug 标题"/>
-      <el-table-column align="center" prop="grade" label="Bug 等级"/>
+      <el-table-column align="center" prop="grade" label="Bug 等级">
+        <template #default="scope">
+          <el-tag
+              :type="gradeColor[scope.row.grade]"
+              effect="light"
+          >
+            {{ scope.row.grade }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column align="center" prop="owner" label="开发人"/>
       <el-table-column align="center" prop="reporter" label="报告人"/>
-      <el-table-column align="center" prop="status" label="Bug 状态"/>
+      <el-table-column align="center" prop="status" label="Bug 状态">
+        <template #default="scope">
+          <el-tag
+              :type="statusColor[scope.row.status]"
+              effect="light"
+          >
+            {{ scope.row.status }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column align="center" prop="solveType" label="解决形式"/>
       <el-table-column align="center" label="操作" width="210">
         <template #default="scope">
@@ -422,12 +526,12 @@ export default defineComponent({
     <template #footer>
       <el-row class="row-bg" justify="space-between">
         <el-col>
-          <el-text size="small">显示第 {{ start }} 到第 {{ end }} 条记录，总共 {{ total }} 条记录，每页显示 </el-text>
+          <el-text size="small">显示第 {{ pageInfo.start }} 到第 {{ pageInfo.end }} 条记录，总共 {{ pageInfo.total }} 条记录，每页显示 </el-text>
           <el-select
-              v-model="size"
+              v-model="pageInfo.size"
               size="small"
               style="width: 60px"
-              :placeholder="defaultPageSize"
+              :placeholder="defaultPageSize.toString()"
               @change="handleSizeChange"
           >
             <el-option
@@ -447,19 +551,69 @@ export default defineComponent({
               class="mt-4"
               hide-on-single-page
               :pager-count="11"
-              v-model:current-page="page"
-              v-model:total="total"
-              v-model:page-size="size"
+              v-model:current-page="pageInfo.page"
+              v-model:total="pageInfo.total"
+              v-model:page-size="pageInfo.size"
               @current-change="handlePageChange"
           />
         </el-col>
       </el-row>
     </template>
   </el-card>
+  <el-dialog v-model="dialogs.solve.toggle" title="解决 Bug" width="500">
+    <el-form :model="dialogs.solve" :rules="dialogs.solve.rules" status-icon>
+      <el-form-item label="解决形式" label-width="100" prop="solveType">
+        <el-select
+            v-model="dialogs.solve.solveType"
+            class="m-2"
+            placeholder="请选择"
+        >
+          <el-option
+              v-for="t in solveTypes.slice(2)"
+              :key="t.value"
+              :label="t.name"
+              :value="t.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="备注" label-width="100" prop="comment">
+        <el-input v-model="dialogs.solve.comment" type="textarea"/>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogs.solve.toggle = false">关闭</el-button>
+        <el-button type="primary" @click="handleSubmitSolve()">保存</el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <el-dialog v-model="dialogs.comment.toggle" title="写备注" width="500">
+    <el-form ref="refComment" :model="dialogs.comment" :rules="dialogs.comment.rules" status-icon>
+      <el-form-item label="备注" label-width="100" prop="comment">
+        <el-input v-model="dialogs.comment.comment" type="textarea"/>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogs.comment.toggle = false">关闭</el-button>
+        <el-button type="primary" @click="handleSubmitComment()">保存</el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <el-dialog v-model="dialogs.close.toggle" title="关闭 Bug" width="500">
+    <el-form :model="dialogs.close" status-icon>
+      <el-form-item label="备注" label-width="100" prop="comment">
+        <el-input v-model="dialogs.close.comment" type="textarea"/>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogs.close.toggle = false">关闭</el-button>
+        <el-button type="primary" @click="handleSubmitClose()">保存</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>
-#pagination {
-  justify-items: end;
-}
 </style>
