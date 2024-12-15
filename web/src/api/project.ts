@@ -19,7 +19,7 @@ export default {
       result.start = result.total
     if (result.end > result.total)
       result.end = result.total
-    return JSON.stringify(result)
+    return result
   },
   deleteProject: function (id: number) {
     // Do something
