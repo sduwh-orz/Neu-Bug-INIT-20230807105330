@@ -229,7 +229,4 @@ export default defineComponent({
 </template>
 
 <style scoped>
-#pagination {
-  justify-items: end;
-}
 </style>
