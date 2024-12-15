@@ -81,7 +81,4 @@ export default {
 </template>
 
 <style scoped>
-.disable-select {
-  user-select: none;
-}
 </style>
