@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 import { reactive } from 'vue'
 export default {
   setup() {

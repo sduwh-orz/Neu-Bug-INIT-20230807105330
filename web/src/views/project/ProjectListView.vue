@@ -1,11 +1,7 @@
 <script lang="ts">
 import {Delete, Edit, Operation, Search} from '@element-plus/icons-vue';
 import BreadCrumbNav from "@/components/BreadCrumbNav.vue";
-import { defineComponent, reactive, ref } from "vue";
-
-const moduleName = "project"
-const defaultPageSize = 10
-const pageSizes = [10, 25]
+import { defineComponent, reactive } from "vue";
 
 interface Project {
   id: number
@@ -15,7 +11,6 @@ interface Project {
   owner: string
   created: string
 }
-
 export default defineComponent({
   computed: {
     Operation() {
@@ -28,24 +23,20 @@ export default defineComponent({
       return Edit
     }
   },
-  components: { Delete, Edit, Operation, BreadCrumbNav, Search },
+  components: {Delete, Edit, Operation, BreadCrumbNav, Search },
   mounted() {
-    this.updateData()
+    let data = this.getData()
+    this.nowProjects.length = 0
+    this.nowProjects.splice(0, 0, ...data)
   },
   data() {
     return {
-      keyword: ref(this.$route.query.keyword ? this.$route.query.keyword.toString(): ""),
-      page: ref(this.$route.query.page ? Number(this.$route.query.page) : 1),
-      size: ref(this.$route.query.size ? Number(this.$route.query.size) : defaultPageSize),
-      total: ref(0),
-      start: ref(0),
-      end: ref(0),
-      deleteDialogVisible: ref(false),
-      itemToDelete: undefined,
-      data: reactive([]),
-      defaultPageSize: defaultPageSize,
-      pageSizes: pageSizes,
-      fakeData: [
+      page: this.$route.query.page ? Number(this.$route.query.page) : 1,
+      form: reactive({
+        name: ''
+      }),
+      size: this.$route.query.size ? Number(this.$route.query.size) : 10,
+      projects: [
         {
           id: 1,
           keyword: 'blog',
@@ -123,75 +114,23 @@ export default defineComponent({
           description: "网站发布系统",
           owner: "李静莉",
           created: "2016-09-14"
-        },
+        }
       ],
+      nowProjects: reactive([])
     }
   },
   methods: {
-    getJsonFake() {
-      let filtered = this.keyword.length == 0 ? this.fakeData : this.fakeData.filter((item)=>{
-        return item.name.indexOf(this.keyword) != -1
-      })
-      let result = {
-        data: filtered.slice((this.page - 1) * this.size, this.page * this.size),
-        total: filtered.length,
-        start: (this.page - 1) * this.size + 1,
-        end: this.page * this.size
-      }
-      if (result.start > result.total)
-        result.start = result.total
-      if (result.end > result.total)
-        result.end = result.total
-      return JSON.stringify(result)
+    getData() {
+      return this.projects.slice((this.page - 1) * this.size, this.page * this.size);
     },
-    updateData() {
-      let result = JSON.parse(this.getJsonFake())
-      this.total = result.total
-      this.start = result.start
-      this.end = result.end
-      this.data.length = 0
-      Object.assign(this.data, result.data)
+    handleManage(index: number, row: Project) {
+      console.log(index, row)
     },
-    updateUrl() {
-      let url = "/" + moduleName + "/list?page=" + this.page
-      if (this.size != defaultPageSize)
-        url += "&size=" + this.size;
-      if (this.keyword.length != 0)
-        url += "&keyword=" + this.keyword
-      this.$router.push(url)
+    handleEdit(index: number, row: Project) {
+      console.log(index, row)
     },
-    handleSearch() {
-      this.updateUrl()
-      this.updateData()
-    },
-    handleCreate() {
-      let url = "/" + moduleName + "/create"
-      this.$router.push(url)
-    },
-    handleManage(_: number, row: Project) {
-      let url = "/" + moduleName + "/modules?id=" + row.id
-      this.$router.push(url)
-    },
-    handleEdit(_: number, row: Project) {
-      let url = "/" + moduleName + "/edit?id=" + row.id
-      this.$router.push(url)
-    },
-    handleDelete(_: number, row: Project) {
-      this.deleteDialogVisible = true
-      this.itemToDelete = row
-    },
-    handlePageChange(page: number) {
-      this.page = page
-      this.updateUrl()
-      this.updateData()
-    },
-    handleSizeChange(_: any) {
-      this.updateUrl()
-      this.updateData()
-    },
-    performDelete() {
-      console.log(this.itemToDelete)
-      this.$router.go(0)
+    handleDelete(index: number, row: Project) {
+      console.log(index, row)
     }
   }
 })
@@ -207,16 +146,16 @@ export default defineComponent({
         <span>查询信息</span>
       </div>
     </template>
-    <el-form label-width="auto" style="max-width: 600px">
+    <el-form :model="form" label-width="auto" style="max-width: 600px">
       <el-form-item label="项目名称">
-        <el-input v-model="keyword" />
+        <el-input v-model="form.name" />
       </el-form-item>
     </el-form>
     <template #footer>
       <el-row class="row-bg" justify="end">
         <div class="flex-grow" />
-        <el-button type="primary" @click="handleSearch" round>查询</el-button>
-        <el-button type="primary" @click="handleCreate" round>添加</el-button>
+        <el-button type="primary" round>查询</el-button>
+        <el-button type="primary" round>添加</el-button>
       </el-row>
     </template>
   </el-card>
@@ -227,14 +166,14 @@ export default defineComponent({
         <span>列表信息</span>
       </div>
     </template>
-    <el-table :data="data" style="width: 100%">
+    <el-table :data="nowProjects" style="width: 100%">
       <el-table-column prop="id" label="序号" width="80"/>
       <el-table-column prop="keyword" label="项目关键字"/>
       <el-table-column prop="name" label="项目名称"/>
       <el-table-column prop="description" label="项目描述信息"/>
       <el-table-column prop="owner" label="项目负责人"/>
       <el-table-column prop="created" label="创建日期"/>
-      <el-table-column label="操作" width="130">
+      <el-table-column label="操作">
         <template #default="scope">
           <el-button
               :icon="Operation"
@@ -260,60 +199,11 @@ export default defineComponent({
       </el-table-column>
     </el-table>
     <template #footer>
-      <el-row class="row-bg" justify="space-between">
-        <el-col>
-          显示第 {{ start }} 到第 {{ end }} 条记录，总共 {{ total }} 条记录，每页显示
-          <el-select
-              v-model="size"
-              size="small"
-              style="width: 60px"
-              :placeholder="defaultPageSize"
-              @change="handleSizeChange"
-          >
-            <el-option
-                v-for="size in pageSizes"
-                :key="size"
-                :label="size"
-                :value="size"
-            />
-          </el-select> 条记录
-        </el-col>
-        <el-col id="pagination">
-          <el-pagination
-            size="small"
-            background
-            layout="prev, pager, next"
-            class="mt-4"
-            hide-on-single-page
-            :pager-count="11"
-            v-model:current-page="page"
-            v-model:total="total"
-            v-model:page-size="size"
-            @current-change="handlePageChange"
-          />
-        </el-col>
-      </el-row>
+      显示第 {{ (page - 1) * size + 1 <= projects.length ? (page - 1) * size + 1 : projects.length }} 到第 {{ page * size <= projects.length ? page * size : projects.length }} 条记录，总共 {{ projects.length }} 条记录
     </template>
   </el-card>
-  <el-dialog
-      v-model="deleteDialogVisible"
-      title="确认删除"
-      width="500"
-  >
-    <span>确认删除这个项目吗？</span>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="deleteDialogVisible = false">取消</el-button>
-        <el-button type="danger" @click="deleteDialogVisible = false; performDelete()">
-          确定
-        </el-button>
-      </div>
-    </template>
-  </el-dialog>
 </template>
 
-<style scoped>
-#pagination {
-  justify-items: end;
-}
+<style>
+
 </style>
