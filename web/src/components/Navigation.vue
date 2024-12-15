@@ -27,8 +27,6 @@ export default {
       background-color="#545c64"
       class="el-menu-vertical"
       text-color="#fff"
-      @open="handleOpen"
-      @close="handleClose"
       style="height: 100%"
   >
     <el-sub-menu index="me">

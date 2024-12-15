@@ -19,7 +19,6 @@ export default {
     :ellipsis="false"
     class="el-menu"
     mode="horizontal"
-    @select="handleSelect"
 >
   <el-menu-item id="page-title" index="0" disabled>
     <el-text class="mx-1" size="large" tag="b">软件缺陷管理系统</el-text>
