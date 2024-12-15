@@ -1,18 +1,8 @@
-<script lang="ts">
-import {defineComponent} from 'vue'
-import user from '@/api/user.ts'
-
-export default defineComponent({
-  name: "HomeView",
-  mounted() {
-  }
-})
+<script setup lang="ts">
 </script>
 
 <template>
-<h1>欢迎登录系统。</h1>
+  <main>
+    <h1>This is home page</h1>
+  </main>
 </template>
-
-<style scoped>
-
-</style>
