@@ -15,7 +15,7 @@ const username = localStorage.getItem('username') || '默认用户名';
 
 <template>
   <BreadCrumbNav :page-paths="['我的面板', '用户信息']"></BreadCrumbNav>
-  <el-card class="user-info-card" shadow="never">
+  <el-card class="info-card" shadow="never">
     <template #header>
         <div class="card-header">
             <el-icon><Tickets /></el-icon>&nbsp;&nbsp;用户信息
@@ -56,16 +56,4 @@ const username = localStorage.getItem('username') || '默认用户名';
 </template>
 
 <style scoped>
-.user-info-card {
-    margin-top: 20px;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.card-header {
-    display: flex;
-    align-items: center;
-    font-size: 20px;
-    font-weight: bold;
-}
 </style>
