@@ -3,15 +3,7 @@ import pagination from '@/api/pagination.ts'
 import type { User } from '@/types/user'
 
 export default {
-  roles: [
-    {'name': '普通用户', 'value': '普通用户'},
-    {'name': '管理员', 'value': '管理员'}
-  ],
-  rolesForQuery: [
-    {'name': '全部', 'value': ''},
-    {'name': '普通用户', 'value': '普通用户'},
-    {'name': '管理员', 'value': '管理员'}
-  ],
+  roles: ['普通用户', '管理员'],
   getData: function (
     username: string,
     realName: string,
@@ -54,4 +46,7 @@ export default {
   deleteUser: function (id: number) {
     // Do something
   },
+  getLoggedInUser: function () {
+    return fakeData.users.find(u => { return u.realName == '管理员' })
+  }
 }

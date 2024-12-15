@@ -16,6 +16,9 @@ export default {
   getProject: function (id: number) {
     return fakeData.projects.find(data => data.id == id)
   },
+  getAllProjects: function () {
+    return fakeData.projects
+  },
   createProject: function (project: Project) {
     // Do something
   },

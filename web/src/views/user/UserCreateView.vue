@@ -4,6 +4,7 @@ import BreadCrumbNav from "@/components/BreadCrumbNav.vue";
 import { reactive, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import user from '@/api/user.ts'
+import utils from '@/api/utils.ts'
 
 const moduleName = 'user'
 const formData = reactive({
@@ -19,7 +20,7 @@ export default {
   components: {EditPen, BreadCrumbNav},
   setup() {
     return {
-      roles: user.roles,
+      roles: utils.toOptions(user.roles, true),
       formData: formData,
       formDataRef: formDataRef,
       formRules: reactive({

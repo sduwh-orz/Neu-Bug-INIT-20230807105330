@@ -4,6 +4,7 @@ import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import user from '@/api/user.ts'
 import { User } from '@/types/user'
 import { defineComponent, reactive, ref } from 'vue'
+import utils from '@/api/utils.ts'
 
 const moduleName = 'user'
 const defaultPageSize = 10
@@ -38,7 +39,7 @@ export default defineComponent({
       data: reactive([]),
       defaultPageSize: defaultPageSize,
       pageSizes: pageSizes,
-      roles: user.rolesForQuery
+      roles: utils.toOptions(user.roles)
     }
   },
   methods: {

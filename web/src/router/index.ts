@@ -99,6 +99,18 @@ const router = createRouter({
           path: 'bugs',
           component: () => import('@/views/bug/BugListView.vue'),
         },
+        {
+          path: 'create',
+          component: () => import('@/views/bug/BugCreateView.vue'),
+        },
+        {
+          path: 'edit',
+          component: () => import('@/views/bug/BugEditView.vue'),
+        },
+        {
+          path: 'info',
+          component: () => import('@/views/bug/BugInfoView.vue'),
+        },
       ]
     },
   ],
