@@ -34,12 +34,14 @@ export default {
             <el-form-item label="用户名">
               <el-input
                   v-model="form.username"
+                  @keyup.enter="login"
               />
             </el-form-item>
             <el-form-item label="密码">
               <el-input
                   v-model="form.password"
                   type="password"
+                  @keyup.enter="login"
                   show-password
               />
             </el-form-item>
