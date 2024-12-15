@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { EditPen } from '@element-plus/icons-vue';
+import BreadCrumbNav from "@/components/BreadCrumbNav.vue";
 
 </script>
 
 <template>
-    <el-breadcrumb separator="/">
-        <el-breadcrumb-item class="breadcrumb-item">我的面板</el-breadcrumb-item>
-        <el-breadcrumb-item class="breadcrumb-item" >
-            <el-text tag="b" class="mx-1" size="large">修改密码</el-text>
-        </el-breadcrumb-item>
-    </el-breadcrumb>
+  <BreadCrumbNav :page-paths="['我的面板', '修改密码']"></BreadCrumbNav>
     <el-card class="password-card" shadow="never">
         <template #header>
             <div class="card-header">
