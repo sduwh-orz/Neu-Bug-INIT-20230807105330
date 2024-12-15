@@ -8,20 +8,6 @@ import { defineComponent, reactive, ref } from 'vue'
 const moduleName = 'user'
 const defaultPageSize = 10
 const pageSizes = [10, 25]
-const roles = [
-  {
-    'name': '全部',
-    'value': ''
-  },
-  {
-    'name': '普通用户',
-    'value': '普通用户'
-  },
-  {
-    'name': '管理员',
-    'value': '管理员'
-  }
-]
 
 export default defineComponent({
   computed: {
@@ -52,7 +38,7 @@ export default defineComponent({
       data: reactive([]),
       defaultPageSize: defaultPageSize,
       pageSizes: pageSizes,
-      roles: roles
+      roles: user.rolesForQuery
     }
   },
   methods: {
@@ -141,7 +127,6 @@ export default defineComponent({
                 v-model="role"
                 class="m-2"
                 placeholder="全部"
-                size="large"
             >
               <el-option
                   v-for="role in roles"

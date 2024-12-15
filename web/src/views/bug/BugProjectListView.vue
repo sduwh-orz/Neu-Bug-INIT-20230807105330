@@ -89,8 +89,8 @@ export default defineComponent({
         <span>查询信息</span>
       </div>
     </template>
-    <el-form label-width="auto" style="max-width: 600px">
-      <el-form-item label="项目名称">
+    <el-form label-width="auto">
+      <el-form-item label="项目名称" style="max-width: 60%">
         <el-input v-model="keyword" />
       </el-form-item>
     </el-form>

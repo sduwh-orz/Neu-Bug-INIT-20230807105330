@@ -1,5 +1,6 @@
 import fakeData from '@/api/fakeData.ts'
-import pagination from "@/api/pagination.ts";
+import pagination from '@/api/pagination.ts'
+import type { Project } from '@/types/project'
 
 export default {
   getProjects: function (
@@ -15,7 +16,10 @@ export default {
   getProject: function (id: number) {
     return fakeData.projects.find(data => data.id == id)
   },
+  createProject: function (project: Project) {
+    // Do something
+  },
   deleteProject: function (id: number) {
     // Do something
-  }
+  },
 }
