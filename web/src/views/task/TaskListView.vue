@@ -1,5 +1,5 @@
 <script lang="ts">
-import { Delete, Edit, Operation, Search } from '@element-plus/icons-vue'
+import { FolderChecked, Search } from '@element-plus/icons-vue'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import { defineComponent, reactive, ref } from 'vue'
 import project from '@/api/project.ts'
@@ -11,17 +11,11 @@ const pageSizes = [10, 25]
 
 export default defineComponent({
   computed: {
-    Operation() {
-      return Operation
+    FolderChecked() {
+      return FolderChecked
     },
-    Delete() {
-      return Delete
-    },
-    Edit() {
-      return Edit
-    }
   },
-  components: { Delete, Edit, Operation, BreadCrumbNav, Search },
+  components: { FolderChecked, BreadCrumbNav, Search },
   mounted() {
     this.updateData()
   },
@@ -42,7 +36,21 @@ export default defineComponent({
   },
   methods: {
     updateData() {
-      let result = JSON.parse(project.getProjects(this.keyword, this.page, this.size))
+      let result = project.getProjects(this.keyword, this.page, this.size)
+      result.data.forEach((project) => {
+        project.features = project.modules.map(module =>
+            module.features.length
+        ).reduce((sum, count) =>
+            sum + count, 0
+        )
+        project.developers = new Set(
+          project.modules.map(module =>
+            module.features.map(module =>
+              module.owner
+            )
+          ).flat().filter(name => name.length > 0)
+        ).size
+      })
       this.total = result.total
       this.start = result.start
       this.end = result.end
@@ -61,21 +69,9 @@ export default defineComponent({
       this.updateUrl()
       this.updateData()
     },
-    handleCreate() {
-      let url = '/' + moduleName + '/create'
-      this.$router.push(url)
-    },
-    handleManage(_: number, row: Project) {
-      let url = '/' + moduleName + '/modules?id=' + row.id
-      this.$router.push(url)
-    },
     handleEdit(_: number, row: Project) {
       let url = '/' + moduleName + '/edit?id=' + row.id
       this.$router.push(url)
-    },
-    handleDelete(_: number, row: Project) {
-      this.deleteDialogVisible = true
-      this.itemToDelete = row
     },
     handlePageChange(page: number) {
       this.page = page
@@ -86,10 +82,6 @@ export default defineComponent({
       this.updateUrl()
       this.updateData()
     },
-    performDelete() {
-      project.deleteProject(this.itemToDelete.id)
-      this.$router.go(0)
-    }
   }
 })
 
@@ -124,42 +116,34 @@ export default defineComponent({
         <span>列表信息</span>
       </div>
     </template>
-    <el-table :data="data" style="width: 100%">
+    <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录">
       <el-table-column align="center" prop="id" label="序号" width="80"/>
-      <el-table-column align="center" prop="keyword" label="项目关键字"/>
       <el-table-column align="center" prop="name" label="项目名称"/>
-      <el-table-column align="center" prop="description" label="项目描述信息"/>
       <el-table-column align="center" prop="owner" label="项目负责人"/>
-      <el-table-column align="center" prop="created" label="创建日期"/>
-      <el-table-column align="center" label="操作" width="130">
+      <el-table-column align="center" prop="features" label="功能数"/>
+      <el-table-column align="center" prop="developers" label="开发人数"/>
+      <el-table-column align="center" label="操作" width="80">
         <template #default="scope">
-          <el-button
-              :icon="Operation"
-              size="small"
-              @click="handleManage(scope.$index, scope.row)"
-              circle
-          />
-          <el-button
-              :icon="Edit"
-              size="small"
-              type="primary"
-              @click="handleEdit(scope.$index, scope.row)"
-              circle
-          />
-          <el-button
-              :icon="Delete"
-              size="small"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-              circle
-          />
+          <el-tooltip
+              class="box-item"
+              content="任务分配"
+              placement="top"
+          >
+            <el-button
+                :icon="FolderChecked"
+                size="small"
+                type="success"
+                @click="handleEdit(scope.$index, scope.row)"
+                circle
+            />
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>
     <template #footer>
       <el-row class="row-bg" justify="space-between">
         <el-col>
-          <el-text size="small">显示第 {{ start }} 到第 {{ end }} 条记录，总共 {{ total }} 条记录，每页显示</el-text>
+          <el-text size="small">显示第 {{ start }} 到第 {{ end }} 条记录，总共 {{ total }} 条记录，每页显示 </el-text>
           <el-select
               v-model="size"
               size="small"
@@ -193,21 +177,6 @@ export default defineComponent({
       </el-row>
     </template>
   </el-card>
-  <el-dialog
-      v-model="deleteDialogVisible"
-      title="确认删除"
-      width="500"
-  >
-    <span>确认删除这个项目吗？</span>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="deleteDialogVisible = false">取消</el-button>
-        <el-button type="danger" @click="deleteDialogVisible = false; performDelete()">
-          确定
-        </el-button>
-      </div>
-    </template>
-  </el-dialog>
 </template>
 
 <style scoped>
