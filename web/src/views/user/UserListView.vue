@@ -5,6 +5,7 @@ import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import Pagination from "@/components/Pagination.vue"
 import user from '@/api/user.ts'
 import utils from '@/api/utils.ts'
+import {ElMessage} from "element-plus";
 
 export default defineComponent({
   computed: {
@@ -64,6 +65,7 @@ export default defineComponent({
     },
     performDelete() {
       user.remove(this.selectedItem.id)
+      ElMessage.success('删除成功')
       this.$router.go(0)
     }
   }

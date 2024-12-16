@@ -64,11 +64,12 @@ export default {
         Object.keys(features).forEach(feature => {
           if (features[feature].owner === '') {
             emptyOwner = true
-            ElMessage.warning(`请为 ${module}模块 下的 ${feature}功能 指定开发者`)
           }
         })
       })
-      if (!emptyOwner) {
+      if (emptyOwner) {
+        ElMessage.warning(`请为所有功能指定开发者`)
+      } else {
         ElMessageBox.confirm(
           '确定要保存有关开发者的修改吗？',
           '保存修改',

@@ -134,6 +134,7 @@ export default {
       ).then(() => {
         module.remove(this.selectedItem.id)
         ElMessage.success('删除成功')
+        this.$router.go(0)
       }).catch(() => {
         ElMessage.info('已取消模块删除')
       })
@@ -161,6 +162,7 @@ export default {
       ).then(() => {
         feature.remove(this.selectedItem.id)
         ElMessage.success('删除成功')
+        this.$router.go(0)
       }).catch(() => {
         ElMessage.info('已取消功能删除')
       })
