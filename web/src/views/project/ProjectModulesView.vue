@@ -1,236 +1,258 @@
-<script lang="ts">
-import BreadCrumbNav from "@/components/BreadCrumbNav.vue";
-import { ArrowLeft, CirclePlus, FolderOpened, Delete, Edit, Plus } from "@element-plus/icons-vue";
-import { useRoute } from "vue-router";
-import project from '@/api/project'
+<script lang='ts'>
+import { reactive, ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { ArrowLeft, CirclePlus, FolderOpened, Delete, Edit, Plus } from '@element-plus/icons-vue'
+import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import module from '@/api/module'
-import { reactive, ref } from "vue";
-import type { Module } from "@/types/module";
-import { ElMessage, ElMessageBox } from "element-plus";
-import feature from "@/api/feature";
+import project from '@/api/project'
+import feature from '@/api/feature'
 
-const createModuleFormRef = ref();
-const modifyModuleFormRef = ref();
-const createFeatureFormRef = ref();
-const modifyFeatureFormRef = ref();
+const refModuleCreate = ref()
+const refModifyModule = ref()
+const refFeatureCreate = ref()
+const refFeatureModify = ref()
 
 export default {
   computed: {
     Plus() {
-      return Plus;
+      return Plus
     },
     Delete() {
-      return Delete;
+      return Delete
     },
     Edit() {
-      return Edit;
+      return Edit
     }
   },
   components: {
     BreadCrumbNav, FolderOpened, ArrowLeft, CirclePlus, Plus, Delete, Edit
   },
   setup() {
-    const route = useRoute();
-    const routeId = Number(route.query.id);
-    const currentProject = project.getProject(routeId);
-
-    currentProject?.modules.forEach(module => {
-      module.uniqueName = module.name;
-      module.features.forEach((feature: { uniqueName: string; name: string; }) => {
-        feature.uniqueName = module.name + '/' + feature.name;
-      });
-    });
-
     return {
-      routeId,
-      currentProject,
+      refModuleCreate: refModuleCreate,
+      refModifyModule: refModifyModule,
+      refFeatureCreate: refFeatureCreate,
+      refFeatureModify: refFeatureModify,
+    }
+  },
+  data() {
+    return {
+      id: undefined,
       module,
+      currentProject: reactive({}),
       treeProps: reactive({
         children: 'features',
         hasChildren: 'hasChildren'
       }),
-
-      createModuleFormRef: createModuleFormRef,
-      modifyModuleFormRef: modifyModuleFormRef,
-      createFeatureFormRef: createFeatureFormRef,
-      modifyFeatureFormRef: modifyFeatureFormRef,
-
-      createModuleDialogVisible: ref(false),
-      modifyModuleDialogVisible: ref(false),
-      createFeatureDialogVisible: ref(false),
-      modifyFeatureDialogVisible: ref(false),
-
-      moduleForm: reactive({ name: '' }),
-      moduleRules: reactive({
-        name: [
-          { required: true, message: '请输入模块名', trigger: 'blur' }
-        ]
-      }),
-
-      featureForm: reactive({ name: '', hours: 0 }),
-      featureRules: reactive({
-        name: [
-          { required: true, message: '请输入功能名', trigger: 'blur' }
-        ],
-        hours: [
-          { required: true, message: '请选择该功能的计划耗时', trigger: 'blur'},
-
-        ]
+      dialogs: reactive({
+        moduleCreate: {
+          name: '',
+          toggle: false,
+          rules: {
+            name: [
+              { required: true, message: '请输入模块名', trigger: 'blur' }
+            ]
+          }
+        },
+        moduleModify: {
+          name: '',
+          toggle: false,
+          rules: {
+            name: [
+              { required: true, message: '请输入模块名', trigger: 'blur' }
+            ]
+          }
+        },
+        featureCreate: {
+          name: '',
+          hours: 0,
+          toggle: false,
+          rules: {
+            name: [
+              { required: true, message: '请输入功能名', trigger: 'blur' }
+            ],
+            hours: [
+              { required: true, message: '请选择该功能的计划耗时', trigger: 'blur'},
+            ]
+          }
+        },
+        featureModify: {
+          name: '',
+          hours: 0,
+          toggle: false,
+          rules: {
+            name: [
+              { required: true, message: '请输入功能名', trigger: 'blur' }
+            ],
+            hours: [
+              { required: true, message: '请选择该功能的计划耗时', trigger: 'blur'},
+            ]
+          }
+        },
       }),
       selectedItem: undefined,
     }
   },
+  mounted() {
+    this.id = this.$route.query.id
+    this.currentProject = project.getProject(this.id)
+    this.currentProject?.modules.forEach(module => {
+      module.uniqueName = module.name
+      module.features.forEach((feature) => {
+        feature.uniqueName = module.name + '/' + feature.name
+      })
+    })
+  },
   methods: {
     goBack() {
-      this.$router.push('/project/list');
+      this.$router.push('/project/list')
     },
     ifModuleRow(row: any) {
-      return row.features;
+      return row.features
     },
 
     // handle functions
-    handleCreateModule(_: number, row: any) {
-      this.createModuleDialogVisible = true;
-      this.selectedItem = row;
+    handleModuleCreate(_: number, row: any) {
+      this.selectedItem = row
+      this.dialogs.moduleCreate.toggle = true
     },
-    handleModifyModule(_: number, row: any) {
-      this.modifyModuleDialogVisible = true;
-      this.selectedItem = row;
+    handleModuleModify(_: number, row: any) {
+      this.selectedItem = row
+      this.dialogs.moduleModify.name = row.name
+      this.dialogs.moduleModify.toggle = true
     },
-    handleDeleteModule(_: number, row: any) {
-      this.selectedItem = row;
+    handleModuleDelete(_: number, row: any) {
+      this.selectedItem = row
       ElMessageBox.confirm(
-        '确定要删除模块吗？',
-        '删除模块',
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
+          '确定要删除模块吗？',
+          '删除模块',
+          {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }
       ).then(() => {
-        module.remove(this.selectedItem.id);
-        this.$router.go(0);
-        ElMessage.success('删除成功');
+        module.remove(this.selectedItem.id)
+        ElMessage.success('删除成功')
       }).catch(() => {
-        ElMessage.info('已取消模块删除');
-      });
+        ElMessage.info('已取消模块删除')
+      })
     },
-    handleCreateFeature(_: number, row: any) {
-      this.createFeatureDialogVisible = true;
-      this.selectedItem = row;
+    handleFeatureCreate(_: number, row: any) {
+      this.selectedItem = row
+      this.dialogs.featureCreate.toggle = true
     },
-    handleModifyFeature(_: number, row: any) {
-      this.modifyFeatureDialogVisible = true;
-      this.selectedItem = row;
+    handleFeatureModify(_: number, row: any) {
+      this.selectedItem = row
+      this.dialogs.featureModify.name = row.name
+      this.dialogs.featureModify.hours = row.hours
+      this.dialogs.featureModify.toggle = true
     },
-    handleDeleteFeature(_: number, row: any) {
-      this.selectedItem = row;
+    handleFeatureDelete(_: number, row: any) {
+      this.selectedItem = row
       ElMessageBox.confirm(
-        '确定要删除功能吗？',
-        '删除功能',
-        {
-          confirmButtonText: '确认',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
+          '确定要删除功能吗？',
+          '删除功能',
+          {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }
       ).then(() => {
-        feature.remove(this.selectedItem.id);
-        this.$router.go(0);
-        ElMessage.success('删除成功');
+        feature.remove(this.selectedItem.id)
+        ElMessage.success('删除成功')
       }).catch(() => {
-        ElMessage.info('已取消功能删除');
-      });
+        ElMessage.info('已取消功能删除')
+      })
     },
 
     // close the dialogs
-    closeCreateModuleDialog() {
-      createModuleFormRef.value.resetFields();
-      this.createModuleDialogVisible = false;
+    closeDialogModuleCreate() {
+      refModuleCreate.value.resetFields()
+      this.dialogs.moduleCreate.toggle = false
     },
-    closeModifyModuleDialog() {
-      modifyModuleFormRef.value.resetFields();
-      this.modifyModuleDialogVisible = false;
+    closeDialogModuleModify() {
+      this.dialogs.moduleModify.toggle = false
     },
-    closeCreateFeatureDialog() {
-      createFeatureFormRef.value.resetFields();
-      this.createFeatureDialogVisible = false;
+    closeDialogFeatureCreate() {
+      refFeatureCreate.value.resetFields()
+      this.dialogs.featureCreate.toggle = false
     },
-    closeModifyFeatureDialog() {
-      modifyFeatureFormRef.value.resetFields();
-      this.modifyFeatureDialogVisible = false;
+    closeDialogFeatureModify() {
+      this.dialogs.featureModify.toggle = false
     },
 
     // submit forms
     submitCreateModuleForm() {
       try {
-        createModuleFormRef.value.validate((valid: any) => {
+        refModuleCreate.value.validate((valid: any) => {
           if(valid) {
-            module.create(this.routeId, this.moduleForm);
-            ElMessage.success('添加成功');
-            this.closeCreateModuleDialog();
-            this.$router.go(0);
+            module.create(this.id, this.dialogs.moduleCreate)
+            ElMessage.success('添加成功')
+            this.closeDialogModuleCreate()
+            this.$router.go(0)
           } else {
-            ElMessage.warning('请检查表单所填写内容');
-            return false;
+            ElMessage.warning('请检查表单所填写内容')
+            return false
           }
-        });
+        })
       } catch(error) {
-        ElMessage.error('请检查输入内容');
-        console.log(error);
+        ElMessage.error('请检查输入内容')
+        console.log(error)
       }
     },
     submitModifyModuleForm() {
       try {
-        modifyModuleFormRef.value.validate((valid: any) => {
-          if(valid) {
-            module.modify(this.selectedItem.id, this.moduleForm);
-            ElMessage.success('修改成功');
-            this.closeModifyModuleDialog();
-            this.$router.go(0);
+        refModifyModule.value.validate((valid: any) => {
+          if (valid) {
+            module.modify(this.selectedItem.id, this.dialogs.moduleModify)
+            ElMessage.success('修改成功')
+            this.closeDialogModuleModify()
+            this.$router.go(0)
           } else {
-            ElMessage.warning('请检查表单所填写内容');
-            return false;
+            ElMessage.warning('请检查表单所填写内容')
+            return false
           }
-        });
+        })
       } catch(error) {
-        ElMessage.error('请检查输入内容');
-        console.log(error);
+        ElMessage.error('请检查输入内容')
+        console.log(error)
       }
     },
     submitCreateFeatureForm() {
       try {
-        createFeatureFormRef.value.validate((valid: any) => {
+        refFeatureCreate.value.validate((valid: any) => {
           if(valid) {
-            feature.create(this.selectedItem.id, this.featureForm);
-            ElMessage.success('添加成功');
-            this.closeCreateFeatureDialog();
-            this.$router.go(0);
+            feature.create(this.selectedItem.id, this.dialogs.featureCreate)
+            ElMessage.success('添加成功')
+            this.closeDialogFeatureCreate()
+            this.$router.go(0)
           } else {
-            ElMessage.warning('请检查表单所填写内容');
-            return false;
+            ElMessage.warning('请检查表单所填写内容')
+            return false
           }
-        });
+        })
       } catch(error) {
-        ElMessage.error('请检查输入内容');
-        console.log(error);
+        ElMessage.error('请检查输入内容')
+        console.log(error)
       }
     },
     submitModifyFeatureForm() {
       try {
-        modifyFeatureFormRef.value.validate((valid: any) => {
+        refFeatureModify.value.validate((valid: any) => {
           if(valid) {
-            feature.modify(this.selectedItem.id, this.featureForm);
-            ElMessage.success('修改成功');
-            this.closeModifyFeatureDialog();
-            this.$router.go(0);
+            feature.modify(this.selectedItem.id, this.dialogs.featureModify)
+            ElMessage.success('修改成功')
+            this.closeDialogFeatureModify()
+            this.$router.go(0)
           } else {
-            ElMessage.warning('请检查表单所填写内容');
-            return false;
+            ElMessage.warning('请检查表单所填写内容')
+            return false
           }
-        });
+        })
       } catch(error) {
-        ElMessage.error('请检查输入内容');
-        console.log(error);
+        ElMessage.error('请检查输入内容')
+        console.log(error)
       }
     }
   }
@@ -245,28 +267,28 @@ export default {
         <div class="module-card-header-left">
           <el-icon><FolderOpened/></el-icon>&nbsp;&nbsp;
           <el-text
-            v-if="currentProject"
-            style="font-size: 20px; font-weight: bold;"
+              v-if="currentProject"
+              style="font-size: 20px; font-weight: bold"
           >
             [ {{ currentProject?.name }} ] 模块管理
           </el-text>
           <el-text
-            v-else
-            style="font-size: 20px; font-weight: bold;"
+              v-else
+              style="font-size: 20px; font-weight: bold"
           >
             该项目不存在
           </el-text>
         </div>
         <div v-if="currentProject">
           <el-button
-            type="success"
-            @click="handleCreateModule"
+              type="success"
+              @click="handleModuleCreate"
           >
             <el-icon><CirclePlus /></el-icon>&nbsp;&nbsp;添加模块
           </el-button>
           <el-button
-            type="primary"
-            @click="goBack"
+              type="primary"
+              @click="goBack"
           >
             <el-icon><ArrowLeft /></el-icon>&nbsp;&nbsp;返回项目列表
           </el-button>
@@ -275,13 +297,13 @@ export default {
     </template>
 
     <el-table
-      v-if="currentProject"
-      :data="currentProject.modules"
-      row-key="uniqueName"
-      border
-      default-expand-all
-      :tree-props="treeProps"
-      :row-class-name="module.getRowClassName"
+        v-if="currentProject"
+        :data="currentProject.modules"
+        row-key="uniqueName"
+        border
+        default-expand-all
+        :tree-props="treeProps"
+        :row-class-name="module.getRowClassName"
     >
       <el-table-column prop="name" label="模块名 / 功能名" />
       <el-table-column prop="hours" label="计划耗时" :formatter="module.hoursFormatter"/>
@@ -297,7 +319,7 @@ export default {
                 :icon="Edit"
                 size="small"
                 type="primary"
-                @click="handleModifyModule(scope.$index, scope.row)"
+                @click="handleModuleModify(scope.$index, scope.row)"
                 circle
             />
           </el-tooltip>
@@ -311,7 +333,7 @@ export default {
                 :icon="Delete"
                 size="small"
                 type="danger"
-                @click="handleDeleteModule(scope.$index, scope.row)"
+                @click="handleModuleDelete(scope.$index, scope.row)"
                 circle
             />
           </el-tooltip>
@@ -325,7 +347,7 @@ export default {
                 :icon="Plus"
                 size="small"
                 type="success"
-                @click="handleCreateFeature(scope.$index, scope.row)"
+                @click="handleFeatureCreate(scope.$index, scope.row)"
                 circle
             />
           </el-tooltip>
@@ -339,7 +361,7 @@ export default {
                 :icon="Edit"
                 size="small"
                 type="primary"
-                @click="handleModifyFeature(scope.$index, scope.row)"
+                @click="handleFeatureModify(scope.$index, scope.row)"
                 circle
             />
           </el-tooltip>
@@ -353,7 +375,7 @@ export default {
                 :icon="Delete"
                 size="small"
                 type="danger"
-                @click="handleDeleteFeature(scope.$index, scope.row)"
+                @click="handleFeatureDelete(scope.$index, scope.row)"
                 circle
             />
           </el-tooltip>
@@ -361,31 +383,31 @@ export default {
       </el-table-column>
     </el-table>
   </el-card>
-  
+
   <!-- modules and features' functions -->
   <!-- add modules -->
   <el-dialog
-    v-model="createModuleDialogVisible"
-    title="添加模块"
-    width="500"
-    :before-close="closeCreateModuleDialog"
+      v-model="dialogs.moduleCreate.toggle"
+      title="添加模块"
+      width="500"
+      :before-close="closeDialogModuleCreate"
   >
-    <div style="margin-top: 10px; padding: 15px;">
+    <div style="margin-top: 10px; padding: 15px">
       <el-form
-        ref="createModuleFormRef"
-        :model="moduleForm"
-        :rules="moduleRules"
-        label-width="100px"
+          ref="refModuleCreate"
+          :model="dialogs.moduleCreate"
+          :rules="dialogs.moduleCreate.rules"
+          label-width="100px"
       >
         <el-form-item label="功能名" prop="name">
-          <el-input v-model="moduleForm.name" placeholder="请输入模块名" style="width: 300px" />
+          <el-input v-model="dialogs.moduleCreate.name" placeholder="请输入模块名" style="width: 300px" />
         </el-form-item>
       </el-form>
     </div>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="closeCreateModuleDialog">关闭</el-button>
-        <el-button type="primary" @click="submitCreateModuleForm();">
+        <el-button @click="closeDialogModuleCreate">关闭</el-button>
+        <el-button type="primary" @click="submitCreateModuleForm()">
           确认
         </el-button>
       </div>
@@ -394,27 +416,27 @@ export default {
 
   <!-- modify modules -->
   <el-dialog
-    v-model="modifyModuleDialogVisible"
-    title="修改模块"
-    width="500"
-    :before-close="closeModifyModuleDialog"
+      v-model="dialogs.moduleModify.toggle"
+      title="修改模块"
+      width="500"
+      :before-close="closeDialogModuleModify"
   >
-    <div style="margin-top: 10px; padding: 15px;">
+    <div style="margin-top: 10px; padding: 15px">
       <el-form
-        ref="modifyModuleFormRef"
-        :model="moduleForm"
-        :rules="moduleRules"
-        label-width="100px"
+          ref="refModifyModule"
+          :model="dialogs.moduleModify"
+          :rules="dialogs.moduleModify.rules"
+          label-width="100px"
       >
         <el-form-item label="功能名" prop="name">
-          <el-input v-model="moduleForm.name" placeholder="请输入模块名" style="width: 300px" />
+          <el-input v-model="dialogs.moduleModify.name" placeholder="请输入模块名" style="width: 300px" />
         </el-form-item>
       </el-form>
     </div>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="closeModifyModuleDialog">关闭</el-button>
-        <el-button type="primary" @click="submitModifyModuleForm();">
+        <el-button @click="closeDialogModuleModify">关闭</el-button>
+        <el-button type="primary" @click="submitModifyModuleForm()">
           确认
         </el-button>
       </div>
@@ -423,30 +445,30 @@ export default {
 
   <!-- add features -->
   <el-dialog
-    v-model="createFeatureDialogVisible"
-    title="添加功能"
-    width="500"
-    :before-close="closeCreateFeatureDialog"
+      v-model="dialogs.featureCreate.toggle"
+      title="添加功能"
+      width="500"
+      :before-close="closeDialogFeatureCreate"
   >
-    <div style="margin-top: 10px; padding: 15px;">
+    <div style="margin-top: 10px; padding: 15px">
       <el-form
-        ref="createFeatureFormRef"
-        :model="featureForm"
-        :rules="featureRules"
-        label-width="100px"
+          ref="refFeatureCreate"
+          :model="dialogs.featureCreate"
+          :rules="dialogs.featureCreate.rules"
+          label-width="100px"
       >
         <el-form-item label="功能名" prop="name">
-          <el-input v-model="featureForm.name" placeholder="请输入功能名" style="width: 300px" />
+          <el-input v-model="dialogs.featureCreate.name" placeholder="请输入功能名" style="width: 300px" />
         </el-form-item>
         <el-form-item label="计划耗时" prop="hours">
-          <el-input-number v-model="featureForm.hours" :precision="1" :step="0.1" :min="0" :max="114514" />
+          <el-input-number v-model="dialogs.featureCreate.hours" :precision="1" :step="0.1" :min="0" :max="114514" />
         </el-form-item>
       </el-form>
     </div>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="closeCreateFeatureDialog">关闭</el-button>
-        <el-button type="primary" @click="submitCreateFeatureForm();">
+        <el-button @click="closeDialogFeatureCreate">关闭</el-button>
+        <el-button type="primary" @click="submitCreateFeatureForm()">
           确认
         </el-button>
       </div>
@@ -455,30 +477,30 @@ export default {
 
   <!-- modify features -->
   <el-dialog
-    v-model="modifyFeatureDialogVisible"
-    title="修改功能"
-    width="500"
-    :before-close="closeModifyFeatureDialog"
+      v-model="dialogs.featureModify.toggle"
+      title="修改功能"
+      width="500"
+      :before-close="closeDialogFeatureModify"
   >
-    <div style="margin-top: 10px; padding: 15px;">
+    <div style="margin-top: 10px; padding: 15px">
       <el-form
-        ref="modifyFeatureFormRef"
-        :model="featureForm"
-        :rules="featureRules"
-        label-width="100px"
+          ref="refFeatureModify"
+          :model="dialogs.featureModify"
+          :rules="dialogs.featureModify.rules"
+          label-width="100px"
       >
         <el-form-item label="功能名" prop="name">
-          <el-input v-model="featureForm.name" placeholder="请输入功能名" style="width: 300px" />
+          <el-input v-model="dialogs.featureModify.name" placeholder="请输入功能名" style="width: 300px" />
         </el-form-item>
         <el-form-item label="计划耗时" prop="hours">
-          <el-input-number v-model="featureForm.hours" :precision="1" :step="0.1" :min="0" :max="114514" />
+          <el-input-number v-model="dialogs.featureModify.hours" :precision="1" :step="0.1" :min="0" :max="114514" />
         </el-form-item>
       </el-form>
     </div>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="closeModifyFeatureDialog">关闭</el-button>
-        <el-button type="primary" @click="submitModifyFeatureForm();">
+        <el-button @click="closeDialogFeatureModify">关闭</el-button>
+        <el-button type="primary" @click="submitModifyFeatureForm()">
           确认
         </el-button>
       </div>
@@ -486,6 +508,5 @@ export default {
   </el-dialog>
 </template>
 
-<style>
-
+<style scoped>
 </style>
