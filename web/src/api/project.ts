@@ -1,31 +1,40 @@
 import fakeData from '@/api/fakeData.ts'
 import pagination from '@/api/pagination.ts'
-import type { Project } from '@/types/project'
+import type {Project} from '@/types/project'
 
 export default {
-  getProjects: function (
+  getProject: function (id: number) {
+    return this.all().find(data => data.id == id)
+  },
+  search: function (
       keyword: string,
       page: number,
       size: number
   ) {
-    let filtered = keyword ? fakeData.projects.filter((item)=>{
+    let filtered = keyword ? this.all().filter((item)=>{
       return item.name.indexOf(keyword) != -1
     }) : fakeData.projects
     return pagination.getDataWithPageInfo(filtered, page, size)
   },
-  getProject: function (id: number) {
-    return fakeData.projects.find(data => data.id == id)
+  all: function () {
+    let result = fakeData.projects
+    result.forEach(project => {
+      project.modules.forEach(module => {
+        module.id = module.name
+        module.features.forEach(feature => {
+          feature.id = feature.name
+        })
+      })
+    })
+    return result
   },
-  getAllProjects: function () {
-    return fakeData.projects
-  },
-  createProject: function (project: Project) {
+  create: function (project: Project) {
     // Do something
   },
-  editProject: function (project: Project) {
+  modify: function (project: Project) {
     // Do something
   },
-  deleteProject: function (id: number) {
+  remove: function (id: number) {
     // Do something
   },
 }

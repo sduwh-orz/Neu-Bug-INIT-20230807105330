@@ -557,80 +557,91 @@ const projects: Project[] = [
 const users: User[] = [
   {
     id: 1,
-    username: "admin",
-    realName: "管理员",
-    role: "管理员",
-    email: "admin@126.com"
+    username: 'admin',
+    password: '123456',
+    realName: '管理员',
+    role: '管理员',
+    email: 'admin@126.com'
   },
   {
     id: 2,
-    username: "Json03",
-    realName: "Json",
-    role: "普通用户",
-    email: "Json@126.com"
+    username: 'Json03',
+    password: '123456',
+    realName: 'Json',
+    role: '普通用户',
+    email: 'Json@126.com'
   },
   {
     id: 3,
-    username: "abcabc",
-    realName: "abc",
-    role: "普通用户",
-    email: "abc@qq.com"
+    username: 'abcabc',
+    password: 'abcabc',
+    realName: 'abc',
+    role: '普通用户',
+    email: 'abc@qq.com'
   },
   {
     id: 4,
-    username: "LiLei1",
-    realName: "LiLei",
-    role: "普通用户",
-    email: "LiLei@126.com"
+    username: 'LiLei1',
+    password: '123456',
+    realName: 'LiLei',
+    role: '普通用户',
+    email: 'LiLei@126.com'
   },
   {
     id: 5,
-    username: "likaifa",
-    realName: "李开發",
-    role: "管理员",
-    email: "likaifa@qq.com"
+    username: 'likaifa',
+    password: '123456',
+    realName: '李开發',
+    role: '管理员',
+    email: 'likaifa@qq.com'
   },
   {
     id: 6,
-    username: "test02",
-    realName: "test02",
-    role: "普通用户",
-    email: "test02@qq.com"
+    username: 'test02',
+    password: '123456',
+    realName: 'test02',
+    role: '普通用户',
+    email: 'test02@qq.com'
   },
   {
     id: 7,
-    username: "zhangjingli",
-    realName: "张景丽",
-    role: "普通用户",
-    email: "zhangjingli@neusoft.org"
+    username: 'zhangjingli',
+    password: '123456',
+    realName: '张景丽',
+    role: '普通用户',
+    email: 'zhangjingli@neusoft.org'
   },
   {
     id: 8,
-    username: "zhangli",
-    realName: "张黎",
-    role: "普通用户",
-    email: "zhangli@neusoft.org"
+    username: 'zhangli',
+    password: '123456',
+    realName: '张黎',
+    role: '普通用户',
+    email: 'zhangli@neusoft.org'
   },
   {
     id: 9,
-    username: "lijingli",
-    realName: "李静莉",
-    role: "普通用户",
-    email: "lijingli@neusoft.org"
+    username: 'lijingli',
+    password: '123456',
+    realName: '李静莉',
+    role: '普通用户',
+    email: 'lijingli@neusoft.org'
   },
   {
     id: 10,
-    username: "wanghan",
-    realName: "王晗",
-    role: "普通用户",
-    email: "wanghan@gmail.com"
+    username: 'wanghan',
+    password: '123456',
+    realName: '王晗',
+    role: '普通用户',
+    email: 'wanghan@gmail.com'
   },
   {
     id: 11,
-    username: "bailu1",
-    realName: "白鹭",
-    role: "普通用户",
-    email: "bailu@neusoft.org"
+    username: 'bailu1',
+    password: '123456',
+    realName: '白鹭',
+    role: '普通用户',
+    email: 'bailu@neusoft.org'
   }
 ]
 export default {

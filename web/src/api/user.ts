@@ -4,12 +4,19 @@ import type { User } from '@/types/user'
 
 export default {
   roles: ['普通用户', '管理员'],
-  getData: function (
+  get: function (id: number) {
+    if (id)
+      return this.all().find(user => {
+        return user.id == id
+      })
+    return undefined
+  },
+  search: function (
     query,
     page: number,
     size: number
   ) {
-    let filtered = fakeData.users
+    let filtered = this.all()
     filtered = query.username ? filtered.filter(user => {
       return user.username.indexOf(query.username) != -1
     }): filtered
@@ -24,26 +31,19 @@ export default {
     }): filtered
     return pagination.getDataWithPageInfo(filtered, page, size)
   },
-  getAllUsers: function () {
+  all: function () {
     return fakeData.users
   },
-  getUserById: function (id: number) {
-    if (id)
-      return fakeData.users.find(user => {
-        return user.id == id
-      })
-    return undefined
-  },
-  createUser: function (user: User) {
+  create: function (user: User) {
     // Do something
   },
-  editUser: function (user: User) {
+  modify: function (user: User) {
     // Do something
   },
-  deleteUser: function (id: number) {
+  remove: function (id: number) {
     // Do something
   },
   getLoggedInUser: function () {
-    return fakeData.users.find(u => { return u.realName == '管理员' })
+    return this.all().find(u => { return u.realName == '管理员' })
   }
 }

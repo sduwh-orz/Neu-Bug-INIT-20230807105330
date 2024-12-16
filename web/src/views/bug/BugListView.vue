@@ -119,7 +119,7 @@ export default defineComponent({
   },
   methods: {
     updateData() {
-      let result = bug.searchData(this.query, this.page.page, this.page.size)
+      let result = bug.searchInProject(this.query, this.page.page, this.page.size)
       this.data.length = 0
       Object.assign(this.data, result.data ?.map( (b, index) => {
         b.index = index + 1
@@ -131,7 +131,7 @@ export default defineComponent({
       this.modules.length = 0
       Object.assign(this.modules, utils.toOptions(p.modules.map( m => m.name )))
 
-      let users = user.getAllUsers()
+      let users = user.all()
       this.users.length = 0
       Object.assign(this.users, [{id: '', realName: '全部'}].concat(users))
 
@@ -151,13 +151,13 @@ export default defineComponent({
       this.page.update()
     },
     handleCreate() {
-      this.page.jump('/create')
+      this.page.jump('/create?id=' + this.project.id)
     },
     handleEdit(_: number, row) {
-      this.page.jump('/edit?id=' +  row.id)
+      this.page.jump('/edit?id=' + row.id)
     },
     handleView(_: number, row) {
-      this.page.jump('/info?id=' +  row.id)
+      this.page.jump('/info?id=' + row.id)
     },
     handleSolve(_: number, row) {
       this.dialogs.solve.toggle = true
@@ -172,7 +172,7 @@ export default defineComponent({
       this.selectedItem = row
     },
     handleSubmitSolve() {
-      bug.updateBug(this.selectedItem.id, '已解决', this.dialogs.solve.solveType, this.dialogs.solve.comment)
+      bug.modify(this.selectedItem.id, '已解决', this.dialogs.solve.solveType, this.dialogs.solve.comment)
       this.dialogs.solve.toggle = false
       ElMessage.success('提交成功')
       this.$router.go(0)
@@ -180,7 +180,7 @@ export default defineComponent({
     handleSubmitComment() {
       try {
         refComment.value.validate().then(() => {
-          bug.updateBug(this.selectedItem.id, undefined, undefined, this.dialogs.comment.comment)
+          bug.modify(this.selectedItem.id, undefined, undefined, this.dialogs.comment.comment)
           this.dialogs.comment.toggle = false
           ElMessage.success('提交成功')
           this.$router.go(0)
@@ -190,7 +190,7 @@ export default defineComponent({
       }
     },
     handleSubmitClose() {
-      bug.updateBug(this.selectedItem.id, '已关闭', undefined, this.dialogs.close.comment)
+      bug.modify(this.selectedItem.id, '已关闭', undefined, this.dialogs.close.comment)
       this.dialogs.close.toggle = false
       ElMessage.success('提交成功')
       this.$router.go(0)
@@ -260,9 +260,9 @@ export default defineComponent({
             >
               <el-option
                   v-for="m in modules"
-                  :key="m.name"
+                  :key="m.value"
                   :label="m.name"
-                  :value="m.name"
+                  :value="m.value"
               />
             </el-select>
           </el-form-item>
@@ -276,7 +276,7 @@ export default defineComponent({
             >
               <el-option
                   v-for="f in features"
-                  :key="f.name"
+                  :key="f.value"
                   :label="f.name"
                   :value="f.value"
               />

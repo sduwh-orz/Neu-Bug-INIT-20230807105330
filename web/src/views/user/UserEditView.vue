@@ -20,7 +20,7 @@ export default {
   components: {EditPen, BreadCrumbNav},
   mounted() {
     this.id = this.$route.query.id ? Number(this.$route.query.id): 1
-    let userInfo = user.getUserById(this.id)
+    let userInfo = user.get(this.id)
     formData.username = userInfo?.username
     formData.realName = userInfo?.realName
     formData.role = userInfo?.role
@@ -68,7 +68,7 @@ export default {
     handleSubmit() {
       try {
         formDataRef.value.validate().then(() => {
-          user.editUser(formData)
+          user.modify(formData)
           ElMessage.success('修改成功')
           formDataRef.value.resetFields()
           localStorage.clear()
@@ -100,7 +100,8 @@ export default {
         ref="formDataRef"
         :model="formData"
         :rules="formRules"
-        label-width="100px"
+        label-width="30%"
+        style="width: 60%"
     >
       <el-form-item label="用户名" prop="username">
         <el-input v-model="formData.username"/>

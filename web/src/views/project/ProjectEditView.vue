@@ -53,14 +53,14 @@ export default {
           }
         ]
       }),
-      users: user.getAllUsers()
+      users: user.all()
     }
   },
   methods: {
     handleSubmit() {
       try {
         formDataRef.value.validate().then(() => {
-          project.editProject(formData)
+          project.modify(formData)
           ElMessage.success('修改成功')
           formDataRef.value.resetFields()
           localStorage.clear()
@@ -92,7 +92,8 @@ export default {
         ref="formDataRef"
         :model="formData"
         :rules="formRules"
-        label-width="100px"
+        label-width="30%"
+        style="width: 60%"
     >
       <el-form-item label="项目名称" prop="name">
         <el-input v-model="formData.name"/>

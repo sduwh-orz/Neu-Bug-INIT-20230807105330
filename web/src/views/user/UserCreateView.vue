@@ -59,7 +59,7 @@ export default {
     handleSubmit() {
       try {
         formDataRef.value.validate().then(() => {
-          user.createUser(formData)
+          user.create(formData)
           ElMessage.success('添加成功')
           formDataRef.value.resetFields()
           localStorage.clear()
@@ -91,7 +91,8 @@ export default {
         ref="formDataRef"
         :model="formData"
         :rules="formRules"
-        label-width="100px"
+        label-width="30%"
+        style="width: 60%"
     >
       <el-form-item label="用户名" prop="username">
         <el-input v-model="formData.username"/>

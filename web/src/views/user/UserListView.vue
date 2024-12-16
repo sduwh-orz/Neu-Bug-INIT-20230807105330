@@ -40,7 +40,7 @@ export default defineComponent({
   },
   methods: {
     updateData() {
-      let result = user.getData(this.query, this.page.page, this.page.size)
+      let result = user.search(this.query, this.page.page, this.page.size)
       this.data.length = 0
       Object.assign(this.data, result.data)
       return {
@@ -63,7 +63,7 @@ export default defineComponent({
       this.selectedItem = row
     },
     performDelete() {
-      user.deleteUser(this.selectedItem.id)
+      user.remove(this.selectedItem.id)
       this.$router.go(0)
     }
   }

@@ -39,7 +39,7 @@ export default defineComponent({
   },
   methods: {
     updateData() {
-      let result = project.getProjects(this.query.keyword, this.page.page, this.page.size)
+      let result = project.search(this.query.keyword, this.page.page, this.page.size)
       this.data.length = 0
       Object.assign(this.data, result.data)
       return {
@@ -65,7 +65,7 @@ export default defineComponent({
       this.selectedItem = row
     },
     performDelete() {
-      project.deleteProject(this.selectedItem.id)
+      project.remove(this.selectedItem.id)
       ElMessage.success('删除成功')
       this.$router.go(0)
     }

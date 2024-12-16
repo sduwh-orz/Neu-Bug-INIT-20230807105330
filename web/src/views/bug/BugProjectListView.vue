@@ -35,7 +35,7 @@ export default defineComponent({
   },
   methods: {
     updateData() {
-      let result = bug.getData(this.query.keyword, this.page.page, this.page.size)
+      let result = bug.search(this.query.keyword, this.page.page, this.page.size)
       this.data.length = 0
       Object.assign(this.data, result.data)
       return {

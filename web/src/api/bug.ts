@@ -15,12 +15,34 @@ export default {
   solveTypes: [
     '未解决', '解决', '不是错误', '错误重复', '无法重现'
   ],
-  getData: function (
+  get: function (
+    id: string
+  ) {
+    let result = undefined
+    project.all().forEach(p => {
+      p.modules.forEach(m => {
+        m?.features?.forEach(f => {
+          f?.bugs?.forEach(b => {
+            if (b.id == id) {
+              result = {
+                bug: b,
+                project: p,
+                module: m,
+                feature: f
+              }
+            }
+          })
+        })
+      })
+    })
+    return result
+  },
+  search: function (
     keyword: string,
     page: number,
     size: number
   ) {
-    let result = project.getProjects(keyword, page, size);
+    let result = project.search(keyword, page, size);
     result.data.forEach((project) => {
       project.bugs = project.modules.map(module =>
         module.features.map(feature =>
@@ -32,7 +54,7 @@ export default {
     })
     return result
   },
-  searchData: function (
+  searchInProject: function (
     now,
     page: number,
     size: number
@@ -73,13 +95,19 @@ export default {
     }) : filtered
     return pagination.getDataWithPageInfo(filtered, page, size)
   },
-  updateBug: function(
+  create: function (
+    bug,
+    reporter: number
+  ) {
+    // Do something
+  },
+  modify: function(
     id: string,
     status: string,
     solveType: string,
     comment: string,
     user: number
   ) {
-
+    // Do something
   },
 }

@@ -1,12 +1,12 @@
 import project from '@/api/project.ts'
 
 export default {
-  getData: function (
+  search: function (
     keyword: string,
     page: number,
     size: number
   ) {
-    let result = project.getProjects(keyword, page, size);
+    let result = project.search(keyword, page, size);
     result.data.forEach((project) => {
       project.features = project.modules.map(module =>
         module.features.length
