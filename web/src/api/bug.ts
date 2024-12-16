@@ -35,6 +35,13 @@ export default {
         })
       })
     })
+    if (result) {
+      result.bug.records.forEach((record, index) => {
+        record.index = index + 1
+      })
+      result.bug.lastModified = result.bug.records[0] ? result.bug.records[0].time: result.bug.created
+
+    }
     return result
   },
   search: function (
@@ -42,7 +49,7 @@ export default {
     page: number,
     size: number
   ) {
-    let result = project.search(keyword, page, size);
+    let result = project.search(keyword, page, size)
     result.data.forEach((project) => {
       project.bugs = project.modules.map(module =>
         module.features.map(feature =>
@@ -93,6 +100,10 @@ export default {
     filtered = now.solveType ? filtered ?.filter(b => {
       return b.solveType == now.solveType
     }) : filtered
+    filtered = filtered.map( (b, index) => {
+      b.index = index + 1
+      return b
+    })
     return pagination.getDataWithPageInfo(filtered, page, size)
   },
   create: function (

@@ -117,7 +117,7 @@ export default {
       <div class="card-header">
         <el-icon>
           <EditPen/>
-        </el-icon>&nbsp;&nbsp;[ {{ project.name }} ] Bug 修改
+        </el-icon>&nbsp;&nbsp;[ {{ project.name }} ] Bug 信息
       </div>
     </template>
     <el-form

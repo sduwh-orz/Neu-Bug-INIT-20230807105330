@@ -121,10 +121,7 @@ export default defineComponent({
     updateData() {
       let result = bug.searchInProject(this.query, this.page.page, this.page.size)
       this.data.length = 0
-      Object.assign(this.data, result.data ?.map( (b, index) => {
-        b.index = index + 1
-        return b
-      }))
+      Object.assign(this.data, result.data)
 
       let p = project.getProject(this.query.id)
       this.project = p
