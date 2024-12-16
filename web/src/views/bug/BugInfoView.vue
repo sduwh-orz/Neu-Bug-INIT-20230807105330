@@ -5,7 +5,6 @@ import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import Pagination from "@/components/Pagination.vue"
 import pagination from '@/api/pagination.ts'
 import bug from "@/api/bug.ts";
-import utils from "@/api/utils.ts";
 
 export default defineComponent({
   computed: {
@@ -29,8 +28,9 @@ export default defineComponent({
     }
   },
   data() {
-    let params = this.$route.query
     return {
+      gradeColor: bug.gradeColor,
+      statusColor: bug.statusColor,
       dialogToggle: ref(false),
       data: reactive([]),
       bug: reactive({}),
@@ -78,10 +78,24 @@ export default defineComponent({
     <el-descriptions :column="3" border>
       <el-descriptions-item label="Bug 标题" :span="3">{{ bug.name }}</el-descriptions-item>
       <el-descriptions-item label="Bug 详情" :span="3">{{ bug.description }}</el-descriptions-item>
-      <el-descriptions-item label="Bug 等级">{{ bug.grade }}</el-descriptions-item>
+      <el-descriptions-item label="Bug 等级">
+        <el-tag
+            :type="gradeColor[bug.grade]"
+            effect="light"
+        >
+          {{ bug.grade }}
+        </el-tag>
+      </el-descriptions-item>
       <el-descriptions-item label="所属模块">{{ module.name }}</el-descriptions-item>
       <el-descriptions-item label="所属功能">{{ feature.name }}</el-descriptions-item>
-      <el-descriptions-item label="Bug 状态">{{ bug.status }}</el-descriptions-item>
+      <el-descriptions-item label="Bug 状态">
+        <el-tag
+            :type="statusColor[bug.status]"
+            effect="light"
+        >
+          {{ bug.status }}
+        </el-tag>
+      </el-descriptions-item>
       <el-descriptions-item label="解决形式">{{ bug.solveType }}</el-descriptions-item>
       <el-descriptions-item label="开发人">{{ feature.owner }}</el-descriptions-item>
       <el-descriptions-item label="报告人">{{ bug.reporter }}</el-descriptions-item>
@@ -99,8 +113,26 @@ export default defineComponent({
     <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录">
       <el-table-column align="center" prop="index" label="序号" width="80"/>
       <el-table-column align="center" prop="type" label="操作类型"/>
-      <el-table-column align="center" prop="before" label="处理前状态"/>
-      <el-table-column align="center" prop="after" label="处理后状态"/>
+      <el-table-column align="center" prop="before" label="处理前状态">
+        <template #default="scope">
+          <el-tag
+              :type="statusColor[scope.row.before]"
+              effect="light"
+          >
+            {{ scope.row.before }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" prop="after" label="处理后状态">
+        <template #default="scope">
+          <el-tag
+              :type="statusColor[scope.row.after]"
+              effect="light"
+          >
+            {{ scope.row.after }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column align="center" prop="handleType" label="解决形式"/>
       <el-table-column align="center" prop="comment" label="备注"/>
       <el-table-column align="center" prop="owner" label="操作人"/>

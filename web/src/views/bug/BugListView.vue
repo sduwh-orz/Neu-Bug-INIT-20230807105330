@@ -6,21 +6,8 @@ import bug from '@/api/bug.ts'
 import {defineComponent, reactive, ref} from 'vue'
 import utils from '@/api/utils.ts'
 import project from '@/api/project.ts'
-import {ElMessage} from "element-plus";
-import Pagination from "@/components/Pagination.vue";
-
-const gradeColor = {
-  '轻微': 'success',
-  '次要': 'info',
-  '一般': 'primary',
-  '紧急': 'warning',
-  '严重': 'danger',
-}
-const statusColor = {
-  '已关闭': 'warning',
-  '已解决': 'success',
-  '开放中': 'primary'
-}
+import {ElMessage} from "element-plus"
+import Pagination from "@/components/Pagination.vue"
 
 const refComment = ref()
 
@@ -94,8 +81,8 @@ export default defineComponent({
   },
   data() {
     return {
-      gradeColor: gradeColor,
-      statusColor: statusColor,
+      gradeColor: bug.gradeColor,
+      statusColor: bug.statusColor,
       grades: utils.toOptions(bug.grades),
       statusTypes: utils.toOptions(bug.statusTypes),
       solveTypes: utils.toOptions(bug.solveTypes),

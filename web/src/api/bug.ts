@@ -15,6 +15,18 @@ export default {
   solveTypes: [
     '未解决', '解决', '不是错误', '错误重复', '无法重现'
   ],
+  gradeColor: {
+    '轻微': 'success',
+    '次要': 'info',
+    '一般': 'primary',
+    '紧急': 'warning',
+    '严重': 'danger',
+  },
+  statusColor: {
+    '已关闭': 'warning',
+    '已解决': 'success',
+    '开放中': 'primary'
+  },
   get: function (
     id: string
   ) {
