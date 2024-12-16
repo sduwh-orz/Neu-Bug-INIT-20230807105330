@@ -8,9 +8,9 @@ export default {
       page: number,
       size: number
   ) {
-    let filtered = keyword.length == 0 ? fakeData.projects : fakeData.projects.filter((item)=>{
+    let filtered = keyword ? fakeData.projects.filter((item)=>{
       return item.name.indexOf(keyword) != -1
-    })
+    }) : fakeData.projects
     return pagination.getDataWithPageInfo(filtered, page, size)
   },
   getProject: function (id: number) {

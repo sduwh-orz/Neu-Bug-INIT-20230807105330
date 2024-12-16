@@ -1,13 +1,10 @@
 <script lang="ts">
-import {Delete, Edit, List, Operation, Search} from '@element-plus/icons-vue'
-import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import { defineComponent, reactive, ref } from 'vue'
+import { ElMessage } from "element-plus"
+import { Delete, Edit, List, Operation, Search } from '@element-plus/icons-vue'
+import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
+import Pagination from "@/components/Pagination.vue"
 import project from '@/api/project.ts'
-import type { Project } from '@/types/project'
-
-const moduleName = 'project'
-const defaultPageSize = 10
-const pageSizes = [10, 25]
 
 export default defineComponent({
   computed: {
@@ -21,73 +18,55 @@ export default defineComponent({
       return Edit
     }
   },
-  components: {List, Delete, Edit, Operation, BreadCrumbNav, Search },
+  components: { Pagination, List, Delete, Edit, Operation, BreadCrumbNav, Search },
   mounted() {
-    this.updateData()
+    this.page.update()
+  },
+  setup() {
+    return {
+      page: ref()
+    }
   },
   data() {
     return {
-      keyword: ref(this.$route.query.keyword ? this.$route.query.keyword.toString(): ''),
-      page: ref(this.$route.query.page ? Number(this.$route.query.page) : 1),
-      size: ref(this.$route.query.size ? Number(this.$route.query.size) : defaultPageSize),
-      total: ref(0),
-      start: ref(0),
-      end: ref(0),
-      deleteDialogVisible: ref(false),
-      itemToDelete: undefined,
+      dialogToggle: ref(false),
       data: reactive([]),
-      defaultPageSize: defaultPageSize,
-      pageSizes: pageSizes,
+      query: reactive({
+        keyword: ''
+      }),
+      selectedItem: undefined,
     }
   },
   methods: {
     updateData() {
-      let result = project.getProjects(this.keyword, this.page, this.size)
-      this.total = result.total
-      this.start = result.start
-      this.end = result.end
+      let result = project.getProjects(this.query.keyword, this.page.page, this.page.size)
       this.data.length = 0
       Object.assign(this.data, result.data)
-    },
-    updateUrl() {
-      let url = '/' + moduleName + '/list?page=' + this.page
-      if (this.size != defaultPageSize)
-        url += '&size=' + this.size;
-      if (this.keyword.length != 0)
-        url += '&keyword=' + this.keyword
-      this.$router.push(url)
+      return {
+        total: result.total,
+        start: result.start,
+        end: result.end,
+      }
     },
     handleSearch() {
-      this.updateUrl()
-      this.updateData()
+      this.page.update()
     },
     handleCreate() {
-      let url = '/' + moduleName + '/create'
-      this.$router.push(url)
+      this.page.jump('/create')
     },
-    handleManage(_: number, row: Project) {
-      let url = '/' + moduleName + '/modules?id=' + row.id
-      this.$router.push(url)
+    handleManage(_: number, row) {
+      this.page.jump('/modules?id=' +  row.id)
     },
-    handleEdit(_: number, row: Project) {
-      let url = '/' + moduleName + '/edit?id=' + row.id
-      this.$router.push(url)
+    handleEdit(_: number, row) {
+      this.page.jump('/edit?id=' +  row.id)
     },
-    handleDelete(_: number, row: Project) {
-      this.deleteDialogVisible = true
-      this.itemToDelete = row
-    },
-    handlePageChange(page: number) {
-      this.page = page
-      this.updateUrl()
-      this.updateData()
-    },
-    handleSizeChange(_: any) {
-      this.updateUrl()
-      this.updateData()
+    handleDelete(_: number, row) {
+      this.dialogToggle = true
+      this.selectedItem = row
     },
     performDelete() {
-      project.deleteProject(this.itemToDelete.id)
+      project.deleteProject(this.selectedItem.id)
+      ElMessage.success('删除成功')
       this.$router.go(0)
     }
   }
@@ -106,7 +85,7 @@ export default defineComponent({
     </template>
     <el-form label-width="auto">
       <el-form-item label="项目名称" style="max-width: 60%" label-width="100">
-        <el-input v-model="keyword" />
+        <el-input v-model="query.keyword" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -175,52 +154,19 @@ export default defineComponent({
       </el-table-column>
     </el-table>
     <template #footer>
-      <el-row class="row-bg" justify="space-between">
-        <el-col>
-          <el-text size="small">显示第 {{ start }} 到第 {{ end }} 条记录，总共 {{ total }} 条记录，每页显示 </el-text>
-          <el-select
-              v-model="size"
-              size="small"
-              style="width: 60px"
-              :placeholder="defaultPageSize.toString()"
-              @change="handleSizeChange"
-          >
-            <el-option
-                v-for="size in pageSizes"
-                :key="size"
-                :label="size"
-                :value="size"
-            />
-          </el-select>
-          <el-text size="small"> 条记录</el-text>
-        </el-col>
-        <el-col id="pagination">
-          <el-pagination
-            size="small"
-            background
-            layout="prev, pager, next"
-            class="mt-4"
-            hide-on-single-page
-            :pager-count="11"
-            v-model:current-page="page"
-            v-model:total="total"
-            v-model:page-size="size"
-            @current-change="handlePageChange"
-          />
-        </el-col>
-      </el-row>
+      <Pagination ref="page" :update-data="updateData" :query="query" module="project" />
     </template>
   </el-card>
   <el-dialog
-      v-model="deleteDialogVisible"
+      v-model="dialogToggle"
       title="确认删除"
       width="500"
   >
     <span>确认删除这个项目吗？</span>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="deleteDialogVisible = false">取消</el-button>
-        <el-button type="danger" @click="deleteDialogVisible = false; performDelete()">
+        <el-button @click="dialogToggle = false">取消</el-button>
+        <el-button type="danger" @click="dialogToggle = false; performDelete()">
           确定
         </el-button>
       </div>

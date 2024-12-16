@@ -1,13 +1,9 @@
 <script lang="ts">
-import {FolderChecked, List, Search} from '@element-plus/icons-vue'
-import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import { defineComponent, reactive, ref } from 'vue'
+import { FolderChecked, List, Search } from '@element-plus/icons-vue'
+import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
+import Pagination from "@/components/Pagination.vue"
 import task from '@/api/task.ts'
-import type { Project } from '@/types/project'
-
-const moduleName = 'task'
-const defaultPageSize = 10
-const pageSizes = [10, 25]
 
 export default defineComponent({
   computed: {
@@ -15,58 +11,41 @@ export default defineComponent({
       return FolderChecked
     },
   },
-  components: {List, FolderChecked, BreadCrumbNav, Search },
+  components: { Pagination, List, FolderChecked, BreadCrumbNav, Search },
   mounted() {
     this.updateData()
   },
+  setup() {
+    return {
+      page: ref()
+    }
+  },
   data() {
     return {
-      keyword: ref(this.$route.query.keyword ? this.$route.query.keyword.toString(): ''),
-      page: ref(this.$route.query.page ? Number(this.$route.query.page) : 1),
-      size: ref(this.$route.query.size ? Number(this.$route.query.size) : defaultPageSize),
-      total: ref(0),
-      start: ref(0),
-      end: ref(0),
-      deleteDialogVisible: ref(false),
-      itemToDelete: undefined,
+      dialogToggle: ref(false),
       data: reactive([]),
-      defaultPageSize: defaultPageSize,
-      pageSizes: pageSizes,
+      query: reactive({
+        keyword: ''
+      }),
+      selectedItem: undefined,
     }
   },
   methods: {
     updateData() {
-      let result = task.getData(this.keyword, this.page, this.size)
-      this.total = result.total
-      this.start = result.start
-      this.end = result.end
+      let result = task.getData(this.query.keyword, this.page.page, this.page.size)
       this.data.length = 0
       Object.assign(this.data, result.data)
-    },
-    updateUrl() {
-      let url = '/' + moduleName + '/list?page=' + this.page
-      if (this.size != defaultPageSize)
-        url += '&size=' + this.size;
-      if (this.keyword.length != 0)
-        url += '&keyword=' + this.keyword
-      this.$router.push(url)
+      return {
+        total: result.total,
+        start: result.start,
+        end: result.end,
+      }
     },
     handleSearch() {
-      this.updateUrl()
-      this.updateData()
+      this.page.update()
     },
-    handleEdit(_: number, row: Project) {
-      let url = '/' + moduleName + '/edit?id=' + row.id
-      this.$router.push(url)
-    },
-    handlePageChange(page: number) {
-      this.page = page
-      this.updateUrl()
-      this.updateData()
-    },
-    handleSizeChange(_: any) {
-      this.updateUrl()
-      this.updateData()
+    handleEdit(_: number, row) {
+      this.page.jump('/edit?id=' + row.id)
     },
   }
 })
@@ -84,7 +63,7 @@ export default defineComponent({
     </template>
     <el-form label-width="auto">
       <el-form-item label="项目名称" style="max-width: 60%" label-width="100">
-        <el-input v-model="keyword" />
+        <el-input v-model="query.keyword" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -126,40 +105,7 @@ export default defineComponent({
       </el-table-column>
     </el-table>
     <template #footer>
-      <el-row class="row-bg" justify="space-between">
-        <el-col>
-          <el-text size="small">显示第 {{ start }} 到第 {{ end }} 条记录，总共 {{ total }} 条记录，每页显示 </el-text>
-          <el-select
-              v-model="size"
-              size="small"
-              style="width: 60px"
-              :placeholder="defaultPageSize.toString()"
-              @change="handleSizeChange"
-          >
-            <el-option
-                v-for="size in pageSizes"
-                :key="size"
-                :label="size"
-                :value="size"
-            />
-          </el-select>
-          <el-text size="small"> 条记录</el-text>
-        </el-col>
-        <el-col id="pagination">
-          <el-pagination
-              size="small"
-              background
-              layout="prev, pager, next"
-              class="mt-4"
-              hide-on-single-page
-              :pager-count="11"
-              v-model:current-page="page"
-              v-model:total="total"
-              v-model:page-size="size"
-              @current-change="handlePageChange"
-          />
-        </el-col>
-      </el-row>
+      <Pagination ref="page" :update-data="updateData" :query="query" module="task" />
     </template>
   </el-card>
 </template>

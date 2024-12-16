@@ -6,12 +6,9 @@ import bug from '@/api/bug.ts'
 import {defineComponent, reactive, ref} from 'vue'
 import utils from '@/api/utils.ts'
 import project from '@/api/project.ts'
-import type {Bug} from "@/types/bug";
 import {ElMessage} from "element-plus";
+import Pagination from "@/components/Pagination.vue";
 
-const moduleName = 'bug'
-const defaultPageSize = 10
-const pageSizes = [10, 25]
 const gradeColor = {
   '轻微': 'success',
   '次要': 'info',
@@ -52,13 +49,13 @@ export default defineComponent({
       return Search
     }
   },
-  components: {List, BreadCrumbNav, Edit, Select, Memo, SwitchButton, Search },
+  components: { Pagination, List, BreadCrumbNav, Edit, Select, Memo, SwitchButton, Search },
   mounted() {
-    this.initParams()
-    this.updateData()
+    this.page.update()
   },
   setup() {
     return {
+      page: ref(),
       dialogs: reactive({
         solve: {
           solveType: '解决',
@@ -96,10 +93,7 @@ export default defineComponent({
     }
   },
   data() {
-    let params = this.$route.query
     return {
-      defaultPageSize: defaultPageSize,
-      pageSizes: pageSizes,
       gradeColor: gradeColor,
       statusColor: statusColor,
       grades: utils.toOptions(bug.grades),
@@ -109,13 +103,6 @@ export default defineComponent({
       project: reactive([]),
       modules: reactive([]),
       users: reactive([]),
-      pageInfo: reactive({
-        page: params.page ? Number(params.page) : 1,
-        size: params.size ? Number(params.size) : defaultPageSize,
-        total: 0,
-        start: 0,
-        end: 0,
-      }),
       query: reactive({
         id: 1,
         name: '',
@@ -131,20 +118,8 @@ export default defineComponent({
     }
   },
   methods: {
-    initParams() {
-      let params = this.$route.query
-      for (const param in this.query) {
-        if (this.query.hasOwnProperty(param) && params[param]) {
-          let type = typeof this.query[param]
-          if (type === 'number' || type == 'undefined')
-            this.query[param] = Number(params[param])
-          else
-            this.query[param] = params[param]
-        }
-      }
-    },
     updateData() {
-      let result = bug.searchData(this.query, this.pageInfo.page, this.pageInfo.size)
+      let result = bug.searchData(this.query, this.page.page, this.page.size)
       this.data.length = 0
       Object.assign(this.data, result.data ?.map( (b, index) => {
         b.index = index + 1
@@ -160,55 +135,39 @@ export default defineComponent({
       this.users.length = 0
       Object.assign(this.users, [{id: '', realName: '全部'}].concat(users))
 
-      this.pageInfo.total = result.total
-      this.pageInfo.start = result.start
-      this.pageInfo.end = result.end
-    },
-    updateUrl() {
-      let params = []
-      for (const param in this.query) {
-        if (this.query.hasOwnProperty(param) && this.query[param]) {
-          params.push(param + '=' + this.query[param])
-        }
+      return {
+        total: result.total,
+        start: result.start,
+        end: result.end,
       }
-      let url = '/' + moduleName + '/bugs?' + params.join('&')
-      this.$router.push(url)
     },
     clearFeature() {
       this.query.feature =''
     },
     clearAll() {
-      for (const param in this.query) {
-        if (param != 'id' && this.query.hasOwnProperty(param)) {
-          let type = typeof this.query[param]
-          if (type === 'number' || type == 'undefined')
-            this.query[param] = undefined
-          else
-            this.query[param] = ''
-        }
-      }
+      this.page.clearAll(['id'])
     },
     handleSearch() {
-      this.updateUrl()
-      this.updateData()
+      this.page.update()
     },
     handleCreate() {
-      let url = '/' + moduleName + '/create'
-      this.$router.push(url)
+      this.page.jump('/create')
     },
-    handleEdit(_: number, row: Bug) {
-      let url = '/' + moduleName + '/edit?id=' + row.id
-      this.$router.push(url)
+    handleEdit(_: number, row) {
+      this.page.jump('/edit?id=' +  row.id)
     },
-    handleSolve(_: number, row: Bug) {
+    handleView(_: number, row) {
+      this.page.jump('/info?id=' +  row.id)
+    },
+    handleSolve(_: number, row) {
       this.dialogs.solve.toggle = true
       this.selectedItem = row
     },
-    handleComment(_: number, row: Bug) {
+    handleComment(_: number, row) {
       this.dialogs.comment.toggle = true
       this.selectedItem = row
     },
-    handleClose(_: number, row: Bug) {
+    handleClose(_: number, row) {
       this.dialogs.close.toggle = true
       this.selectedItem = row
     },
@@ -236,37 +195,21 @@ export default defineComponent({
       ElMessage.success('提交成功')
       this.$router.go(0)
     },
-    handleView(_: number, row: Bug) {
-      let url = '/' + moduleName + '/info?id=' + row.id
-      this.$router.push(url)
-    },
-    handlePageChange(page: number) {
-      this.pageInfo.page = page
-      this.updateUrl()
-      this.updateData()
-    },
-    handleSizeChange(_: any) {
-      this.updateUrl()
-      this.updateData()
-    },
     handleAllBugs() {
       this.clearAll()
-      this.updateUrl()
-      this.updateData()
+      this.page.update()
     },
     handleMyBugs() {
       let nowUser = user.getLoggedInUser()
       this.clearAll()
       this.query.owner = nowUser.id
-      this.updateUrl()
-      this.updateData()
+      this.page.update()
     },
     handleMyReports() {
       let nowUser = user.getLoggedInUser()
       this.clearAll()
       this.query.reporter = nowUser.id
-      this.updateUrl()
-      this.updateData()
+      this.page.update()
     },
   }
 })
@@ -524,40 +467,7 @@ export default defineComponent({
       </el-table-column>
     </el-table>
     <template #footer>
-      <el-row class="row-bg" justify="space-between">
-        <el-col>
-          <el-text size="small">显示第 {{ pageInfo.start }} 到第 {{ pageInfo.end }} 条记录，总共 {{ pageInfo.total }} 条记录，每页显示 </el-text>
-          <el-select
-              v-model="pageInfo.size"
-              size="small"
-              style="width: 60px"
-              :placeholder="defaultPageSize.toString()"
-              @change="handleSizeChange"
-          >
-            <el-option
-                v-for="size in pageSizes"
-                :key="size"
-                :label="size"
-                :value="size"
-            />
-          </el-select>
-          <el-text size="small"> 条记录</el-text>
-        </el-col>
-        <el-col id="pagination">
-          <el-pagination
-              size="small"
-              background
-              layout="prev, pager, next"
-              class="mt-4"
-              hide-on-single-page
-              :pager-count="11"
-              v-model:current-page="pageInfo.page"
-              v-model:total="pageInfo.total"
-              v-model:page-size="pageInfo.size"
-              @current-change="handlePageChange"
-          />
-        </el-col>
-      </el-row>
+      <Pagination ref="page" :update-data="updateData" :query="query" module="bug" path="bugs" />
     </template>
   </el-card>
   <el-dialog v-model="dialogs.solve.toggle" title="解决 Bug" width="500">
