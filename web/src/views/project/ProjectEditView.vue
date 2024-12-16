@@ -63,7 +63,6 @@ export default {
           project.modify(formData)
           ElMessage.success('修改成功')
           formDataRef.value.resetFields()
-          localStorage.clear()
           this.$router.push('/' + moduleName + '/list')
         })
       } catch (error) {

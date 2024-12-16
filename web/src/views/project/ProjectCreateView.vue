@@ -54,7 +54,6 @@ export default {
           project.create(formData)
           ElMessage.success('添加成功')
           formDataRef.value.resetFields()
-          localStorage.clear()
           this.$router.push('/' + moduleName + '/list')
         })
       } catch (error) {

@@ -84,7 +84,6 @@ export default {
           bug.create(formData, this.user.id)
           ElMessage.success('添加成功')
           formDataRef.value.resetFields()
-          localStorage.clear()
           this.$router.push('/' + moduleName + '/bugs?id='+this.id)
         })
       } catch (error) {
