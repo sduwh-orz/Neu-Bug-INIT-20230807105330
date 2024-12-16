@@ -122,4 +122,48 @@ export default {
   ) {
     // Do something
   },
+  stats: function(
+    id: number
+  ) {
+    let p = project.getProject(id)
+    let bugs = this.searchInProject({id: id}, 1, 114514).data
+    return {
+      grade: this.grades.map(g => {
+        return {
+          name: g,
+          count: bugs.filter(b => {
+            return b.grade == g
+          }).length
+        }
+      }),
+      status: this.statusTypes.map(s => {
+        return {
+          name: s,
+          count: bugs.filter(b => {
+            return b.status == s
+          }).length
+        }
+      }),
+      developers: Array.from(new Set(bugs.map(b =>
+        b.owner
+      ))).map(d => {
+        return {
+          name: d,
+          count: bugs.filter(b => {
+            return b.owner == d
+          }).length
+        }
+      }),
+      reporters: Array.from(new Set(bugs.map(b =>
+        b.reporter
+      ))).map(r => {
+        return {
+          name: r,
+          count: bugs.filter(b => {
+            return b.reporter == r
+          }).length
+        }
+      }),
+    }
+  }
 }
