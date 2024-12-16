@@ -1,6 +1,6 @@
 <script lang="ts">
-import { RouterLink } from "vue-router"
-import {Aim, Avatar, Expand, Fold, List, OfficeBuilding, Operation} from "@element-plus/icons-vue"
+import { RouterLink } from 'vue-router'
+import { Aim, Avatar, Expand, Fold, List, OfficeBuilding, Operation } from '@element-plus/icons-vue'
 
 export default {
   name: "Navigation",

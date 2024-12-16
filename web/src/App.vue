@@ -1,10 +1,17 @@
 <script lang="ts">
+import { ref } from 'vue'
 import { RouterView } from 'vue-router'
-import Navigation from './components/Navigation.vue'
-import PageHeader from './components/PageHeader.vue'
+import Navigation from '@/components/Navigation.vue'
+import PageHeader from '@/components/PageHeader.vue'
+
 export default {
   components: {
     Navigation, PageHeader, RouterView
+  },
+  setup() {
+    return {
+      header: ref()
+    }
   }
 }
 </script>
@@ -13,7 +20,7 @@ export default {
   <div class="main">
     <el-container style="height: 100%;">
       <el-header padding="0">
-        <PageHeader/>
+        <PageHeader ref="header"/>
       </el-header>
       <el-container>
         <el-aside width="collapse" v-if="!$route.meta.notLoggedIn">

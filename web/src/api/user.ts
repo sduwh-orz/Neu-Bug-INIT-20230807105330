@@ -43,8 +43,18 @@ export default {
   remove: function (id: number) {
     // Do something
   },
+  login: function (username: string, password: string) {
+    return !!this.all().find(u => {
+      return u.username == username && u.password == password
+    });
+
+  },
   getLoggedInUser: function () {
-    return this.all().find(u => { return u.realName == '管理员' })
+    let username = localStorage.getItem('username')
+    let password = localStorage.getItem('password')
+    return this.all().find(u => {
+      return u.username == username && u.password == password
+    })
   },
   getAllRealNames: function() {
     return this.all().map(user => ({

@@ -1,8 +1,12 @@
 <script lang="ts">
 import { reactive } from 'vue'
-import { ElMessage } from "element-plus";
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import user from '@/api/user.ts'
 export default {
   setup() {
+    if (user.getLoggedInUser())
+      useRouter().push('/project/list')
     const form = reactive({
       username: '',
       password: ''
@@ -13,10 +17,14 @@ export default {
   },
   methods: {
     login() {
-      localStorage['username'] = this.form.username
-      localStorage['password'] = this.form.password
-      ElMessage.success('登录成功')
-      this.$router.push('/project/list')
+      if (user.login(this.form.username, this.form.password)) {
+        localStorage['username'] = this.form.username
+        localStorage['password'] = this.form.password
+        this.$router.push('/project/list')
+        ElMessage.success('登录成功')
+      } else {
+        ElMessage.error('用户名或密码错误')
+      }
     }
   }
 }

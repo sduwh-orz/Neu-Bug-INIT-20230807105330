@@ -16,7 +16,7 @@ const router = createRouter({
     },
     {
       path: '/logout',
-      redirect: '/login',
+      component: () => import('@/views/LogoutView.vue'),
       meta: {
         notLoggedIn: true,
       }

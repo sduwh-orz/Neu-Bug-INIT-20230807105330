@@ -1,16 +1,17 @@
-<script setup lang="ts">
-import {CreditCard, Guide, Message, Tickets, User} from '@element-plus/icons-vue';
-import { reactive } from 'vue';
-import BreadCrumbNav from "@/components/BreadCrumbNav.vue";
+<script lang='ts'>
+import { CreditCard, Guide, Message, Tickets, User } from '@element-plus/icons-vue'
+import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
+import user from '@/api/user.ts'
 
-const currentUser = reactive({
-    username: 'admin',
-    realName: '管理员',
-    role: '管理员',
-    email: 'admin@126.com'
-})
-
-const username = localStorage.getItem('username') || '默认用户名';
+const nowUser = user.getLoggedInUser()
+export default {
+  components: { Message, Guide, CreditCard, User, Tickets, BreadCrumbNav },
+  data() {
+    return {
+      user: nowUser
+    }
+  }
+}
 </script>
 
 <template>
@@ -31,25 +32,25 @@ const username = localStorage.getItem('username') || '默认用户名';
         <template #label>
           <el-icon><User /></el-icon>&nbsp;&nbsp;用户名
         </template>
-        {{ username }}
+        {{ user.username }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template #label>
           <el-icon><CreditCard /></el-icon>&nbsp;&nbsp;真实姓名
         </template>
-        {{ currentUser.realName }}
+        {{ user.realName }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template #label>
           <el-icon><Guide /></el-icon>&nbsp;&nbsp;角色
         </template>
-        {{ currentUser.role }}
+        {{ user.role }}
       </el-descriptions-item>
       <el-descriptions-item>
         <template #label>
           <el-icon><Message /></el-icon>&nbsp;&nbsp;邮箱
         </template>
-        {{ currentUser.email }}
+        {{ user.email }}
       </el-descriptions-item>
     </el-descriptions>
   </el-card>
