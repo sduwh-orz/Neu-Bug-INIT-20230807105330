@@ -89,7 +89,7 @@ export default {
     handleSubmit() {
       try {
         formDataRef.value.validate().then(() => {
-          bug.create(formData, this.user.id)
+          bug.modify(this.id, undefined, undefined, formData.comment, this.user.id, formData)
           ElMessage.success('修改成功')
           formDataRef.value.resetFields()
           localStorage.clear()

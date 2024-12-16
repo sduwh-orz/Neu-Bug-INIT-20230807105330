@@ -106,7 +106,8 @@ export default {
     status: string,
     solveType: string,
     comment: string,
-    user: number
+    user: number,
+    info: Bug
   ) {
     // Do something
   },
