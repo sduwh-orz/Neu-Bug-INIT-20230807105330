@@ -41,3 +41,6 @@ body {
 #pagination {
     justify-items: end;
 }
+.module-row {
+    font-weight: bold;
+}

@@ -109,6 +109,7 @@ export default {
         }
       ).then(() => {
         module.remove(this.selectedItem.id);
+        this.$router.go(0);
         ElMessage.success('删除成功');
       }).catch(() => {
         ElMessage.info('已取消模块删除');
@@ -134,6 +135,7 @@ export default {
         }
       ).then(() => {
         feature.remove(this.selectedItem.id);
+        this.$router.go(0);
         ElMessage.success('删除成功');
       }).catch(() => {
         ElMessage.info('已取消功能删除');
@@ -166,6 +168,7 @@ export default {
             module.create(this.routeId, this.moduleForm);
             ElMessage.success('添加成功');
             this.closeCreateModuleDialog();
+            this.$router.go(0);
           } else {
             ElMessage.warning('请检查表单所填写内容');
             return false;
@@ -183,6 +186,7 @@ export default {
             module.modify(this.selectedItem.id, this.moduleForm);
             ElMessage.success('修改成功');
             this.closeModifyModuleDialog();
+            this.$router.go(0);
           } else {
             ElMessage.warning('请检查表单所填写内容');
             return false;
@@ -200,6 +204,7 @@ export default {
             feature.create(this.selectedItem.id, this.featureForm);
             ElMessage.success('添加成功');
             this.closeCreateFeatureDialog();
+            this.$router.go(0);
           } else {
             ElMessage.warning('请检查表单所填写内容');
             return false;
@@ -217,6 +222,7 @@ export default {
             feature.modify(this.selectedItem.id, this.featureForm);
             ElMessage.success('修改成功');
             this.closeModifyFeatureDialog();
+            this.$router.go(0);
           } else {
             ElMessage.warning('请检查表单所填写内容');
             return false;
@@ -481,7 +487,5 @@ export default {
 </template>
 
 <style>
-.module-row {
-  font-weight: bold;
-}
+
 </style>

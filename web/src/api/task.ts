@@ -23,4 +23,10 @@ export default {
     })
     return result
   },
+  modify(
+    projectId: number, 
+    form
+  ) {
+    // Do something
+  }
 }

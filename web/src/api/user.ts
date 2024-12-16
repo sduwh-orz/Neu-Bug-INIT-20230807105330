@@ -45,5 +45,12 @@ export default {
   },
   getLoggedInUser: function () {
     return this.all().find(u => { return u.realName == '管理员' })
+  },
+  getAllRealNames: function() {
+    return this.all().map(user => ({
+      key: user.id,
+      label: user.realName,
+      value: user.realName
+    }));
   }
 }

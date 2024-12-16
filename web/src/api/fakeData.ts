@@ -137,6 +137,16 @@ const projects: Project[] = [
                     comment: '',
                     owner: '管理员',
                     time: Date.parse('2018/6/23 16:33')
+                  },
+                  {
+                    id: 11,
+                    type: '编辑bug',
+                    before: '已解决',
+                    after: '已解决',
+                    handleType: '',
+                    comment: 'dss',
+                    owner: '管理员',
+                    time: Date.parse('2018-06-27 23:43:34')
                   }
                 ]
               }

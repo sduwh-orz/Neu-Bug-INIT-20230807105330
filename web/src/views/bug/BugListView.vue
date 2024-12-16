@@ -121,10 +121,7 @@ export default defineComponent({
     updateData() {
       let result = bug.searchInProject(this.query, this.page.page, this.page.size)
       this.data.length = 0
-      Object.assign(this.data, result.data ?.map( (b, index) => {
-        b.index = index + 1
-        return b
-      }))
+      Object.assign(this.data, result.data)
 
       let p = project.getProject(this.query.id)
       this.project = p
@@ -228,12 +225,12 @@ export default defineComponent({
     <el-form>
       <el-row justify="space-between">
         <el-col :span="11">
-          <el-form-item label="Bug 标题" label-width="70">
+          <el-form-item label="Bug 标题" label-width="100px">
             <el-input v-model="query.name" />
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="Bug 等级" label-width="70">
+          <el-form-item label="Bug 等级" label-width="100px">
             <el-select
                 v-model="query.grade"
                 class="m-2"
@@ -251,7 +248,7 @@ export default defineComponent({
       </el-row>
       <el-row justify="space-between">
         <el-col :span="11">
-          <el-form-item label="所属模块" label-width="70">
+          <el-form-item label="所属模块" label-width="100px">
             <el-select
                 v-model="query.module"
                 class="m-2"
@@ -268,7 +265,7 @@ export default defineComponent({
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="所属功能" label-width="70">
+          <el-form-item label="所属功能" label-width="100px">
             <el-select
                 v-model="query.feature"
                 class="m-2"
@@ -286,7 +283,7 @@ export default defineComponent({
       </el-row>
       <el-row justify="space-between">
         <el-col :span="11">
-          <el-form-item label="开发人" label-width="70">
+          <el-form-item label="开发人" label-width="100px">
             <el-select
                 v-model="query.owner"
                 class="m-2"
@@ -302,7 +299,7 @@ export default defineComponent({
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="报告人" label-width="70">
+          <el-form-item label="报告人" label-width="100px">
             <el-select
                 v-model="query.reporter"
                 class="m-2"
@@ -320,7 +317,7 @@ export default defineComponent({
       </el-row>
       <el-row justify="space-between">
         <el-col :span="11">
-          <el-form-item label="Bug 状态" label-width="70">
+          <el-form-item label="Bug 状态" label-width="100px">
             <el-select
                 v-model="query.status"
                 class="m-2"
@@ -336,7 +333,7 @@ export default defineComponent({
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="解决形式" label-width="70">
+          <el-form-item label="解决形式" label-width="100px">
             <el-select
                 v-model="query.solveType"
                 class="m-2"
