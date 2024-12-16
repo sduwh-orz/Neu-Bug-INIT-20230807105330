@@ -7,7 +7,7 @@ const pageSizes = [10, 25]
 export default defineComponent({
   name: "Pagination",
   props: {
-    path: 'list',
+    path: { required: true },
     module: { required: true },
     query: { required: true },
     updateData: { type: Function, required: true }

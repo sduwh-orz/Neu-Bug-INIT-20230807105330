@@ -105,7 +105,7 @@ export default defineComponent({
       </el-table-column>
     </el-table>
     <template #footer>
-      <Pagination ref="page" :update-data="updateData" :query="query" module="task" />
+      <Pagination ref="page" :update-data="updateData" :query="query" module="task" path="list" />
     </template>
   </el-card>
 </template>
