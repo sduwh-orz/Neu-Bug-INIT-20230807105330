@@ -17,30 +17,14 @@ export default {
       formDataRef: formDataRef,
       formRules: reactive({
         oldPassword: [
-          {
-            required: true,
-            message: '请输入原密码',
-            trigger: 'blur'
-          }
+          { required: true, message: '请输入原密码', trigger: 'blur' }
         ],
         newPassword: [
-          {
-            required: true,
-            message: '请输入新密码',
-            trigger: 'blur'
-          },
-          {
-            min: 6,
-            message: '密码长度至少为6位',
-            trigger: 'blur'
-          },
+          { required: true, message: '请输入新密码', trigger: 'blur' },
+          { min: 6, message: '密码长度至少为6位', trigger: 'blur' },
         ],
         confirmPassword: [
-          {
-            required: true,
-            message: '请确认新密码',
-            trigger: 'blur'
-          },
+          { required: true, message: '请确认新密码', trigger: 'blur' },
           {
             validator: (_rule: any, value: string, callback: any) => {
               if (value !== formData.newPassword) {
@@ -58,23 +42,30 @@ export default {
   methods: {
     submitForm() {
       try {
-        formDataRef.value.validate();
-        ElMessageBox.confirm(
-            '确定要修改密码吗？提交后需要重新登录。',
-            '修改确认',
-            {
-              confirmButtonText: '确认',
-              cancelButtonText: '取消',
-              type: 'warning',
-            }
-        ).then(() => {
-          ElMessage.success('密码修改成功')
-          formDataRef.value.resetFields()
-          localStorage.clear()
-          this.$router.push('/login')
-        }).catch(() => {
-          ElMessage.info('已取消密码修改')
+        formDataRef.value.validate((valid: any) => {
+          if (valid) {
+            ElMessageBox.confirm(
+              '确定要修改密码吗？提交后需要重新登录。',
+              '修改确认',
+              {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                type: 'warning',
+              }
+            ).then(() => {
+              ElMessage.success('密码修改成功');
+              formDataRef.value.resetFields();
+              localStorage.clear();
+              this.$router.push('/login');
+            }).catch(() => {
+              ElMessage.info('已取消密码修改');
+            });
+          } else {
+            ElMessage.warning('请检查表单所填写内容');
+            return false;
+          }
         });
+        
       } catch (error) {
         ElMessage.error('请检查输入内容')
         console.log(error)

@@ -14,5 +14,14 @@ export default {
       return 'module-row';
     }
     return '';
+  },
+  create: function(projectId: number, module) {
+
+  },
+  modify: function(id: string, module) {
+
+  },
+  remove: function(id: string) {
+
   }
 }
