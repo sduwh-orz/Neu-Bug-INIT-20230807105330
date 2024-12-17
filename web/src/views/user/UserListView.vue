@@ -86,7 +86,7 @@ export default defineComponent({
         <span>查询信息</span>
       </div>
     </template>
-    <el-form>
+    <el-form @keyup.enter="handleSearch">
       <el-row justify="space-between">
         <el-col :span="11">
           <el-form-item label="用户名" class="disable-select" label-width="80">

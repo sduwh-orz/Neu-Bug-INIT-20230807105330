@@ -409,6 +409,8 @@ export default {
           :model="dialogs.moduleCreate"
           :rules="dialogs.moduleCreate.rules"
           label-width="100px"
+          @submit.native.prevent
+          @keyup.enter="submitCreateModuleForm"
       >
         <el-form-item label="功能名" prop="name">
           <el-input v-model="dialogs.moduleCreate.name" placeholder="请输入模块名" style="width: 300px" />
@@ -431,6 +433,8 @@ export default {
       title="修改模块"
       width="500"
       :before-close="closeDialogModuleModify"
+      @submit.native.prevent
+      @keyup.enter="submitModifyModuleForm"
   >
     <div style="margin-top: 10px; padding: 15px">
       <el-form
@@ -460,6 +464,7 @@ export default {
       title="添加功能"
       width="500"
       :before-close="closeDialogFeatureCreate"
+      @keyup.enter="submitCreateFeatureForm"
   >
     <div style="margin-top: 10px; padding: 15px">
       <el-form
@@ -492,6 +497,7 @@ export default {
       title="修改功能"
       width="500"
       :before-close="closeDialogFeatureModify"
+      @keyup.enter="submitModifyFeatureForm"
   >
     <div style="margin-top: 10px; padding: 15px">
       <el-form

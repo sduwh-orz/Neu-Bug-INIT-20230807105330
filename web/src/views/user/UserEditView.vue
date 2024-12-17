@@ -103,6 +103,7 @@ export default {
         :rules="formRules"
         label-width="30%"
         style="width: 60%"
+        @keyup.enter="handleSubmit"
     >
       <el-form-item label="用户名" prop="username">
         <el-input v-model="formData.username"/>

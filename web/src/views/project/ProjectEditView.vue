@@ -95,6 +95,7 @@ export default {
         :rules="formRules"
         label-width="30%"
         style="width: 60%"
+        @keyup.enter="handleSubmit"
     >
       <el-form-item label="项目名称" prop="name">
         <el-input v-model="formData.name"/>

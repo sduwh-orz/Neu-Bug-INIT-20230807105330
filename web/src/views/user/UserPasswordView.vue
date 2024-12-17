@@ -94,6 +94,7 @@ export default {
         :rules="formRules"
         label-width="100px"
         class="password-form"
+        @keyup.enter="submitForm"
     >
       <el-form-item label="原密码" prop="oldPassword">
         <el-input

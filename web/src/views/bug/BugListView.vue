@@ -250,7 +250,7 @@ export default defineComponent({
         <span>查询信息</span>
       </div>
     </template>
-    <el-form>
+    <el-form @keyup.enter="handleSearch">
       <el-row justify="space-between">
         <el-col :span="11">
           <el-form-item label="Bug 标题" label-width="100px">

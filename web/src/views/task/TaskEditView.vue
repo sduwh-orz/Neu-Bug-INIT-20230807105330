@@ -144,6 +144,7 @@ export default {
           <el-select
             v-model="form[scope.row.module].features[scope.row.id].owner"
             v-if="!ifModuleRow(scope.row)"
+            placeholder="请选择..."
           >
           <el-option
             v-for="item in realNames"

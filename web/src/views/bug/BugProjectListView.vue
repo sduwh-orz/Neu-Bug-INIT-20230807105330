@@ -47,10 +47,10 @@ export default defineComponent({
     handleSearch() {
       this.page.update()
     },
-    handleManage(_: number, row) {
+    handleManage(_: number, row: any) {
       this.page.jump('/bugs?id=' +  row.id)
     },
-    handleStats(_: number, row) {
+    handleStats(_: number, row: any) {
       this.page.jump('/stats?id=' +  row.id)
     },
   }
@@ -67,9 +67,9 @@ export default defineComponent({
         <span>查询信息</span>
       </div>
     </template>
-    <el-form label-width="auto">
+    <el-form label-width="auto" @submit.native.prevent @keyup.enter="handleSearch">
       <el-form-item label="项目名称" style="max-width: 60%" label-width="100">
-        <el-input v-model="query.keyword" />
+        <el-input v-model="query.keyword"/>
       </el-form-item>
     </el-form>
     <template #footer>
