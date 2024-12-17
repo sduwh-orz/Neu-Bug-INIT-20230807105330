@@ -34,7 +34,9 @@ export default defineComponent({
       query: reactive({
         keyword: ''
       }),
-      selectedItem: undefined,
+      selectedItem: {
+        id: undefined,
+      },
     }
   },
   methods: {
@@ -54,20 +56,22 @@ export default defineComponent({
     handleCreate() {
       this.page.jump('/create')
     },
-    handleManage(_: number, row) {
+    handleManage(_: number, row: any) {
       this.page.jump('/modules?id=' +  row.id)
     },
-    handleEdit(_: number, row) {
+    handleEdit(_: number, row: any) {
       this.page.jump('/edit?id=' +  row.id)
     },
-    handleDelete(_: number, row) {
+    handleDelete(_: number, row: any) {
       this.dialogToggle = true
       this.selectedItem = row
     },
     performDelete() {
-      project.remove(this.selectedItem.id)
-      ElMessage.success('删除成功')
-      this.$router.go(0)
+      if (this.selectedItem.id) {
+        project.remove(this.selectedItem.id)
+        ElMessage.success('删除成功')
+        this.$router.go(0)
+      }
     }
   }
 })

@@ -21,10 +21,12 @@ export default {
   mounted() {
     this.id = this.$route.query.id ? Number(this.$route.query.id): 1
     let userInfo = user.get(this.id)
-    formData.username = userInfo?.username
-    formData.realName = userInfo?.realName
-    formData.role = userInfo?.role
-    formData.email = userInfo?.email
+    if (userInfo) {
+      formData.username = userInfo.username
+      formData.realName = userInfo.realName
+      formData.role = userInfo.role
+      formData.email = userInfo.email
+    }
   },
   setup() {
     return {

@@ -3,10 +3,11 @@ import { EditPen } from '@element-plus/icons-vue'
 import BreadCrumbNav from "@/components/BreadCrumbNav.vue"
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import type { Module } from '@/types/module'
 import project from '@/api/project.ts'
 import bug from '@/api/bug.ts'
 import user from '@/api/user.ts'
-import utils from "@/api/utils.ts";
+import utils from "@/api/utils.ts"
 
 const moduleName = 'bug'
 const formData = reactive({
@@ -61,18 +62,28 @@ export default {
     return {
       grades: utils.toOptions(bug.grades, true),
       id: ref(params.id ? Number(params.id) : 1),
-      project: reactive({}),
-      user: reactive(user.getLoggedInUser()),
+      project: reactive({
+        name: '',
+        modules: ([] as Module[])
+      }),
+      user: reactive({
+        id: 0
+      }),
     }
   },
   mounted() {
-    this.project = project.getProject(this.id)
+    let nowProject = project.get(this.id)
+    if (nowProject)
+      this.project = nowProject
+    let nowUser = user.getLoggedInUser()
+    if (nowUser)
+      this.user = nowUser
   },
   computed: {
     features() {
       if (this.formData.module != '') {
         let m = this.project.modules.find(m => { return m.name == this.formData.module })
-        return utils.toOptions(m.features.map(f => f.name), true)
+        return utils.toOptions(m?.features.map(f => f.name), true)
       }
       return utils.toOptions([], true)
     },

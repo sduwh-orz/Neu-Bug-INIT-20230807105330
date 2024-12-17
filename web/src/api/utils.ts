@@ -1,6 +1,6 @@
 export default {
-  toOptions: function(values, noChange=false) {
-    let result = values.map(g => {
+  toOptions: function(values: any, noChange=false) {
+    let result = values.map((g: any) => {
       return { name: g, value: g }
     })
     if (noChange)

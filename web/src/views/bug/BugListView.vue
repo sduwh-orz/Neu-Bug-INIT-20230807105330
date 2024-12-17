@@ -1,13 +1,16 @@
 <script lang="ts">
+import { defineComponent, reactive, ref } from 'vue'
+import { ElMessage } from "element-plus"
 import { Edit, Select, Memo, SwitchButton, Search, List } from '@element-plus/icons-vue'
+import type { Module } from '@/types/module'
+import type { User } from '@/types/user'
+import type { Option } from '@/types/option.ts'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
+import Pagination from '@/components/Pagination.vue'
 import user from '@/api/user.ts'
 import bug from '@/api/bug.ts'
-import {defineComponent, reactive, ref} from 'vue'
 import utils from '@/api/utils.ts'
 import project from '@/api/project.ts'
-import {ElMessage} from "element-plus"
-import Pagination from "@/components/Pagination.vue"
 
 const refComment = ref()
 
@@ -15,8 +18,8 @@ export default defineComponent({
   computed: {
     features() {
       if (this.query.module) {
-        let m = this.project.modules.find(m => { return m.name == this.query.module })
-        return utils.toOptions(m.features.map(f => f.name))
+        let m = this.project.modules.find((m: any) => { return m.name == this.query.module })
+        return utils.toOptions(m?.features.map((f: any) => f.name))
       }
       return utils.toOptions([])
     },
@@ -87,9 +90,12 @@ export default defineComponent({
       statusTypes: utils.toOptions(bug.statusTypes),
       solveTypes: utils.toOptions(bug.solveTypes),
       data: reactive([]),
-      project: reactive([]),
-      modules: reactive([]),
-      users: reactive([]),
+      project: reactive({
+        id: 0,
+        modules: [] as Module[]
+      }),
+      modules: reactive([] as Option[]),
+      users: reactive([] as User[]),
       query: reactive({
         id: 1,
         name: '',
@@ -101,7 +107,9 @@ export default defineComponent({
         status: '',
         solveType: '',
       }),
-      selectedItem: undefined,
+      selectedItem: {
+        id: ''
+      },
     }
   },
   methods: {
@@ -110,12 +118,14 @@ export default defineComponent({
       this.data.length = 0
       Object.assign(this.data, result.data)
 
-      let p = project.getProject(this.query.id)
-      this.project = p
-      this.modules.length = 0
-      Object.assign(this.modules, utils.toOptions(p.modules.map( m => m.name )))
+      let p = project.get(this.query.id)
+      if (p) {
+        this.project = p
+        this.modules.length = 0
+        Object.assign(this.modules, utils.toOptions(p.modules.map( m => m.name )))
+      }
 
-      let users = user.all()
+      let users: any[] = user.all()
       this.users.length = 0
       Object.assign(this.users, [{id: '', realName: '全部'}].concat(users))
 
@@ -137,47 +147,74 @@ export default defineComponent({
     handleCreate() {
       this.page.jump('/create?id=' + this.project.id)
     },
-    handleEdit(_: number, row) {
+    handleEdit(_: number, row: any) {
       this.page.jump('/edit?id=' + row.id)
     },
-    handleView(_: number, row) {
+    handleView(_: number, row: any) {
       this.page.jump('/info?id=' + row.id)
     },
-    handleSolve(_: number, row) {
+    handleSolve(_: number, row: any) {
       this.dialogs.solve.toggle = true
       this.selectedItem = row
     },
-    handleComment(_: number, row) {
+    handleComment(_: number, row: any) {
       this.dialogs.comment.toggle = true
       this.selectedItem = row
     },
-    handleClose(_: number, row) {
+    handleClose(_: number, row: any) {
       this.dialogs.close.toggle = true
       this.selectedItem = row
     },
     handleSubmitSolve() {
-      bug.modify(this.selectedItem.id, '已解决', this.dialogs.solve.solveType, this.dialogs.solve.comment)
-      this.dialogs.solve.toggle = false
-      ElMessage.success('提交成功')
-      this.$router.go(0)
+      if (this.selectedItem) {
+        bug.modify(
+            this.selectedItem.id,
+            '已解决',
+            this.dialogs.solve.solveType,
+            this.dialogs.solve.comment,
+            undefined,
+            undefined
+        )
+        this.dialogs.solve.toggle = false
+        ElMessage.success('提交成功')
+        this.$router.go(0)
+      }
     },
     handleSubmitComment() {
-      try {
-        refComment.value.validate().then(() => {
-          bug.modify(this.selectedItem.id, undefined, undefined, this.dialogs.comment.comment)
-          this.dialogs.comment.toggle = false
-          ElMessage.success('提交成功')
-          this.$router.go(0)
-        })
-      } catch (error) {
-        ElMessage.error('请输入备注')
+      if (this.selectedItem) {
+        try {
+          refComment.value.validate().then(() => {
+            bug.modify(
+                this.selectedItem.id,
+                undefined,
+                undefined,
+                this.dialogs.comment.comment,
+                undefined,
+                undefined
+            )
+            this.dialogs.comment.toggle = false
+            ElMessage.success('提交成功')
+            this.$router.go(0)
+          })
+        } catch (error) {
+          ElMessage.error('请输入备注')
+        }
       }
     },
     handleSubmitClose() {
-      bug.modify(this.selectedItem.id, '已关闭', undefined, this.dialogs.close.comment)
-      this.dialogs.close.toggle = false
-      ElMessage.success('提交成功')
-      this.$router.go(0)
+      if (this.selectedItem) {
+        bug.modify(
+            this.selectedItem.id,
+            '已关闭',
+            undefined,
+            this.dialogs.close.comment,
+            undefined,
+            undefined
+        )
+        this.dialogs.close.toggle = false
+        ElMessage.success('提交成功')
+        this.$router.go(0)
+      }
     },
     handleAllBugs() {
       this.clearAll()
@@ -186,13 +223,17 @@ export default defineComponent({
     handleMyBugs() {
       let nowUser = user.getLoggedInUser()
       this.clearAll()
-      this.query.owner = nowUser.id
+      if (nowUser) {
+        this.query.owner = nowUser.id
+      }
       this.page.update()
     },
     handleMyReports() {
       let nowUser = user.getLoggedInUser()
       this.clearAll()
-      this.query.reporter = nowUser.id
+      if (nowUser) {
+        this.query.reporter = nowUser.id
+      }
       this.page.update()
     },
   }

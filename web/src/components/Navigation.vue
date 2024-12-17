@@ -20,7 +20,7 @@ export default {
 
 <template>
   <el-menu
-      :default-active="this.$route.path"
+      :default-active="$route.path"
       :router="true"
       :collapse="isNavCollapsed"
       active-text-color="#ffd04b"

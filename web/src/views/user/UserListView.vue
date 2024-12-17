@@ -36,7 +36,9 @@ export default defineComponent({
         role: '',
         email: ''
       }),
-      selectedItem: undefined,
+      selectedItem: {
+        id: 0
+      },
     }
   },
   methods: {
@@ -56,17 +58,19 @@ export default defineComponent({
     handleCreate() {
       this.page.jump('/create')
     },
-    handleEdit(_: number, row) {
+    handleEdit(_: number, row: any) {
       this.page.jump('/edit?id=' +  row.id)
     },
-    handleDelete(_: number, row) {
+    handleDelete(_: number, row: any) {
       this.dialogToggle = true
       this.selectedItem = row
     },
     performDelete() {
-      user.remove(this.selectedItem.id)
-      ElMessage.success('删除成功')
-      this.$router.go(0)
+      if (this.selectedItem) {
+        user.remove(this.selectedItem.id)
+        ElMessage.success('删除成功')
+        this.$router.go(0)
+      }
     }
   }
 })

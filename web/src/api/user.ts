@@ -1,6 +1,5 @@
 import fakeData from '@/api/fakeData.ts';
 import pagination from '@/api/pagination.ts'
-import type { User } from '@/types/user'
 
 export default {
   roles: ['普通用户', '管理员'],
@@ -12,7 +11,7 @@ export default {
     return undefined
   },
   search: function (
-    query,
+    query: any,
     page: number,
     size: number
   ) {
@@ -34,10 +33,10 @@ export default {
   all: function () {
     return fakeData.users
   },
-  create: function (user: User) {
+  create: function (user: any) {
     // Do something
   },
-  modify: function (user: User) {
+  modify: function (user: any) {
     // Do something
   },
   remove: function (id: number) {

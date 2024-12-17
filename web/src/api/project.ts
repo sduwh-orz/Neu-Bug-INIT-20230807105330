@@ -3,7 +3,7 @@ import pagination from '@/api/pagination.ts'
 import type {Project} from '@/types/project'
 
 export default {
-  getProject: function (id: number) {
+  get: function (id: number) {
     return this.all().find(data => data.id == id)
   },
   search: function (
@@ -21,17 +21,17 @@ export default {
     result.forEach(project => {
       project.modules.forEach(module => {
         module.id = module.name
-        module.features.forEach(feature => {
+        module.features.forEach((feature: any) => {
           feature.id = feature.name
         })
       })
     })
     return result
   },
-  create: function (project: Project) {
+  create: function (project: Project | any) {
     // Do something
   },
-  modify: function (project: Project) {
+  modify: function (project: Project | any) {
     // Do something
   },
   remove: function (id: number) {

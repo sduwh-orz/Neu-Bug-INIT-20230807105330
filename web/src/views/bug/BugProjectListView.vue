@@ -1,9 +1,9 @@
 <script lang="ts">
+import { defineComponent, reactive, ref } from 'vue'
 import {TrendCharts, Operation, Search, List} from '@element-plus/icons-vue'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
-import { defineComponent, reactive, ref } from 'vue'
-import Pagination from "@/components/Pagination.vue";
-import bug from "@/api/bug.ts";
+import Pagination from '@/components/Pagination.vue'
+import bug from '@/api/bug.ts'
 
 export default defineComponent({
   computed: {

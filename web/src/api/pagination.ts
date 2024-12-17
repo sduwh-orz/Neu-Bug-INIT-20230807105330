@@ -1,5 +1,5 @@
 export default {
-  getDataWithPageInfo(data, page, size) {
+  getDataWithPageInfo(data: any, page: number, size: number) {
     let start = (page - 1) * size + 1
     if (start > data.length)
       start = data.length

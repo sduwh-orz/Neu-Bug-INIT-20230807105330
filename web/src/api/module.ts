@@ -1,6 +1,3 @@
-import type { Feature } from "@/types/feature";
-import type { Module } from "@/types/module.d.ts";
-
 export default {
   hoursFormatter: function(row: { features?: { hours: number }[]; hours?: number }): string {
     if (row.features) {
@@ -15,10 +12,10 @@ export default {
     }
     return '';
   },
-  create: function(projectId: number, module) {
+  create: function(projectId: number, module: any) {
 
   },
-  modify: function(id: string, module) {
+  modify: function(id: string, module: any) {
 
   },
   remove: function(id: string) {

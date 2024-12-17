@@ -44,7 +44,7 @@ export default defineComponent({
     handleSearch() {
       this.page.update()
     },
-    handleEdit(_: number, row) {
+    handleEdit(_: number, row: any) {
       this.page.jump('/edit?id=' + row.id)
     },
   }

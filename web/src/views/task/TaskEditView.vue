@@ -1,5 +1,4 @@
 <script lang="ts">
-import feature from "@/api/feature";
 import module from "@/api/module";
 import project from "@/api/project";
 import task from "@/api/task";
@@ -7,7 +6,7 @@ import user from "@/api/user";
 import BreadCrumbNav from "@/components/BreadCrumbNav.vue";
 import { ArrowLeft, CircleCheck, FolderOpened } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { reactive, ref } from "vue";
+import { reactive } from "vue";
 import { useRoute } from "vue-router";
 
 export default {
@@ -17,11 +16,11 @@ export default {
   setup() {
     const route = useRoute();
     const routeId = Number(route.query.id);
-    const currentProject = project.getProject(routeId);
+    const currentProject = project.get(routeId);
 
     currentProject?.modules.forEach(module => {
       module.uniqueName = module.name;
-      module.features.forEach((feature: { uniqueName: string; name: string; }) => {
+      module.features.forEach((feature: any) => {
         feature.uniqueName = module.name + '/' + feature.name
         feature.module = module.id
       });

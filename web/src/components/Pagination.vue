@@ -31,7 +31,7 @@ export default defineComponent({
   methods: {
     initParams() {
       let params = this.$route.query
-      for (const param in this.query) {
+      for (const param in (this.query as any)) {
         if (this.query.hasOwnProperty(param) && params[param]) {
           let type = typeof this.query[param]
           if (type === 'number' || type == 'undefined')
@@ -43,7 +43,7 @@ export default defineComponent({
     },
     updateUrl() {
       let params = []
-      for (const param in this.query) {
+      for (const param in (this.query as any)) {
         if (this.query.hasOwnProperty(param) && this.query[param]) {
           params.push(param + '=' + this.query[param])
         }
@@ -55,7 +55,7 @@ export default defineComponent({
       let url = '/' + this.module + '/' + this.path + '?' + params.join('&')
       this.$router.push(url)
     },
-    updateStats(result) {
+    updateStats(result: any) {
       this.total = result.total
       this.start = result.start
       this.end = result.end
@@ -67,7 +67,7 @@ export default defineComponent({
       this.page = page
       this.update()
     },
-    jump(path) {
+    jump(path: string) {
       let url = '/' + this.module
       if (!path.startsWith('/'))
         url += '/'
@@ -75,7 +75,7 @@ export default defineComponent({
       this.$router.push(url)
     },
     clearAll(except: string[] = []) {
-      for (const param in this.query) {
+      for (const param in (this.query as any)) {
         if (!except.includes(param) && this.query.hasOwnProperty(param)) {
           let type = typeof this.query[param]
           if (type === 'number' || type == 'undefined')
@@ -91,7 +91,7 @@ export default defineComponent({
       if (to.path == from.path) {
         if (JSON.stringify(to.query) != JSON.stringify(from.query)) {
           let params = to.query
-          for (const param in this.query) {
+          for (const param in (this.query as any)) {
             if (this.query.hasOwnProperty(param)) {
               if (this.query[param] == params[param])
                 continue

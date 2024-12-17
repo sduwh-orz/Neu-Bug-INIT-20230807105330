@@ -16,7 +16,7 @@ export default {
 
 <template>
   <BreadCrumbNav :page-paths="['我的面板', '用户信息']"></BreadCrumbNav>
-  <el-card class="info-card" shadow="never">
+  <el-card class="info-card" shadow="never" v-if="user">
     <template #header>
         <div class="card-header">
             <el-icon><Tickets /></el-icon>&nbsp;&nbsp;用户信息

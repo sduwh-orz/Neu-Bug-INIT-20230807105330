@@ -1,11 +1,12 @@
 <script lang="ts">
 import { EditPen } from '@element-plus/icons-vue'
-import BreadCrumbNav from "@/components/BreadCrumbNav.vue"
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import type { Module } from '@/types/module'
+import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import bug from '@/api/bug.ts'
 import user from '@/api/user.ts'
-import utils from "@/api/utils.ts";
+import utils from '@/api/utils.ts'
 
 const moduleName = 'bug'
 const formData = reactive({
@@ -60,10 +61,18 @@ export default {
     let params = this.$route.query
     return {
       grades: utils.toOptions(bug.grades, true),
-      id: ref(params.id ? params.id : ''),
-      project: reactive({}),
-      module: reactive({}),
-      user: reactive(user.getLoggedInUser()),
+      id: ref(params.id ? params.id.toString() : ''),
+      project: reactive({
+        id: 0,
+        name: '',
+        modules: ([] as Module[])
+      }),
+      module: reactive({
+        features: []
+      }),
+      user: reactive({
+        id: 0
+      }),
     }
   },
   mounted() {
@@ -76,11 +85,15 @@ export default {
     this.formData.module = result.module.id
     this.formData.feature = result.feature.id
     this.formData.description = result.description
+    let nowUser = user.getLoggedInUser()
+    if (nowUser) {
+      Object.assign(this.user, nowUser)
+    }
   },
   computed: {
     features() {
       if (this.formData.module != '') {
-        return utils.toOptions(this.module.features.map(f => f.name), true)
+        return utils.toOptions(this.module.features.map((f: any) => f.name), true)
       }
       return utils.toOptions([], true)
     },

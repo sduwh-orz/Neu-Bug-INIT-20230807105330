@@ -1,10 +1,11 @@
 <script lang="ts">
 import { defineComponent, reactive, ref } from 'vue'
 import { Delete, Edit, List, Operation, Search } from '@element-plus/icons-vue'
+import type { BugRecord } from '@/types/bugRecord'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import Pagination from "@/components/Pagination.vue"
 import pagination from '@/api/pagination.ts'
-import bug from "@/api/bug.ts";
+import bug from '@/api/bug.ts'
 
 export default defineComponent({
   computed: {
@@ -33,11 +34,27 @@ export default defineComponent({
       statusColor: bug.statusColor,
       dialogToggle: ref(false),
       data: reactive([]),
-      bug: reactive({}),
-      project: reactive({}),
-      module: reactive({}),
-      feature: reactive({}),
-      data: reactive([]),
+      bug: reactive({
+        name: '',
+        description: '',
+        grade: '',
+        status: '',
+        solveType: '',
+        reporter: '',
+        created: 0,
+        lastModified: 0,
+        records: ([] as BugRecord[])
+      }),
+      project: reactive({
+        name: ''
+      }),
+      module: reactive({
+        name: ''
+      }),
+      feature: reactive({
+        name: '',
+        owner: ''
+      }),
       query: reactive({
         id: ''
       }),

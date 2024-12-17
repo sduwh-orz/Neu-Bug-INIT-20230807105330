@@ -3,6 +3,7 @@ import { reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowLeft, CirclePlus, FolderOpened, Delete, Edit, Plus } from '@element-plus/icons-vue'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
+import type { Module } from '@/types/module'
 import module from '@/api/module'
 import project from '@/api/project'
 import feature from '@/api/feature'
@@ -37,9 +38,12 @@ export default {
   },
   data() {
     return {
-      id: undefined,
+      id: 0,
       module,
-      currentProject: reactive({}),
+      currentProject: reactive({
+        name: '',
+        modules: ([] as Module[])
+      }),
       treeProps: reactive({
         children: 'features',
         hasChildren: 'hasChildren'
@@ -90,15 +94,20 @@ export default {
           }
         },
       }),
-      selectedItem: undefined,
+      selectedItem: {
+        id: ''
+      },
     }
   },
   mounted() {
-    this.id = this.$route.query.id
-    this.currentProject = project.getProject(this.id)
-    this.currentProject?.modules.forEach(module => {
+    this.id = Number(this.$route.query.id)
+    let nowProject = project.get(this.id)
+    if (nowProject) {
+      this.currentProject = nowProject
+    }
+    this.currentProject?.modules.forEach((module: any) => {
       module.uniqueName = module.name
-      module.features.forEach((feature) => {
+      module.features.forEach((feature: any) => {
         feature.uniqueName = module.name + '/' + feature.name
       })
     })

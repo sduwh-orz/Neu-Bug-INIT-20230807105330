@@ -1,7 +1,8 @@
 <script lang="ts">
-import { reactive, ref } from "vue"
-import { ArrowLeft, CirclePlus, FolderOpened, Edit } from "@element-plus/icons-vue"
-import BreadCrumbNav from "@/components/BreadCrumbNav.vue"
+import { reactive, ref } from 'vue'
+import { ArrowLeft, CirclePlus, FolderOpened, Edit } from '@element-plus/icons-vue'
+import type { Module } from '@/types/module'
+import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import project from '@/api/project'
 import module from '@/api/module'
 import bug from '@/api/bug.ts'
@@ -19,8 +20,16 @@ export default {
     return {
       module,
       id: ref(1),
-      project: reactive({}),
-      stats: reactive({}),
+      project: reactive({
+        name: '',
+        modules: [] as Module[]
+      }),
+      stats: reactive({
+        grade: [],
+        status: [],
+        developers: [],
+        reporters: []
+      }),
       treeProps: reactive({
         children: 'features',
         hasChildren: 'hasChildren'
@@ -29,8 +38,8 @@ export default {
   },
   mounted() {
     this.id = this.$route.query.id ? Number(this.$route.query.id): 1
-    this.project = project.getProject(this.id)
-    this.project?.modules.forEach(module => {
+    this.project = project.get(this.id)
+    this.project?.modules.forEach((module: any) => {
       module.uniqueName = module.name;
       module.features.forEach((feature: { uniqueName: string; name: string; }) => {
         feature.uniqueName = module.name + '/' + feature.name;
@@ -39,7 +48,7 @@ export default {
     this.stats = bug.stats(this.id)
   },
   methods: {
-    bugFormatter: function(row): string {
+    bugFormatter: function(row: any) {
       if (row.features) {
         return ''
       }

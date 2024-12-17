@@ -19,11 +19,13 @@ export default {
   components: {EditPen, BreadCrumbNav},
   mounted() {
     this.id = this.$route.query.id ? Number(this.$route.query.id): 1
-    let projectInfo = project.getProject(this.id)
-    formData.name = projectInfo?.name
-    formData.keyword = projectInfo?.keyword
-    formData.description = projectInfo?.description
-    formData.owner = projectInfo?.owner
+    let projectInfo = project.get(this.id)
+    if (projectInfo) {
+      formData.name = projectInfo.name
+      formData.keyword = projectInfo.keyword
+      formData.description = projectInfo.description
+      formData.owner = projectInfo.owner
+    }
   },
   setup() {
     return {

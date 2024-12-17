@@ -2,14 +2,15 @@
 import { reactive } from 'vue'
 import { Expand, Fold, UserFilled } from '@element-plus/icons-vue'
 import user from '@/api/user.ts'
+import type {User} from "@/types/user";
 
-let userData = {}
+let userData: User
 
-function detectLoginStatus(route, router) {
-  if (route.path != '/login') {
+function detectLoginStatus(route: any, router: any) {
+  if (!['/login', '/logout'].includes(route.path)) {
     let loggedInUser = user.getLoggedInUser()
     if (!loggedInUser) {
-      router.push('/login')
+      window.location.href = '/login'
     } else {
       userData = loggedInUser
     }
@@ -46,7 +47,7 @@ export default {
     <el-text class="mx-1" size="large" tag="b">软件缺陷管理系统</el-text>
   </el-menu-item>
   <div class="flex-grow" />
-  <el-sub-menu index="user" v-if="user.username && !$route.meta.notLoggedIn">
+  <el-sub-menu index="user" v-if="user && !$route.meta.notLoggedIn">
     <template #title><el-icon><UserFilled /></el-icon><el-text>{{ user.realName }}</el-text>&nbsp;&nbsp;<el-tag type="primary">{{ user.role }}</el-tag></template>
     <el-menu-item index="/user/info">用户信息</el-menu-item>
     <el-menu-item index="/user/password">修改密码</el-menu-item>
