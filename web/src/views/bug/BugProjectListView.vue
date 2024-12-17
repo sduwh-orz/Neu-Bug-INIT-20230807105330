@@ -34,15 +34,11 @@ export default defineComponent({
     }
   },
   methods: {
-    updateData() {
-      let result = bug.search(this.query.keyword, this.page.page, this.page.size)
+    async updateData() {
+      let result = await bug.projectSearch(this.query.keyword, this.page.page, this.page.size)
       this.data.length = 0
       Object.assign(this.data, result.data)
-      return {
-        total: result.total,
-        start: result.start,
-        end: result.end,
-      }
+      return result
     },
     handleSearch() {
       this.page.update()
@@ -87,7 +83,7 @@ export default defineComponent({
       </div>
     </template>
     <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录">
-      <el-table-column align="center" prop="id" label="序号" width="80"/>
+      <el-table-column align="center" type="index" label="序号" width="80"/>
       <el-table-column align="center" prop="name" label="项目名称"/>
       <el-table-column align="center" prop="owner" label="项目负责人"/>
       <el-table-column align="center" prop="bugs" label="Bug 总数"/>

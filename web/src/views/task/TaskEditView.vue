@@ -1,91 +1,77 @@
 <script lang="ts">
-import module from "@/api/module";
-import project from "@/api/project";
-import task from "@/api/task";
-import user from "@/api/user";
-import BreadCrumbNav from "@/components/BreadCrumbNav.vue";
-import { ArrowLeft, CircleCheck, FolderOpened } from "@element-plus/icons-vue";
-import { ElMessage, ElMessageBox } from "element-plus";
-import { reactive } from "vue";
-import { useRoute } from "vue-router";
+import module from "@/api/module"
+import project from "@/api/project"
+import task from "@/api/task"
+import user from "@/api/user"
+import BreadCrumbNav from "@/components/BreadCrumbNav.vue"
+import { ArrowLeft, CircleCheck, FolderOpened } from "@element-plus/icons-vue"
+import { ElMessage, ElMessageBox } from "element-plus"
+import { reactive } from "vue"
+import { useRoute } from "vue-router"
 
 export default {
   components: {
     BreadCrumbNav, FolderOpened, CircleCheck, ArrowLeft
   },
-  setup() {
-    const route = useRoute();
-    const routeId = Number(route.query.id);
-    const currentProject = project.get(routeId);
-
-    currentProject?.modules.forEach(module => {
-      module.uniqueName = module.name;
-      module.features.forEach((feature: any) => {
-        feature.uniqueName = module.name + '/' + feature.name
-        feature.module = module.id
-      });
-    });
-
-    const form = {}
-    currentProject?.modules.forEach(module => {
-      form[module.id] = {
-        id: module.id,
-        features: []
-      }
-      module.features.forEach(feature =>{
-        form[module.id].features[feature.id] = {
-          id: feature.id,
-          owner: feature.owner
-        }
-      })
-    })
-
+  data() {
+    const route = useRoute()
+    const routeId = route.query.id.toString()
     return {
       routeId,
-      currentProject,
+      currentProject: reactive(project.empty),
       module,
       treeProps: reactive({
         children: 'features',
         hasChildren: 'hasChildren'
       }),
-      realNames: user.getAllRealNames(),
-      form: reactive(form)
+      realNames: reactive([]),
+      form: reactive({})
     }
   },
-  methods: {
-    goBack() {
-      this.$router.push('/task/list');
-    },
-    handleSubmit() {
-      let emptyOwner = false
-      Object.keys(this.form).forEach(module => {
-        const features = this.form[module].features
-        Object.keys(features).forEach(feature => {
-          if (features[feature].owner === '') {
-            emptyOwner = true
+  mounted() {
+    user.getAllRealNames().then(names => {
+      this.realNames.length = 0
+      Object.assign(this.realNames, [{key: '', label: '请选择...', value: ''}].concat(names))
+    })
+    project.get(this.routeId).then((data) => {
+      this.currentProject = data
+      this.currentProject?.modules.forEach(module => {
+        this.form[module.id] = {}
+        module.features.forEach(feature =>{
+          this.form[module.id][feature.id] = {
+            id: feature.id,
+            owner: feature.owner ? feature.owner.id : null
           }
         })
       })
-      if (emptyOwner) {
-        ElMessage.warning(`请为所有功能指定开发者`)
-      } else {
-        ElMessageBox.confirm(
-          '确定要保存有关开发者的修改吗？',
-          '保存修改',
-          {
-            confirmButtonText: '确认',
-            cancelButtonText: '取消',
-            type: 'warning',
+    })
+  },
+  methods: {
+    goBack() {
+      this.$router.push('/task/list')
+    },
+    handleSubmit() {
+      ElMessageBox.confirm(
+        '确定要保存有关开发者的修改吗？',
+        '保存修改',
+        {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(() => {
+        task.modify(this.routeId, this.form).then((response) => {
+          if (response.success) {
+            ElMessage.success('保存成功')
+            this.$router.go(0)
+          } else {
+            ElMessage.error('保存失败')
           }
-        ).then(() => {
-          task.modify(this.routeId, this.form)
-          this.$router.go(0)
-          ElMessage.success('保存成功')
         })
-      }
+      })
     },
     ifModuleRow(row: any) {
-      return row.features;
+      return row.features
     }
   }
 }
@@ -131,7 +117,7 @@ export default {
     <el-table
       v-if="currentProject"
       :data="currentProject.modules"
-      row-key="uniqueName"
+      row-key="id"
       border
       default-expand-all
       :tree-props="treeProps"
@@ -142,7 +128,7 @@ export default {
       <el-table-column label="开发者">
         <template #default="scope">
           <el-select
-            v-model="form[scope.row.module].features[scope.row.id].owner"
+            v-model="form[scope.row.module][scope.row.id].owner"
             v-if="!ifModuleRow(scope.row)"
             placeholder="请选择..."
           >

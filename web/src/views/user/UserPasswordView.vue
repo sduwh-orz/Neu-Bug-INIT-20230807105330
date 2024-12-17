@@ -1,8 +1,10 @@
 <script lang="ts">
-import { EditPen } from '@element-plus/icons-vue';
-import BreadCrumbNav from "@/components/BreadCrumbNav.vue";
-import { reactive, ref } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { EditPen } from '@element-plus/icons-vue'
+import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
+import { reactive, ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import user from '@/api/user.ts'
+
 const formData = reactive({
   oldPassword: '',
   newPassword: '',
@@ -53,22 +55,28 @@ export default {
                 type: 'warning',
               }
             ).then(() => {
-              ElMessage.success('密码修改成功');
-              formDataRef.value.resetFields();
-              localStorage.clear();
-              this.$router.push('/login');
-            }).catch(() => {
-              ElMessage.info('已取消密码修改');
+              user.password(formData.oldPassword, formData.newPassword).then((response) => {
+                if (response.success) {
+                  localStorage.removeItem('loggedIn')
+                  ElMessage.success('密码修改成功')
+                  formDataRef.value.resetFields()
+                  this.$router.push('/login')
+                } else {
+                  ElMessage.error('旧密码不正确')
+                  return false
+                }
+              })
+            }).catch((error) => {
+              ElMessage.info('已取消密码修改')
             });
           } else {
-            ElMessage.warning('请检查表单所填写内容');
-            return false;
+            ElMessage.warning('请检查表单所填写内容')
+            return false
           }
-        });
+        })
         
       } catch (error) {
         ElMessage.error('请检查输入内容')
-        console.log(error)
       }
     },
     resetForm() {

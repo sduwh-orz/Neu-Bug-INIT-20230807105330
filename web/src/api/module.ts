@@ -1,8 +1,10 @@
+import {$axios} from "@/api/axios.ts";
+
 export default {
   hoursFormatter: function(row: { features?: { hours: number }[]; hours?: number }): string {
     if (row.features) {
-      const totalHours = row.features.reduce((sum: number, feature: { hours: number }) => sum + feature.hours, 0);
-      return `${totalHours} 小时`;
+      const totalHours = row.features.reduce((sum: number, feature: { hours: number }) => sum + feature.hours, 0)
+      return `${totalHours} 小时`
     }
     return `${row.hours} 小时`;
   },
@@ -12,13 +14,15 @@ export default {
     }
     return '';
   },
-  create: function(projectId: number, module: any) {
-
+  create: async function(projectId: string, module: any) {
+    module.projectId = projectId
+    return (await $axios.post('/module/create', module)).data
   },
-  modify: function(id: string, module: any) {
-
+  modify: async function(id: string, module: any) {
+    module.id = id
+    return (await $axios.post('/module/modify', module)).data
   },
-  remove: function(id: string) {
-
+  remove: async function(id: string) {
+    return (await $axios.get('/module/remove/' + id)).data
   }
 }

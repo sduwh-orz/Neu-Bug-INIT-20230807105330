@@ -1,65 +1,66 @@
-import fakeData from '@/api/fakeData.ts';
-import pagination from '@/api/pagination.ts'
+import utils from '@/api/utils.ts'
+import { $axios } from '@/api/axios.ts'
+import type { User } from '@/types/user'
+import type { Response } from '@/types/response'
+import type { Pagination } from '@/types/pagination'
+import type {Type} from "@/types/type";
 
 export default {
-  roles: ['普通用户', '管理员'],
-  get: function (id: number) {
-    if (id)
-      return this.all().find(user => {
-        return user.id == id
-      })
-    return undefined
+  empty: {
+    id: '',
+    username: '',
+    realName: '',
+    role: utils.emptyType,
+    email: ''
+  } as User,
+  get: async function (id: string): Promise<User> {
+    return (await $axios.get('/user/' + id)).data
   },
-  search: function (
+  search: async function (
     query: any,
     page: number,
     size: number
-  ) {
-    let filtered = this.all()
-    filtered = query.username ? filtered.filter(user => {
-      return user.username.indexOf(query.username) != -1
-    }): filtered
-    filtered = query.realName ? filtered.filter(user => {
-      return user.realName.indexOf(query.realName) != -1
-    }): filtered
-    filtered = query.role ? filtered.filter(user => {
-      return user.role == query.role
-    }): filtered
-    filtered = query.email ? filtered.filter(user => {
-      return user.email.indexOf(query.email) != -1
-    }): filtered
-    return pagination.getDataWithPageInfo(filtered, page, size)
+  ): Promise<Pagination<User>> {
+    query.page = page
+    query.size = size
+    return (await $axios.post('/user/search', query)).data
   },
-  all: function () {
-    return fakeData.users
+  all: async function (): Promise<User[]> {
+    return (await $axios.get('/user/all')).data
   },
-  create: function (user: any) {
-    // Do something
+  create: async function (user: any): Promise<Response> {
+    return (await $axios.post('/user/create', user)).data
   },
-  modify: function (user: any) {
-    // Do something
+  modify: async function (user: any): Promise<Response> {
+    return (await $axios.post('/user/modify', user)).data
   },
-  remove: function (id: number) {
-    // Do something
+  remove: async function (id: string): Promise<Response> {
+    return (await $axios.get('/user/remove/' + id)).data
   },
-  login: function (username: string, password: string) {
-    return !!this.all().find(u => {
-      return u.username == username && u.password == password
-    });
-
+  login: async function (username: string, password: string): Promise<Response> {
+    return (await $axios.post('/user/login', {
+      username: username,
+      password: password
+    })).data
   },
-  getLoggedInUser: function () {
-    let username = localStorage.getItem('username')
-    let password = localStorage.getItem('password')
-    return this.all().find(u => {
-      return u.username == username && u.password == password
-    })
+  logout: async function (): Promise<Response> {
+    return (await $axios.get('/user/logout')).data
   },
-  getAllRealNames: function() {
-    return this.all().map(user => ({
+  password: async function (previous: string, password: string): Promise<Response> {
+    return (await $axios.post('/user/password', { previous, password })).data
+  },
+  getLoggedInUser: async function (): Promise<User> {
+    return (await $axios.get('/user/me')).data
+  },
+  getAllRealNames: async function(): Promise<{key: string, label: string, value: string}[]> {
+    const users = await this.all();
+    return users.map(user => ({
       key: user.id,
       label: user.realName,
-      value: user.realName
-    }));
-  }
+      value: user.id
+    }))
+  },
+  getRoles: async function (): Promise<Type[]> {
+    return (await $axios.get('/user/roles')).data
+  },
 }

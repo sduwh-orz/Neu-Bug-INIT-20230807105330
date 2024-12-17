@@ -2,36 +2,42 @@
 import { EditPen } from '@element-plus/icons-vue';
 import BreadCrumbNav from "@/components/BreadCrumbNav.vue";
 import { reactive, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import user from '@/api/user.ts'
 import utils from '@/api/utils.ts'
 
 const moduleName = 'user'
 const formData = reactive({
+  id: '',
   username: '',
-  password: '',
   realName: '',
   role: '',
   email: ''
 })
+const roles = reactive([])
 const formDataRef = ref()
 
 export default {
   components: {EditPen, BreadCrumbNav},
-  mounted() {
-    this.id = this.$route.query.id ? Number(this.$route.query.id): 1
-    let userInfo = user.get(this.id)
-    if (userInfo) {
-      formData.username = userInfo.username
-      formData.realName = userInfo.realName
-      formData.role = userInfo.role
-      formData.email = userInfo.email
-    }
-  },
   setup() {
+    user.getRoles().then(response => {
+      roles.length = 0
+      Object.assign(roles, utils.toOptions(response, true))
+    })
+
+    let route = useRoute()
+    formData.id = route.query.id ? route.query.id.toString() : ''
+    user.get(formData.id).then(userInfo => {
+      if (userInfo) {
+        formData.username = userInfo.username
+        formData.realName = userInfo.realName
+        formData.role = String(userInfo.role.id)
+        formData.email = userInfo.email
+      }
+    })
     return {
-      id: ref(1),
-      roles: utils.toOptions(user.roles, true),
+      roles,
       formData: formData,
       formDataRef: formDataRef,
       formRules: reactive({
@@ -70,14 +76,18 @@ export default {
     handleSubmit() {
       try {
         formDataRef.value.validate().then(() => {
-          user.modify(formData)
-          ElMessage.success('修改成功')
-          formDataRef.value.resetFields()
-          this.$router.push('/' + moduleName + '/list')
+          user.modify(formData).then((response) => {
+            if (response.success) {
+              ElMessage.success('修改成功')
+              formDataRef.value.resetFields()
+              this.$router.push('/' + moduleName + '/list')
+            } else {
+              ElMessage.error('修改失败')
+            }
+          })
         })
       } catch (error) {
         ElMessage.error('请检查输入内容')
-        console.log(error)
       }
     },
     handleReturn() {
@@ -107,9 +117,6 @@ export default {
     >
       <el-form-item label="用户名" prop="username">
         <el-input v-model="formData.username"/>
-      </el-form-item>
-      <el-form-item label="密码" prop="password">
-        <el-input v-model="formData.password" type="password" show-password/>
       </el-form-item>
       <el-form-item label="真实姓名" prop="realName">
         <el-input v-model="formData.realName"/>

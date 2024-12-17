@@ -14,13 +14,18 @@ const formData = reactive({
   role: '',
   email: ''
 })
+const roles = reactive([])
 const formDataRef = ref()
 
 export default {
   components: {EditPen, BreadCrumbNav},
   setup() {
+    user.getRoles().then(response => {
+      roles.length = 0
+      Object.assign(roles, utils.toOptions(response, true))
+    })
     return {
-      roles: utils.toOptions(user.roles, true),
+      roles,
       formData: formData,
       formDataRef: formDataRef,
       formRules: reactive({
@@ -59,14 +64,18 @@ export default {
     handleSubmit() {
       try {
         formDataRef.value.validate().then(() => {
-          user.create(formData)
-          ElMessage.success('添加成功')
-          formDataRef.value.resetFields()
-          this.$router.push('/' + moduleName + '/list')
+          user.create(formData).then((response) => {
+            if (response.success) {
+              ElMessage.success('添加成功')
+              formDataRef.value.resetFields()
+              this.$router.push('/' + moduleName + '/list')
+            } else {
+              ElMessage.error('添加失败')
+            }
+          })
         })
       } catch (error) {
         ElMessage.error('请检查输入内容')
-        console.log(error)
       }
     },
     handleReturn() {

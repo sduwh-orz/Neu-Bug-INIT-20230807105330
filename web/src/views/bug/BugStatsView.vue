@@ -1,51 +1,49 @@
 <script lang="ts">
 import { reactive, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { ArrowLeft, CirclePlus, FolderOpened, Edit } from '@element-plus/icons-vue'
-import type { Module } from '@/types/module'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import project from '@/api/project'
 import module from '@/api/module'
 import bug from '@/api/bug.ts'
 
+const id = ref('')
+let nowProject = reactive(project.empty)
+let stats = reactive({
+  grade: [],
+  status: [],
+  developers: [],
+  reporters: []
+})
+
 export default {
   computed: {
     Edit() {
-      return Edit;
-    }
+      return Edit
+    },
   },
   components: {
     BreadCrumbNav, FolderOpened, ArrowLeft, CirclePlus, Edit
   },
-  data() {
+  setup() {
+    let route = useRoute()
+    id.value = route.query.id ? route.query.id.toString() : ''
+    project.get(id.value).then(response => {
+      Object.assign(nowProject, response)
+    })
+    bug.stats(id.value).then(response => {
+      Object.assign(stats, response)
+    })
     return {
+      id,
+      nowProject,
+      stats,
       module,
-      id: ref(1),
-      project: reactive({
-        name: '',
-        modules: [] as Module[]
-      }),
-      stats: reactive({
-        grade: [],
-        status: [],
-        developers: [],
-        reporters: []
-      }),
       treeProps: reactive({
         children: 'features',
         hasChildren: 'hasChildren'
       }),
     }
-  },
-  mounted() {
-    this.id = this.$route.query.id ? Number(this.$route.query.id): 1
-    this.project = project.get(this.id)
-    this.project?.modules.forEach((module: any) => {
-      module.uniqueName = module.name;
-      module.features.forEach((feature: { uniqueName: string; name: string; }) => {
-        feature.uniqueName = module.name + '/' + feature.name;
-      })
-    })
-    this.stats = bug.stats(this.id)
   },
   methods: {
     bugFormatter: function(row: any) {
@@ -73,15 +71,15 @@ export default {
           <el-text
               style="font-size: 20px; font-weight: bold;"
           >
-            [ {{ project.name }} ] Bug 统计
+            [ {{ nowProject.name }} ] Bug 统计
           </el-text>
         </div>
       </div>
     </template>
     <h1>按功能统计</h1>
     <el-table
-        :data="project.modules"
-        row-key="uniqueName"
+        :data="nowProject.modules"
+        row-key="id"
         empty-text="暂无数据"
         border
         default-expand-all

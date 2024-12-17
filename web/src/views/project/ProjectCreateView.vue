@@ -14,11 +14,17 @@ const formData = reactive({
   owner: ''
 })
 const formDataRef = ref()
+const users = reactive([])
 
 export default {
   components: {EditPen, BreadCrumbNav},
   setup() {
+    user.all().then(data => {
+      users.length = 0
+      Object.assign(users, data)
+    })
     return {
+      users,
       formData: formData,
       formDataRef: formDataRef,
       formRules: reactive({
@@ -44,21 +50,24 @@ export default {
           }
         ]
       }),
-      users: user.all()
     }
   },
   methods: {
     handleSubmit() {
       try {
         formDataRef.value.validate().then(() => {
-          project.create(formData)
-          ElMessage.success('添加成功')
-          formDataRef.value.resetFields()
-          this.$router.push('/' + moduleName + '/list')
+          project.create(formData).then(response => {
+            if (response.success) {
+              ElMessage.success('添加成功')
+              formDataRef.value.resetFields()
+              this.$router.push('/' + moduleName + '/list')
+            } else {
+              ElMessage.error('添加失败')
+            }
+          })
         })
       } catch (error) {
         ElMessage.error('请检查输入内容')
-        console.log(error)
       }
     },
     handleReturn() {

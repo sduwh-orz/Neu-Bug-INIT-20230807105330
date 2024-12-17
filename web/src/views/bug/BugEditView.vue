@@ -1,14 +1,15 @@
 <script lang="ts">
-import { EditPen } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { EditPen } from '@element-plus/icons-vue'
 import type { Module } from '@/types/module'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import bug from '@/api/bug.ts'
-import user from '@/api/user.ts'
 import utils from '@/api/utils.ts'
 
 const moduleName = 'bug'
+const grades = reactive([])
 const formData = reactive({
   name: '',
   grade: '',
@@ -17,11 +18,35 @@ const formData = reactive({
   description: '',
   comment: ''
 })
+const project = reactive({
+  id: '',
+  name: '',
+  modules: ([] as Module[])
+})
+const module = reactive({
+  id: ''
+})
+const id = ref('')
 const formDataRef = ref()
 
 export default {
   components: {EditPen, BreadCrumbNav},
   setup() {
+    let params = useRoute().query
+    id.value = params.id ? params.id.toString() : ''
+    bug.getGrades().then((result) => {
+      grades.length = 0
+      Object.assign(grades, utils.toOptions(result, true))
+    })
+    bug.get(id.value).then((result) => {
+      Object.assign(project, result.feature.module.project)
+      Object.assign(module, result.feature.module)
+      formData.name = result.name
+      formData.grade = String(result.grade.id)
+      formData.module = result.feature.module.id
+      formData.feature = result.feature.id
+      formData.description = result.description
+    })
     return {
       formData: formData,
       formDataRef: formDataRef,
@@ -58,42 +83,17 @@ export default {
     }
   },
   data() {
-    let params = this.$route.query
     return {
-      grades: utils.toOptions(bug.grades, true),
-      id: ref(params.id ? params.id.toString() : ''),
-      project: reactive({
-        id: 0,
-        name: '',
-        modules: ([] as Module[])
-      }),
-      module: reactive({
-        features: []
-      }),
-      user: reactive({
-        id: 0
-      }),
-    }
-  },
-  mounted() {
-    let result = bug.get(this.id)
-    let now = result.bug
-    this.project = result.project
-    this.module = result.module
-    this.formData.name = now.name
-    this.formData.grade = now.grade
-    this.formData.module = result.module.id
-    this.formData.feature = result.feature.id
-    this.formData.description = result.description
-    let nowUser = user.getLoggedInUser()
-    if (nowUser) {
-      Object.assign(this.user, nowUser)
+      id,
+      grades,
+      project,
+      module,
     }
   },
   computed: {
     features() {
       if (this.formData.module != '') {
-        return utils.toOptions(this.module.features.map((f: any) => f.name), true)
+        return utils.toOptions(this.project.modules.find(m=>{return m.id == this.module.id}).features, true)
       }
       return utils.toOptions([], true)
     },
@@ -102,21 +102,25 @@ export default {
     handleSubmit() {
       try {
         formDataRef.value.validate().then(() => {
-          bug.modify(this.id, undefined, undefined, formData.comment, this.user.id, formData)
-          ElMessage.success('修改成功')
-          formDataRef.value.resetFields()
-          this.$router.push('/' + moduleName + '/bugs?id='+this.project.id)
+          bug.modify(this.id, formData.comment, formData).then((result) => {
+            if (result.success) {
+              ElMessage.success('修改成功')
+              formDataRef.value.resetFields()
+              this.$router.push('/' + moduleName + '/bugs?id='+this.project.id)
+            } else {
+              ElMessage.error('修改失败')
+            }
+          })
         })
       } catch (error) {
         ElMessage.error('请检查输入内容')
-        console.log(error)
       }
     },
     handleReturn() {
       this.$router.go(-1)
     },
     clearFeature() {
-      this.formData.feature =''
+      this.formData.feature = ''
     },
   }
 }
@@ -146,10 +150,10 @@ export default {
       <el-form-item label="Bug 等级" prop="grade">
         <el-select v-model="formData.grade" placeholder="请选择..." no-data-text="暂无等级">
           <el-option
-              v-for="m in grades"
-              :key="m.value"
-              :label="m.name"
-              :value="m.name"
+              v-for="g in grades"
+              :key="g.value"
+              :label="g.name"
+              :value="g.value"
           />
         </el-select>
       </el-form-item>

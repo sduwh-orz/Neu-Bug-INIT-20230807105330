@@ -1,32 +1,21 @@
-import project from '@/api/project.ts'
+import {$axios} from "@/api/axios.ts";
 
 export default {
-  search: function (
-    keyword: string,
+  search: async function (
+    name: string,
     page: number,
     size: number
   ) {
-    let result = project.search(keyword, page, size);
-    result.data.forEach((project: any) => {
-      project.features = project.modules.map((module: any) =>
-        module.features.length
-      ).reduce((sum: number, count: number) =>
-        sum + count, 0
-      )
-      project.developers = new Set(
-        project.modules.map((module: any) =>
-          module.features.map((module: any) =>
-            module.owner
-          )
-        ).flat().filter((name: string) => name.length > 0)
-      ).size
-    })
-    return result
+    return (await $axios.post('/project/task_search',{
+      name, page, size
+    })).data
   },
-  modify(
-    projectId: number, 
-    form: any
+  modify: async function (
+    projectId: string,
+    modules: any
   ) {
-    // Do something
+    return (await $axios.post('/feature/assign',{
+      projectId, modules
+    })).data
   }
 }

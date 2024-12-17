@@ -1,15 +1,16 @@
 <script lang="ts">
-import { EditPen } from '@element-plus/icons-vue'
-import BreadCrumbNav from "@/components/BreadCrumbNav.vue"
-import { reactive, ref } from 'vue'
+import {reactive, ref} from 'vue'
+import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import type { Module } from '@/types/module'
+import { EditPen } from '@element-plus/icons-vue'
+import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import project from '@/api/project.ts'
 import bug from '@/api/bug.ts'
-import user from '@/api/user.ts'
-import utils from "@/api/utils.ts"
+import utils from '@/api/utils.ts'
 
 const moduleName = 'bug'
+const id = ref('')
+const grades = reactive([])
 const formData = reactive({
   name: '',
   grade: '',
@@ -18,10 +19,20 @@ const formData = reactive({
   description: '',
 })
 const formDataRef = ref()
+const nowProject = reactive(project.empty)
 
 export default {
   components: {EditPen, BreadCrumbNav},
   setup() {
+    id.value = useRoute().query.id ?.toString()
+    bug.getGrades().then((result) => {
+      grades.length = 0
+      Object.assign(grades, utils.toOptions(result, true))
+    })
+    project.get(id.value).then((result) => {
+      if (result)
+        Object.assign(nowProject, result)
+    })
     return {
       formData: formData,
       formDataRef: formDataRef,
@@ -58,32 +69,19 @@ export default {
     }
   },
   data() {
-    let params = this.$route.query
     return {
-      grades: utils.toOptions(bug.grades, true),
-      id: ref(params.id ? Number(params.id) : 1),
-      project: reactive({
-        name: '',
-        modules: ([] as Module[])
-      }),
-      user: reactive({
-        id: 0
-      }),
+      grades,
+      id,
+      project: nowProject
     }
   },
   mounted() {
-    let nowProject = project.get(this.id)
-    if (nowProject)
-      this.project = nowProject
-    let nowUser = user.getLoggedInUser()
-    if (nowUser)
-      this.user = nowUser
   },
   computed: {
     features() {
       if (this.formData.module != '') {
-        let m = this.project.modules.find(m => { return m.name == this.formData.module })
-        return utils.toOptions(m?.features.map(f => f.name), true)
+        let m = this.project.modules.find(m => { return m.id == this.formData.module })
+        return utils.toOptions(m?.features, true)
       }
       return utils.toOptions([], true)
     },
@@ -92,21 +90,25 @@ export default {
     handleSubmit() {
       try {
         formDataRef.value.validate().then(() => {
-          bug.create(formData, this.user.id)
-          ElMessage.success('添加成功')
-          formDataRef.value.resetFields()
-          this.$router.push('/' + moduleName + '/bugs?id='+this.id)
+          bug.create(formData).then((response) => {
+            if (response.success) {
+              ElMessage.success('添加成功')
+              formDataRef.value.resetFields()
+              this.$router.push('/' + moduleName + '/bugs?id='+this.id)
+            } else {
+              ElMessage.error('添加失败')
+            }
+          })
         })
       } catch (error) {
         ElMessage.error('请检查输入内容')
-        console.log(error)
       }
     },
     handleReturn() {
       this.$router.go(-1)
     },
     clearFeature() {
-      this.formData.feature =''
+      this.formData.feature = ''
     },
   }
 }
@@ -139,7 +141,7 @@ export default {
               v-for="m in grades"
               :key="m.value"
               :label="m.name"
-              :value="m.name"
+              :value="m.value"
           />
         </el-select>
       </el-form-item>

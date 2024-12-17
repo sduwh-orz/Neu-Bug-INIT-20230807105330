@@ -1,40 +1,41 @@
-import fakeData from '@/api/fakeData.ts'
-import pagination from '@/api/pagination.ts'
-import type {Project} from '@/types/project'
+import type { Project } from '@/types/project'
+import type { Module } from '@/types/module'
+import type { Response } from '@/types/response'
+import type { Pagination } from '@/types/pagination'
+import {$axios} from '@/api/axios.ts'
+import user from '@/api/user.ts'
 
 export default {
-  get: function (id: number) {
-    return this.all().find(data => data.id == id)
+  empty: {
+    id: '',
+    keyword: '',
+    name: '',
+    description: '',
+    owner: user.empty,
+    created: '',
+    totalFeatures: null,
+    totalDevelopers: null,
+    modules: [] as Module[],
+  } as Project,
+  get: async function (id: string): Promise<Project> {
+    return (await $axios.get('/project/' + id)).data
   },
-  search: function (
-      keyword: string,
+  search: async function (
+      name: string,
       page: number,
       size: number
-  ) {
-    let filtered = keyword ? this.all().filter((item)=>{
-      return item.name.indexOf(keyword) != -1
-    }) : fakeData.projects
-    return pagination.getDataWithPageInfo(filtered, page, size)
+  ): Promise<Pagination<any>> {
+    return (await $axios.post('/project/search',{
+      name, page, size
+    })).data
   },
-  all: function () {
-    let result = fakeData.projects
-    result.forEach(project => {
-      project.modules.forEach(module => {
-        module.id = module.name
-        module.features.forEach((feature: any) => {
-          feature.id = feature.name
-        })
-      })
-    })
-    return result
+  create: async function (project: any): Promise<Response> {
+    return (await $axios.post('/project/create', project)).data
   },
-  create: function (project: Project | any) {
-    // Do something
+  modify: async function (project: any): Promise<Response> {
+    return (await $axios.post('/project/modify', project)).data
   },
-  modify: function (project: Project | any) {
-    // Do something
-  },
-  remove: function (id: number) {
-    // Do something
+  remove: async function (id: string): Promise<Response> {
+    return (await $axios.get('/project/remove/' + id)).data
   },
 }

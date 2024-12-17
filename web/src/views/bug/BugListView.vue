@@ -1,9 +1,9 @@
 <script lang="ts">
 import { defineComponent, reactive, ref } from 'vue'
-import { ElMessage } from "element-plus"
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { Edit, Select, Memo, SwitchButton, Search, List } from '@element-plus/icons-vue'
 import type { Module } from '@/types/module'
-import type { User } from '@/types/user'
 import type { Option } from '@/types/option.ts'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import Pagination from '@/components/Pagination.vue'
@@ -13,13 +13,39 @@ import utils from '@/api/utils.ts'
 import project from '@/api/project.ts'
 
 const refComment = ref()
+const grades = reactive([])
+const statusTypes = reactive([])
+const solveTypes = reactive([])
+const users = reactive([])
+const data = reactive([])
+const modules = reactive([] as Option[])
+const nowProject = reactive({
+  id: '',
+  modules: [] as Module[]
+})
+const query = reactive({
+  id: '',
+  name: '',
+  grade: '',
+  module: '',
+  feature: '',
+  developer: '',
+  reporter: '',
+  status: '',
+  solveType: '',
+})
 
 export default defineComponent({
   computed: {
+    loggedInUser() {
+      return this.$store.state.user
+    },
     features() {
       if (this.query.module) {
-        let m = this.project.modules.find((m: any) => { return m.name == this.query.module })
-        return utils.toOptions(m?.features.map((f: any) => f.name))
+        console.log(this.project)
+        let nowModule = this.project.modules.find((m: any) => { return m.id == this.query.module })
+        if (nowModule)
+          return utils.toOptions(nowModule?.features)
       }
       return utils.toOptions([])
     },
@@ -37,18 +63,44 @@ export default defineComponent({
     },
     Search() {
       return Search
-    }
+    },
   },
   components: { Pagination, List, BreadCrumbNav, Edit, Select, Memo, SwitchButton, Search },
-  mounted() {
-    this.page.update()
-  },
   setup() {
+    bug.getGrades().then((result) => {
+      grades.length = 0
+      Object.assign(grades, utils.toOptions(result))
+    })
+    bug.getStatusTypes().then((result) => {
+      statusTypes.length = 0
+      Object.assign(statusTypes, utils.toOptions(result))
+    })
+    bug.getSolveTypes().then((result) => {
+      solveTypes.length = 0
+      Object.assign(solveTypes, utils.toOptions(result))
+    })
+
+    user.all().then(data => {
+      users.length = 0
+      Object.assign(users, [{id: '', realName: '全部'}].concat(data))
+    })
+
+    let id = useRoute().query.id ?.toString()
+    if (id == null) {
+      useRouter().push('/project/list')
+    }
+
+    project.get(id).then(p => {
+      Object.assign(nowProject, p)
+      modules.length = 0
+      Object.assign(modules, utils.toOptions(p.modules))
+    })
+
     return {
       page: ref(),
       dialogs: reactive({
         solve: {
-          solveType: '解决',
+          solveType: '',
           comment: '',
           toggle: false,
           rules: reactive({
@@ -86,54 +138,26 @@ export default defineComponent({
     return {
       gradeColor: bug.gradeColor,
       statusColor: bug.statusColor,
-      grades: utils.toOptions(bug.grades),
-      statusTypes: utils.toOptions(bug.statusTypes),
-      solveTypes: utils.toOptions(bug.solveTypes),
-      data: reactive([]),
-      project: reactive({
-        id: 0,
-        modules: [] as Module[]
-      }),
-      modules: reactive([] as Option[]),
-      users: reactive([] as User[]),
-      query: reactive({
-        id: 1,
-        name: '',
-        grade: '',
-        module: '',
-        feature: '',
-        owner: undefined,
-        reporter: undefined,
-        status: '',
-        solveType: '',
-      }),
+      grades,
+      statusTypes,
+      solveTypes,
+      users,
+      modules,
+      data,
+      query,
+      project: nowProject,
       selectedItem: {
         id: ''
       },
     }
   },
   methods: {
-    updateData() {
-      let result = bug.searchInProject(this.query, this.page.page, this.page.size)
-      this.data.length = 0
-      Object.assign(this.data, result.data)
+    async updateData() {
+      let result = await bug.searchInProject(query, this.page.page, this.page.size)
+      data.length = 0
+      Object.assign(data, result.data)
 
-      let p = project.get(this.query.id)
-      if (p) {
-        this.project = p
-        this.modules.length = 0
-        Object.assign(this.modules, utils.toOptions(p.modules.map( m => m.name )))
-      }
-
-      let users: any[] = user.all()
-      this.users.length = 0
-      Object.assign(this.users, [{id: '', realName: '全部'}].concat(users))
-
-      return {
-        total: result.total,
-        start: result.start,
-        end: result.end,
-      }
+      return result
     },
     clearFeature() {
       this.query.feature =''
@@ -167,34 +191,37 @@ export default defineComponent({
     },
     handleSubmitSolve() {
       if (this.selectedItem) {
-        bug.modify(
+        bug.solve(
             this.selectedItem.id,
-            '已解决',
             this.dialogs.solve.solveType,
-            this.dialogs.solve.comment,
-            undefined,
-            undefined
-        )
-        this.dialogs.solve.toggle = false
-        ElMessage.success('提交成功')
-        this.$router.go(0)
+            this.dialogs.solve.comment
+        ).then((response) => {
+          if (response.success) {
+            this.dialogs.solve.toggle = false
+            ElMessage.success('提交成功')
+            this.$router.go(0)
+          } else {
+            ElMessage.error('提交失败')
+          }
+        })
       }
     },
     handleSubmitComment() {
       if (this.selectedItem) {
         try {
           refComment.value.validate().then(() => {
-            bug.modify(
+            bug.comment(
                 this.selectedItem.id,
-                undefined,
-                undefined,
-                this.dialogs.comment.comment,
-                undefined,
-                undefined
-            )
-            this.dialogs.comment.toggle = false
-            ElMessage.success('提交成功')
-            this.$router.go(0)
+                this.dialogs.comment.comment
+            ).then((response) => {
+              if (response.success) {
+                this.dialogs.comment.toggle = false
+                ElMessage.success('提交成功')
+                this.$router.go(0)
+              } else {
+                ElMessage.error('提交失败')
+              }
+            })
           })
         } catch (error) {
           ElMessage.error('请输入备注')
@@ -203,17 +230,18 @@ export default defineComponent({
     },
     handleSubmitClose() {
       if (this.selectedItem) {
-        bug.modify(
+        bug.close(
             this.selectedItem.id,
-            '已关闭',
-            undefined,
-            this.dialogs.close.comment,
-            undefined,
-            undefined
-        )
-        this.dialogs.close.toggle = false
-        ElMessage.success('提交成功')
-        this.$router.go(0)
+            this.dialogs.close.comment
+        ).then((response) => {
+          if (response.success) {
+            this.dialogs.close.toggle = false
+            ElMessage.success('提交成功')
+            this.$router.go(0)
+          } else {
+            ElMessage.error('提交失败')
+          }
+        })
       }
     },
     handleAllBugs() {
@@ -221,18 +249,16 @@ export default defineComponent({
       this.page.update()
     },
     handleMyBugs() {
-      let nowUser = user.getLoggedInUser()
       this.clearAll()
-      if (nowUser) {
-        this.query.owner = nowUser.id
+      if (this.loggedInUser) {
+        this.query.developer = this.loggedInUser.id
       }
       this.page.update()
     },
     handleMyReports() {
-      let nowUser = user.getLoggedInUser()
       this.clearAll()
-      if (nowUser) {
-        this.query.reporter = nowUser.id
+      if (this.loggedInUser) {
+        this.query.reporter = this.loggedInUser.id
       }
       this.page.update()
     },
@@ -266,7 +292,7 @@ export default defineComponent({
             >
               <el-option
                   v-for="g in grades"
-                  :key="g.name"
+                  :key="g.value"
                   :label="g.name"
                   :value="g.value"
               />
@@ -313,7 +339,7 @@ export default defineComponent({
         <el-col :span="11">
           <el-form-item label="开发人" label-width="100px">
             <el-select
-                v-model="query.owner"
+                v-model="query.developer"
                 class="m-2"
                 placeholder="全部"
             >
@@ -397,31 +423,31 @@ export default defineComponent({
       </div>
     </template>
     <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录">
-      <el-table-column align="center" prop="index" label="序号" width="80"/>
+      <el-table-column align="center" type="index" label="序号" width="80"/>
       <el-table-column align="center" prop="name" label="Bug 标题"/>
-      <el-table-column align="center" prop="grade" label="Bug 等级">
+      <el-table-column align="center" prop="grade.name" label="Bug 等级">
         <template #default="scope">
           <el-tag
-              :type="gradeColor[scope.row.grade]"
+              :type="gradeColor[scope.row.grade.name]"
               effect="light"
           >
-            {{ scope.row.grade }}
+            {{ scope.row.grade.name }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="owner" label="开发人"/>
-      <el-table-column align="center" prop="reporter" label="报告人"/>
-      <el-table-column align="center" prop="status" label="Bug 状态">
+      <el-table-column align="center" prop="developer.realName" label="开发人"/>
+      <el-table-column align="center" prop="reporter.realName" label="报告人"/>
+      <el-table-column align="center" prop="status.name" label="Bug 状态">
         <template #default="scope">
           <el-tag
-              :type="statusColor[scope.row.status]"
+              :type="statusColor[scope.row.status.name]"
               effect="light"
           >
-            {{ scope.row.status }}
+            {{ scope.row.status.name }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="solveType" label="解决形式"/>
+      <el-table-column align="center" prop="solveType.name" label="解决形式"/>
       <el-table-column align="center" label="操作" width="210">
         <template #default="scope">
           <el-tooltip

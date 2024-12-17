@@ -7,6 +7,8 @@ import user from '@/api/user.ts'
 import utils from '@/api/utils.ts'
 import {ElMessage} from "element-plus";
 
+const roles = reactive([])
+
 export default defineComponent({
   computed: {
     Delete() {
@@ -17,17 +19,18 @@ export default defineComponent({
     }
   },
   components: { Pagination, List, Delete, Edit, BreadCrumbNav, Search },
-  mounted() {
-    this.page.update()
-  },
   setup() {
+    user.getRoles().then((result) => {
+      roles.length = 0
+      Object.assign(roles, utils.toOptions(result))
+    })
     return {
       page: ref()
     }
   },
   data() {
     return {
-      roles: utils.toOptions(user.roles),
+      roles: roles,
       dialogToggle: ref(false),
       data: reactive([]),
       query: reactive({
@@ -37,20 +40,17 @@ export default defineComponent({
         email: ''
       }),
       selectedItem: {
-        id: 0
+        id: ''
       },
     }
   },
   methods: {
-    updateData() {
-      let result = user.search(this.query, this.page.page, this.page.size)
+    async updateData() {
+      let result = await user.search(this.query, this.page.page, this.page.size)
       this.data.length = 0
       Object.assign(this.data, result.data)
-      return {
-        total: result.total,
-        start: result.start,
-        end: result.end,
-      }
+
+      return result
     },
     handleSearch() {
       this.page.update()
@@ -59,7 +59,7 @@ export default defineComponent({
       this.page.jump('/create')
     },
     handleEdit(_: number, row: any) {
-      this.page.jump('/edit?id=' +  row.id)
+      this.page.jump('/edit?id=' + row.id)
     },
     handleDelete(_: number, row: any) {
       this.dialogToggle = true
@@ -139,10 +139,10 @@ export default defineComponent({
       </div>
     </template>
     <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录">
-      <el-table-column align="center" prop="id" label="序号" width="80"/>
+      <el-table-column align="center" type="index" label="序号" width="80"/>
       <el-table-column align="center" prop="username" label="用户名"/>
       <el-table-column align="center" prop="realName" label="真实姓名"/>
-      <el-table-column align="center" prop="role" label="角色"/>
+      <el-table-column align="center" prop="role.name" label="角色"/>
       <el-table-column align="center" prop="email" label="邮箱"/>
       <el-table-column align="center" label="操作" width="130">
         <template #default="scope">

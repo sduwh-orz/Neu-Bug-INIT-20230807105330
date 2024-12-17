@@ -110,10 +110,22 @@ const router = createRouter({
         {
           path: 'info',
           component: () => import('@/views/bug/BugInfoView.vue'),
-        },
+        }
       ]
     },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  const isLogged = localStorage.getItem('loggedIn')
+  if (to.matched.some(record => record.meta.notLoggedIn == null) && !isLogged) {
+    next({
+      path: '/login',
+      query: { redirect: to.fullPath }
+    })
+  } else {
+    next()
+  }
 })
 
 export default router

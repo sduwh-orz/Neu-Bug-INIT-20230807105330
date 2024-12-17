@@ -36,14 +36,20 @@ export default {
       refFeatureModify: refFeatureModify,
     }
   },
+  mounted() {
+    this.id = this.$route.query.id ?.toString()
+    project.get(this.id).then(response => {
+      this.currentProject = response
+    })
+  },
   data() {
     return {
-      id: 0,
-      module,
+      id: ref(''),
       currentProject: reactive({
         name: '',
         modules: ([] as Module[])
       }),
+      module,
       treeProps: reactive({
         children: 'features',
         hasChildren: 'hasChildren'
@@ -69,7 +75,7 @@ export default {
         },
         featureCreate: {
           name: '',
-          hours: 0,
+          hours: 0.0,
           toggle: false,
           rules: {
             name: [
@@ -82,7 +88,7 @@ export default {
         },
         featureModify: {
           name: '',
-          hours: 0,
+          hours: 0.0,
           toggle: false,
           rules: {
             name: [
@@ -98,19 +104,6 @@ export default {
         id: ''
       },
     }
-  },
-  mounted() {
-    this.id = Number(this.$route.query.id)
-    let nowProject = project.get(this.id)
-    if (nowProject) {
-      this.currentProject = nowProject
-    }
-    this.currentProject?.modules.forEach((module: any) => {
-      module.uniqueName = module.name
-      module.features.forEach((feature: any) => {
-        feature.uniqueName = module.name + '/' + feature.name
-      })
-    })
   },
   methods: {
     goBack() {
@@ -197,11 +190,16 @@ export default {
     submitCreateModuleForm() {
       try {
         refModuleCreate.value.validate((valid: any) => {
-          if(valid) {
-            module.create(this.id, this.dialogs.moduleCreate)
-            ElMessage.success('添加成功')
-            this.closeDialogModuleCreate()
-            this.$router.go(0)
+          if (valid) {
+            module.create(this.id, this.dialogs.moduleCreate).then(response => {
+              if (response.success) {
+                ElMessage.success('添加成功')
+                this.closeDialogModuleCreate()
+                this.$router.go(0)
+              } else {
+                ElMessage.error('添加失败')
+              }
+            })
           } else {
             ElMessage.warning('请检查表单所填写内容')
             return false
@@ -209,17 +207,21 @@ export default {
         })
       } catch(error) {
         ElMessage.error('请检查输入内容')
-        console.log(error)
       }
     },
     submitModifyModuleForm() {
       try {
         refModifyModule.value.validate((valid: any) => {
           if (valid) {
-            module.modify(this.selectedItem.id, this.dialogs.moduleModify)
-            ElMessage.success('修改成功')
-            this.closeDialogModuleModify()
-            this.$router.go(0)
+            module.modify(this.selectedItem.id, this.dialogs.moduleModify).then(response => {
+              if (response.success) {
+                ElMessage.success('修改成功')
+                this.closeDialogModuleModify()
+                this.$router.go(0)
+              } else {
+                ElMessage.error('修改失败')
+              }
+            })
           } else {
             ElMessage.warning('请检查表单所填写内容')
             return false
@@ -227,17 +229,21 @@ export default {
         })
       } catch(error) {
         ElMessage.error('请检查输入内容')
-        console.log(error)
       }
     },
     submitCreateFeatureForm() {
       try {
         refFeatureCreate.value.validate((valid: any) => {
           if(valid) {
-            feature.create(this.selectedItem.id, this.dialogs.featureCreate)
-            ElMessage.success('添加成功')
-            this.closeDialogFeatureCreate()
-            this.$router.go(0)
+            feature.create(this.selectedItem.id, this.dialogs.featureCreate).then(response => {
+              if (response.success) {
+                ElMessage.success('添加成功')
+                this.closeDialogFeatureCreate()
+                this.$router.go(0)
+              } else {
+                ElMessage.error('添加失败')
+              }
+            })
           } else {
             ElMessage.warning('请检查表单所填写内容')
             return false
@@ -245,17 +251,21 @@ export default {
         })
       } catch(error) {
         ElMessage.error('请检查输入内容')
-        console.log(error)
       }
     },
     submitModifyFeatureForm() {
       try {
         refFeatureModify.value.validate((valid: any) => {
           if(valid) {
-            feature.modify(this.selectedItem.id, this.dialogs.featureModify)
-            ElMessage.success('修改成功')
-            this.closeDialogFeatureModify()
-            this.$router.go(0)
+            feature.modify(this.selectedItem.id, this.dialogs.featureModify).then(response => {
+              if (response.success) {
+                ElMessage.success('修改成功')
+                this.closeDialogFeatureModify()
+                this.$router.go(0)
+              } else {
+                ElMessage.error('修改失败')
+              }
+            })
           } else {
             ElMessage.warning('请检查表单所填写内容')
             return false
@@ -263,7 +273,6 @@ export default {
         })
       } catch(error) {
         ElMessage.error('请检查输入内容')
-        console.log(error)
       }
     }
   }
@@ -310,7 +319,7 @@ export default {
     <el-table
         v-if="currentProject"
         :data="currentProject.modules"
-        row-key="uniqueName"
+        row-key="id"
         border
         default-expand-all
         :tree-props="treeProps"

@@ -14,7 +14,9 @@ export default defineComponent({
   },
   mounted() {
     this.initParams()
-    this.updateStats(this.updateData())
+    this.updateData().then((data) => {
+      this.updateStats(data)
+    })
   },
   data() {
     let params = this.$route.query
@@ -102,7 +104,9 @@ export default defineComponent({
                 this.query[param] = params[param]
             }
           }
-          this.updateStats(this.updateData())
+          this.updateData().then(data => {
+            this.updateStats(data)
+          })
         }
       }
     }

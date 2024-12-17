@@ -25,21 +25,16 @@ export default defineComponent({
       dialogToggle: ref(false),
       data: reactive([]),
       query: reactive({
-        keyword: ''
+        name: ''
       }),
       selectedItem: undefined,
     }
   },
   methods: {
-    updateData() {
-      let result = task.search(this.query.keyword, this.page.page, this.page.size)
-      this.data.length = 0
-      Object.assign(this.data, result.data)
-      return {
-        total: result.total,
-        start: result.start,
-        end: result.end,
-      }
+    async updateData() {
+      let result = await task.search(this.query.name, this.page.page, this.page.size)
+      this.data = result.data
+      return result
     },
     handleSearch() {
       this.page.update()
@@ -63,7 +58,7 @@ export default defineComponent({
     </template>
     <el-form label-width="auto" @submit.native.prevent @keyup.enter="handleSearch">
       <el-form-item label="项目名称" style="max-width: 60%" label-width="100">
-        <el-input v-model="query.keyword" />
+        <el-input v-model="query.name" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -81,11 +76,11 @@ export default defineComponent({
       </div>
     </template>
     <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录">
-      <el-table-column align="center" prop="id" label="序号" width="80"/>
+      <el-table-column align="center" type="index" label="序号" width="80"/>
       <el-table-column align="center" prop="name" label="项目名称"/>
       <el-table-column align="center" prop="owner" label="项目负责人"/>
-      <el-table-column align="center" prop="features" label="功能数"/>
-      <el-table-column align="center" prop="developers" label="开发人数"/>
+      <el-table-column align="center" prop="totalFeatures" label="功能数"/>
+      <el-table-column align="center" prop="totalDevelopers" label="开发人数"/>
       <el-table-column align="center" label="操作" width="80">
         <template #default="scope">
           <el-tooltip

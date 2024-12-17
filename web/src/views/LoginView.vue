@@ -4,27 +4,44 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import user from '@/api/user.ts'
 export default {
+  computed: {
+    loggedInUser() {
+      return this.$store.state.user
+    }
+  },
   setup() {
-    if (user.getLoggedInUser())
-      useRouter().push('/project/list')
     const form = reactive({
       username: '',
       password: ''
     })
     return {
-      form
+      form,
+    }
+  },
+  mounted() {
+    if (this.loggedInUser) {
+      useRouter().push('/project/list')
     }
   },
   methods: {
     login() {
-      if (user.login(this.form.username, this.form.password)) {
-        localStorage['username'] = this.form.username
-        localStorage['password'] = this.form.password
-        this.$router.push('/project/list')
-        ElMessage.success('登录成功')
-      } else {
-        ElMessage.error('用户名或密码错误')
-      }
+        user.login(this.form.username, this.form.password).then(response => {
+        if (response.success) {
+          user.getLoggedInUser().then(user => {
+            localStorage.setItem('loggedIn', 'ok')
+            this.$store.commit('setUser', user)
+            this.$router.push('/project/list')
+            ElMessage.success('登录成功')
+          })
+        } else {
+          ElMessage.error(response.message)
+          if (response.message == '已登录') {
+            this.$router.push('/project/list')
+          }
+        }
+      }).catch(() => {
+        ElMessage.error('未知错误')
+      })
     }
   }
 }

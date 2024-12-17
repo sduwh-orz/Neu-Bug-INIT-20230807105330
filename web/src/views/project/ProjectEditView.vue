@@ -1,35 +1,42 @@
 <script lang="ts">
-import { EditPen } from '@element-plus/icons-vue';
-import BreadCrumbNav from "@/components/BreadCrumbNav.vue";
-import { reactive, ref } from 'vue';
-import { ElMessage } from 'element-plus';
+import { reactive, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { EditPen } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import user from '@/api/user.ts'
 import project from '@/api/project.ts'
 
 const moduleName = 'project'
 const formData = reactive({
+  id: '',
   name: '',
   keyword: '',
   description: '',
   owner: ''
 })
 const formDataRef = ref()
+const users = reactive([])
 
 export default {
   components: {EditPen, BreadCrumbNav},
-  mounted() {
-    this.id = this.$route.query.id ? Number(this.$route.query.id): 1
-    let projectInfo = project.get(this.id)
-    if (projectInfo) {
-      formData.name = projectInfo.name
-      formData.keyword = projectInfo.keyword
-      formData.description = projectInfo.description
-      formData.owner = projectInfo.owner
-    }
-  },
   setup() {
+    let route = useRoute()
+    formData.id = route.query.id ? route.query.id.toString() : ''
+    project.get(formData.id).then(projectInfo => {
+      if (projectInfo) {
+        formData.name = projectInfo.name
+        formData.keyword = projectInfo.keyword
+        formData.description = projectInfo.description
+        formData.owner = projectInfo.owner.id
+      }
+    })
+    user.all().then(data => {
+      users.length = 0
+      Object.assign(users, data)
+    })
     return {
-      id: ref(1),
+      users,
       formData: formData,
       formDataRef: formDataRef,
       formRules: reactive({
@@ -55,21 +62,24 @@ export default {
           }
         ]
       }),
-      users: user.all()
     }
   },
   methods: {
     handleSubmit() {
       try {
         formDataRef.value.validate().then(() => {
-          project.modify(formData)
-          ElMessage.success('修改成功')
-          formDataRef.value.resetFields()
-          this.$router.push('/' + moduleName + '/list')
+          project.modify(formData).then(response => {
+            if (response.success) {
+              ElMessage.success('修改成功')
+              formDataRef.value.resetFields()
+              this.$router.push('/' + moduleName + '/list')
+            } else {
+              ElMessage.error('修改失败')
+            }
+          })
         })
       } catch (error) {
         ElMessage.error('请检查输入内容')
-        console.log(error)
       }
     },
     handleReturn() {
