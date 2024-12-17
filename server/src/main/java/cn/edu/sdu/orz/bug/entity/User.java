@@ -3,6 +3,7 @@ package cn.edu.sdu.orz.bug.entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -23,15 +24,17 @@ public class User implements Serializable {
     @Column(name = "real_name", nullable = false)
     private String realName;
 
-    @ManyToOne
-    @JoinColumn(name = "role", nullable = false)
-    private UserRole role;
+    @Column(name = "role", nullable = false)
+    private Integer role;
 
     @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "deleted", nullable = false)
     private Integer deleted;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Feature> features;
 
     public void setId(String id) {
         this.id = id;
@@ -65,12 +68,12 @@ public class User implements Serializable {
         return realName;
     }
 
-    public String getRole() {
-        return role.getName();
+    public void setRole(Integer role) {
+        this.role = role;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
+    public Integer getRole() {
+        return role;
     }
 
     public void setEmail(String email) {
