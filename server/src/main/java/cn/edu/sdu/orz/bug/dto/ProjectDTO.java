@@ -1,8 +1,6 @@
 package cn.edu.sdu.orz.bug.dto;
 
 
-import cn.edu.sdu.orz.bug.utils.Utils;
-
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -60,11 +58,8 @@ public class ProjectDTO implements Serializable {
         this.owner = owner;
     }
 
-    public String getCreated() {
-        if (created != null) {
-            return Utils.dateFormat.format(created);
-        }
-        return "";
+    public Timestamp getCreated() {
+        return created;
     }
 
     public void setCreated(Timestamp created) {

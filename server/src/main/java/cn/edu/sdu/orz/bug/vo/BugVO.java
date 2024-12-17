@@ -2,6 +2,7 @@ package cn.edu.sdu.orz.bug.vo;
 
 
 import java.io.Serializable;
+import java.sql.Date;
 
 
 public class BugVO implements Serializable {
@@ -17,73 +18,14 @@ public class BugVO implements Serializable {
 
     private Integer grade;
 
+    private String reporter;
+
     private Integer status;
 
     private Integer solveType;
 
-    private String comment;
+    private Date created;
 
-    public String getId() {
-        return id;
-    }
+    private Date modified;
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getFeature() {
-        return feature;
-    }
-
-    public void setFeature(String feature) {
-        this.feature = feature;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getGrade() {
-        return grade;
-    }
-
-    public void setGrade(Integer grade) {
-        this.grade = grade;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Integer getSolveType() {
-        return solveType;
-    }
-
-    public void setSolveType(Integer solveType) {
-        this.solveType = solveType;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
 }

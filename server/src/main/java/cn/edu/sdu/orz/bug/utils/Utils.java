@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 
@@ -16,8 +15,6 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class Utils {
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     public static String[] getNullPropertyNames(Object source) {
         final BeanWrapper src = new BeanWrapperImpl(source);
         java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();

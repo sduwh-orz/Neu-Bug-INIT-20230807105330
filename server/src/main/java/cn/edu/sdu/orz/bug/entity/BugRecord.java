@@ -15,9 +15,8 @@ public class BugRecord implements Serializable {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "bug", nullable = false)
-    private Bug bug;
+    @Column(name = "bug", nullable = false)
+    private String bug;
 
     @ManyToOne
     @JoinColumn(name = "type", nullable = false)
@@ -38,9 +37,8 @@ public class BugRecord implements Serializable {
     @Column(name = "comment", nullable = false)
     private String comment;
 
-    @ManyToOne
-    @JoinColumn(name = "user", nullable = false)
-    private User user;
+    @Column(name = "user", nullable = false)
+    private String user;
 
     @Column(name = "time", nullable = false)
     private Timestamp time;
@@ -53,11 +51,11 @@ public class BugRecord implements Serializable {
         return id;
     }
 
-    public void setBug(Bug bug) {
+    public void setBug(String bug) {
         this.bug = bug;
     }
 
-    public Bug getBug() {
+    public String getBug() {
         return bug;
     }
 
@@ -101,11 +99,11 @@ public class BugRecord implements Serializable {
         return comment;
     }
 
-    public void setUser(User user) {
+    public void setUser(String user) {
         this.user = user;
     }
 
-    public User getUser() {
+    public String getUser() {
         return user;
     }
 

@@ -1,10 +1,8 @@
 package cn.edu.sdu.orz.bug.dto;
 
+
 import java.io.Serializable;
 import java.math.BigDecimal;
-import cn.edu.sdu.orz.bug.entity.Module;
-import cn.edu.sdu.orz.bug.entity.User;
-import org.springframework.beans.BeanUtils;
 
 public class FeatureDTO implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -16,7 +14,7 @@ public class FeatureDTO implements Serializable {
 
     private BigDecimal hours;
 
-    private UserBriefDTO owner;
+    private String owner;
 
     public String getId() {
         return id;
@@ -38,8 +36,8 @@ public class FeatureDTO implements Serializable {
         return module;
     }
 
-    public void setModule(Module module) {
-        this.module = module.getId();
+    public void setModule(String module) {
+        this.module = module;
     }
 
     public BigDecimal getHours() {
@@ -50,13 +48,11 @@ public class FeatureDTO implements Serializable {
         this.hours = hours;
     }
 
-    public UserBriefDTO getOwner() {
+    public String getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
-        UserBriefDTO bean = new UserBriefDTO();
-        BeanUtils.copyProperties(owner, bean);
-        this.owner = bean;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

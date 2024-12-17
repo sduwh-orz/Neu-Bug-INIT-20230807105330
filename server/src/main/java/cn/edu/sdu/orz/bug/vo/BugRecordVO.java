@@ -1,11 +1,13 @@
-package cn.edu.sdu.orz.bug.dto;
+package cn.edu.sdu.orz.bug.vo;
 
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.sql.Date;
 
-public class BugRecordDTO implements Serializable {
+
+public class BugRecordVO implements Serializable {
     private static final long serialVersionUID = 1L;
+
     private String id;
 
     private String bug;
@@ -22,6 +24,6 @@ public class BugRecordDTO implements Serializable {
 
     private String user;
 
-    private Timestamp time;
+    private Date time;
 
 }

@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.sql.Timestamp;
-import java.util.List;
 
 @Entity
 @Table(name = "bug")
@@ -20,7 +18,7 @@ public class Bug implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
     @ManyToOne
@@ -48,9 +46,6 @@ public class Bug implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feature", nullable = false)
     private Feature feature;
-
-    @OneToMany(mappedBy = "bug", fetch = FetchType.EAGER)
-    private List<BugRecord> records;
 
     public void setId(String id) {
         this.id = id;
@@ -130,14 +125,6 @@ public class Bug implements Serializable {
 
     public void setFeature(Feature feature) {
         this.feature = feature;
-    }
-
-    public List<BugRecord> getRecords() {
-        return records;
-    }
-
-    public void setRecords(List<BugRecord> records) {
-        this.records = records;
     }
 
     @Override
