@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "feature")
@@ -21,13 +22,16 @@ public class Feature implements Serializable {
     @Column(name = "hours", nullable = false)
     private BigDecimal hours;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "module", nullable = false)
     private Module module;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner", nullable = false)
     private User owner;
+
+    @OneToMany(mappedBy = "feature", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Bug> bugs;
 
     public void setId(String id) {
         this.id = id;
@@ -45,12 +49,12 @@ public class Feature implements Serializable {
         return name;
     }
 
-    public void setModule(Module module) {
-        this.module = module;
-    }
-
     public Module getModule() {
         return module;
+    }
+
+    public void setModule(Module module) {
+        this.module = module;
     }
 
     public void setHours(BigDecimal hours) {

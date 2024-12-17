@@ -20,14 +20,6 @@ public class BugGrade implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    public BugGrade() {
-
-    }
-
-    public BugGrade(Integer id) {
-        this.id = id;
-    }
-
     public void setId(Integer id) {
         this.id = id;
     }

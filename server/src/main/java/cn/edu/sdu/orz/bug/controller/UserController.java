@@ -2,7 +2,9 @@ package cn.edu.sdu.orz.bug.controller;
 
 import cn.edu.sdu.orz.bug.dto.UserDTO;
 import cn.edu.sdu.orz.bug.service.UserService;
-import cn.edu.sdu.orz.bug.vo.*;
+import cn.edu.sdu.orz.bug.vo.Response;
+import cn.edu.sdu.orz.bug.vo.UserUpdateVO;
+import cn.edu.sdu.orz.bug.vo.UserVO;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -24,13 +26,18 @@ public class UserController {
         return userService.getById(id);
     }
 
-    @PostMapping("/search")
-    public Map<String, Object> search(@RequestBody UserQueryVO vO) {
-        return userService.search(vO);
+    @GetMapping("/search")
+    public Map<String, Object> search(@RequestParam(value = "username", required = false) String username,
+                                      @RequestParam(value = "realName", required = false) String realName,
+                                      @RequestParam(value = "role", required = false) String role,
+                                      @RequestParam(value = "email", required = false) String email,
+                                      @RequestParam(value = "page", required = false) Integer page,
+                                      @RequestParam(value = "size", required = false) Integer size) {
+        return userService.search(username, realName, role, email, page, size);
     }
 
     @PostMapping("/create")
-    public Response create(@RequestBody UserCreateVO vO,
+    public Response create(@RequestBody UserVO vO,
                            HttpSession session) {
         return new Response(userService.create(vO, session));
     }
@@ -50,12 +57,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Response login(@RequestBody UserLoginVO vO,
+    public Response login(@RequestParam String username,
+                          @RequestParam String password,
                           HttpSession session) {
         if (userService.isLoggedIn(session)) {
             return new Response(false, "已登录");
         } else {
-            if (userService.login(vO.getUsername(), vO.getPassword(), session)) {
+            if (userService.login(username, password, session)) {
                 return new Response(true);
             }
             return new Response(false, "用户名或密码错误");
@@ -66,11 +74,5 @@ public class UserController {
     public Response logout(HttpSession session) {
         userService.logout(session);
         return new Response(true);
-    }
-
-    @PostMapping("/password")
-    public Response password(@RequestBody UserPasswordVO vO,
-                             HttpSession session) {
-        return new Response(userService.password(vO, session));
     }
 }

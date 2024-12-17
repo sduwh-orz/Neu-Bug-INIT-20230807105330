@@ -1,6 +1,9 @@
 package cn.edu.sdu.orz.bug.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.io.Serializable;
 import java.sql.Date;
@@ -18,21 +21,17 @@ public class BugRecord implements Serializable {
     @Column(name = "bug", nullable = false)
     private String bug;
 
-    @ManyToOne
-    @JoinColumn(name = "type", nullable = false)
-    private BugRecordType type;
+    @Column(name = "type", nullable = false)
+    private Integer type;
 
-    @ManyToOne
-    @JoinColumn(name = "previous", nullable = false)
-    private BugStatus previous;
+    @Column(name = "previous", nullable = false)
+    private Integer previous;
 
-    @ManyToOne
-    @JoinColumn(name = "after", nullable = false)
-    private BugStatus after;
+    @Column(name = "after", nullable = false)
+    private Integer after;
 
-    @ManyToOne
-    @JoinColumn(name = "solve_type")
-    private BugSolveType solveType;
+    @Column(name = "solve_type")
+    private Integer solveType;
 
     @Column(name = "comment", nullable = false)
     private String comment;
@@ -59,36 +58,36 @@ public class BugRecord implements Serializable {
         return bug;
     }
 
-    public BugRecordType getType() {
-        return type;
-    }
-
-    public void setType(BugRecordType type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
-    public BugStatus getPrevious() {
-        return previous;
+    public Integer getType() {
+        return type;
     }
 
-    public void setPrevious(BugStatus previous) {
+    public void setPrevious(Integer previous) {
         this.previous = previous;
     }
 
-    public BugStatus getAfter() {
-        return after;
+    public Integer getPrevious() {
+        return previous;
     }
 
-    public void setAfter(BugStatus after) {
+    public void setAfter(Integer after) {
         this.after = after;
     }
 
-    public BugSolveType getSolveType() {
-        return solveType;
+    public Integer getAfter() {
+        return after;
     }
 
-    public void setSolveType(BugSolveType solveType) {
+    public void setSolveType(Integer solveType) {
         this.solveType = solveType;
+    }
+
+    public Integer getSolveType() {
+        return solveType;
     }
 
     public void setComment(String comment) {

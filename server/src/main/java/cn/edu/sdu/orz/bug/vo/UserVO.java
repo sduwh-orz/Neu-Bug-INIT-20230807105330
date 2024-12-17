@@ -15,6 +15,8 @@ public class UserVO implements Serializable {
 
     private String email;
 
+    private Integer deleted;
+
     public String getUsername() {
         return username;
     }
@@ -45,5 +47,13 @@ public class UserVO implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Integer getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
     }
 }

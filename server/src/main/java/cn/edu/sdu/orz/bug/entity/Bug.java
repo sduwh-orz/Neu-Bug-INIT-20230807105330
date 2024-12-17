@@ -15,31 +15,23 @@ public class Bug implements Serializable {
     @Column(name = "id", nullable = false)
     private String id;
 
-    @OneToOne
-    @JoinColumn(name = "feature", nullable = false)
-    private Feature feature;
-
     @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description", nullable = false)
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "grade", nullable = false)
-    private BugGrade grade;
+    @Column(name = "grade", nullable = false)
+    private Integer grade;
 
-    @ManyToOne
-    @JoinColumn(name = "reporter", nullable = false)
-    private User reporter;
+    @Column(name = "reporter", nullable = false)
+    private String reporter;
 
-    @ManyToOne
-    @JoinColumn(name = "status", nullable = false)
-    private BugStatus status;
+    @Column(name = "status", nullable = false)
+    private Integer status;
 
-    @ManyToOne
-    @JoinColumn(name = "solve_type")
-    private BugSolveType solveType;
+    @Column(name = "solve_type")
+    private Integer solveType;
 
     @Column(name = "created", nullable = false)
     private Date created;
@@ -47,20 +39,16 @@ public class Bug implements Serializable {
     @Column(name = "modified")
     private Date modified;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "feature", nullable = false)
+    private Feature feature;
+
     public void setId(String id) {
         this.id = id;
     }
 
     public String getId() {
         return id;
-    }
-
-    public void setFeature(Feature feature) {
-        this.feature = feature;
-    }
-
-    public Feature getFeature() {
-        return feature;
     }
 
     public void setName(String name) {
@@ -79,36 +67,36 @@ public class Bug implements Serializable {
         return description;
     }
 
-    public void setReporter(User reporter) {
-        this.reporter = reporter;
-    }
-
-    public User getReporter() {
-        return reporter;
-    }
-
-    public BugGrade getGrade() {
-        return grade;
-    }
-
-    public void setGrade(BugGrade grade) {
+    public void setGrade(Integer grade) {
         this.grade = grade;
     }
 
-    public BugStatus getStatus() {
-        return status;
+    public Integer getGrade() {
+        return grade;
     }
 
-    public void setStatus(BugStatus status) {
+    public void setReporter(String reporter) {
+        this.reporter = reporter;
+    }
+
+    public String getReporter() {
+        return reporter;
+    }
+
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
-    public BugSolveType getSolveType() {
-        return solveType;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setSolveType(BugSolveType solveType) {
+    public void setSolveType(Integer solveType) {
         this.solveType = solveType;
+    }
+
+    public Integer getSolveType() {
+        return solveType;
     }
 
     public void setCreated(Date created) {
@@ -127,11 +115,19 @@ public class Bug implements Serializable {
         return modified;
     }
 
+    public Feature getFeature() {
+        return feature;
+    }
+
+    public void setFeature(Feature feature) {
+        this.feature = feature;
+    }
+
     @Override
     public String toString() {
         return "Bug{" +
                 "id=" + id + '\'' +
-                "feature=" + feature + '\'' +
+                "feature=" + (feature != null ? feature.getId() : null) + '\'' +
                 "name=" + name + '\'' +
                 "description=" + description + '\'' +
                 "grade=" + grade + '\'' +
