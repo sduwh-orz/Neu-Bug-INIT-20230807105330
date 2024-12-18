@@ -7,6 +7,8 @@ import project from '@/api/project'
 import module from '@/api/module'
 import bug from '@/api/bug.ts'
 
+const loading = ref(true)
+
 const id = ref('')
 let nowProject = reactive(project.empty)
 let stats = reactive({
@@ -26,15 +28,8 @@ export default {
     BreadCrumbNav, FolderOpened, ArrowLeft, CirclePlus, Edit
   },
   setup() {
-    let route = useRoute()
-    id.value = route.query.id ? route.query.id.toString() : ''
-    project.get(id.value).then(response => {
-      Object.assign(nowProject, response)
-    })
-    bug.stats(id.value).then(response => {
-      Object.assign(stats, response)
-    })
     return {
+      loading,
       id,
       nowProject,
       stats,
@@ -44,6 +39,16 @@ export default {
         hasChildren: 'hasChildren'
       }),
     }
+  },
+  async mounted() {
+    loading.value = true
+    let route = useRoute()
+    id.value = route.query.id ? route.query.id.toString() : ''
+    let response = await project.get(id.value)
+    Object.assign(nowProject, response)
+    let nowStats = await bug.stats(id.value)
+    Object.assign(stats, nowStats)
+    loading.value = false
   },
   methods: {
     bugFormatter: function(row: any) {
@@ -63,7 +68,7 @@ export default {
 
 <template>
   <BreadCrumbNav :page-paths="['Bug 管理', '项目列表', 'Bug 统计']"></BreadCrumbNav>
-  <el-card class="info-card" shadow="never">
+  <el-card class="info-card" shadow="never" v-loading="loading">
     <template #header>
       <div class="module-card-header">
         <div class="module-card-header-left">
@@ -144,7 +149,4 @@ export default {
 </template>
 
 <style>
-.module-row {
-  font-weight: bold;
-}
 </style>

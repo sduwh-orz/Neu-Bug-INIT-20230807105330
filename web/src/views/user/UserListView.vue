@@ -21,10 +21,6 @@ export default defineComponent({
   },
   components: { Pagination, List, Delete, Edit, BreadCrumbNav, Search },
   setup() {
-    user.getRoles().then((result) => {
-      roles.length = 0
-      Object.assign(roles, utils.toOptions(result))
-    })
     return {
       loading,
       page: ref()
@@ -49,6 +45,10 @@ export default defineComponent({
   methods: {
     async updateData() {
       loading.value = true
+      let nowRoles = await user.getRoles()
+      roles.length = 0
+      Object.assign(roles, utils.toOptions(nowRoles))
+
       let result = await user.search(this.query, this.page.page, this.page.size)
       this.data.length = 0
       Object.assign(this.data, result.data)
@@ -82,7 +82,7 @@ export default defineComponent({
 
 <template>
   <BreadCrumbNav :page-paths="['用户管理', '用户列表']"></BreadCrumbNav>
-  <el-card class="info-card" shadow="never">
+  <el-card class="info-card" shadow="never" v-loading="loading">
     <template #header>
       <div class="card-header">
         <el-icon><Search /></el-icon>&nbsp;&nbsp;

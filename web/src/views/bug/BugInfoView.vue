@@ -7,6 +7,8 @@ import utils from '@/api/utils.ts'
 import bug from '@/api/bug.ts'
 import user from '@/api/user.ts'
 
+const loading = ref(true)
+
 export default defineComponent({
   computed: {
     Operation() {
@@ -25,6 +27,7 @@ export default defineComponent({
   },
   setup() {
     return {
+      loading,
       page: ref()
     }
   },
@@ -53,6 +56,7 @@ export default defineComponent({
   },
   methods: {
     async updateData() {
+      loading.value = true
       let now = await bug.get(this.query.id)
       console.log(now)
       this.bug = now
@@ -64,6 +68,7 @@ export default defineComponent({
 
       this.data.length = 0
       Object.assign(this.data, result.data)
+      loading.value = false
       return {
         total: result.total,
         start: result.start,
@@ -77,7 +82,7 @@ export default defineComponent({
 
 <template>
   <BreadCrumbNav :page-paths="['Bug 管理', '项目列表', 'Bug 列表', 'Bug 信息']"></BreadCrumbNav>
-  <el-card class="info-card" shadow="never">
+  <el-card class="info-card" shadow="never" v-loading="loading">
     <template #header>
       <div class="card-header">
         <el-icon><Search /></el-icon>&nbsp;&nbsp;
@@ -112,7 +117,7 @@ export default defineComponent({
       <el-descriptions-item label="最后处理日期">{{ bug.modified }}</el-descriptions-item>
     </el-descriptions>
   </el-card>
-  <el-card class="info-card" shadow="never">
+  <el-card class="info-card" shadow="never" v-loading="loading">
     <template #header>
       <div class="card-header">
         <el-icon><List /></el-icon>&nbsp;&nbsp;

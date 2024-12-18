@@ -12,7 +12,13 @@ import bug from '@/api/bug.ts'
 import utils from '@/api/utils.ts'
 import project from '@/api/project.ts'
 
-const loading = ref(true)
+const loading = reactive({
+  grades: true,
+  statusTypes: true,
+  solveTypes: true,
+  users: true,
+  data: true
+})
 const refComment = ref()
 const grades = reactive([])
 const statusTypes = reactive([])
@@ -70,19 +76,23 @@ export default defineComponent({
     bug.getGrades().then((result) => {
       grades.length = 0
       Object.assign(grades, utils.toOptions(result))
+      loading.grades = false
     })
     bug.getStatusTypes().then((result) => {
       statusTypes.length = 0
       Object.assign(statusTypes, utils.toOptions(result))
+      loading.statusTypes = false
     })
     bug.getSolveTypes().then((result) => {
       solveTypes.length = 0
       Object.assign(solveTypes, utils.toOptions(result))
+      loading.solveTypes = false
     })
 
     user.all().then(data => {
       users.length = 0
       Object.assign(users, [{id: '', realName: '全部'}].concat(data))
+      loading.users = false
     })
 
     let id = useRoute().query.id ?.toString()
@@ -90,10 +100,12 @@ export default defineComponent({
       useRouter().push('/project/list')
     }
 
+    loading.data = true
     project.get(id).then(p => {
       Object.assign(nowProject, p)
       modules.length = 0
       Object.assign(modules, utils.toOptions(p.modules))
+      loading.data = false
     })
 
     return {
@@ -155,11 +167,11 @@ export default defineComponent({
   },
   methods: {
     async updateData() {
-      loading.value = true
+      loading.data = true
       let result = await bug.searchInProject(query, this.page.page, this.page.size)
       data.length = 0
       Object.assign(data, result.data)
-      loading.value = false
+      loading.data = false
       return result
     },
     clearFeature() {
@@ -287,7 +299,7 @@ export default defineComponent({
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="Bug 等级" label-width="100px">
+          <el-form-item label="Bug 等级" label-width="100px" v-loading="loading.grades">
             <el-select
                 v-model="query.grade"
                 class="m-2"
@@ -305,7 +317,7 @@ export default defineComponent({
       </el-row>
       <el-row justify="space-between">
         <el-col :span="11">
-          <el-form-item label="所属模块" label-width="100px">
+          <el-form-item label="所属模块" label-width="100px" v-loading="loading.data">
             <el-select
                 v-model="query.module"
                 class="m-2"
@@ -322,7 +334,7 @@ export default defineComponent({
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="所属功能" label-width="100px">
+          <el-form-item label="所属功能" label-width="100px" v-loading="loading.data">
             <el-select
                 v-model="query.feature"
                 class="m-2"
@@ -340,7 +352,7 @@ export default defineComponent({
       </el-row>
       <el-row justify="space-between">
         <el-col :span="11">
-          <el-form-item label="开发人" label-width="100px">
+          <el-form-item label="开发人" label-width="100px" v-loading="loading.users">
             <el-select
                 v-model="query.developer"
                 class="m-2"
@@ -356,7 +368,7 @@ export default defineComponent({
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="报告人" label-width="100px">
+          <el-form-item label="报告人" label-width="100px" v-loading="loading.users">
             <el-select
                 v-model="query.reporter"
                 class="m-2"
@@ -374,7 +386,7 @@ export default defineComponent({
       </el-row>
       <el-row justify="space-between">
         <el-col :span="11">
-          <el-form-item label="Bug 状态" label-width="100px">
+          <el-form-item label="Bug 状态" label-width="100px" v-loading="loading.statusTypes">
             <el-select
                 v-model="query.status"
                 class="m-2"
@@ -390,7 +402,7 @@ export default defineComponent({
           </el-form-item>
         </el-col>
         <el-col :span="11">
-          <el-form-item label="解决形式" label-width="100px">
+          <el-form-item label="解决形式" label-width="100px" v-loading="loading.solveTypes">
             <el-select
                 v-model="query.solveType"
                 class="m-2"
@@ -426,7 +438,7 @@ export default defineComponent({
         <span>列表信息</span>
       </div>
     </template>
-    <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录" v-loading="loading">
+    <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录" v-loading="loading.data">
       <el-table-column align="center" type="index" label="序号" width="80"/>
       <el-table-column align="center" prop="name" label="Bug 标题"/>
       <el-table-column align="center" prop="grade.name" label="Bug 等级">
