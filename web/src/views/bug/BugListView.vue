@@ -12,6 +12,7 @@ import bug from '@/api/bug.ts'
 import utils from '@/api/utils.ts'
 import project from '@/api/project.ts'
 
+const loading = ref(true)
 const refComment = ref()
 const grades = reactive([])
 const statusTypes = reactive([])
@@ -96,6 +97,7 @@ export default defineComponent({
     })
 
     return {
+      loading,
       page: ref(),
       dialogs: reactive({
         solve: {
@@ -153,10 +155,11 @@ export default defineComponent({
   },
   methods: {
     async updateData() {
+      loading.value = true
       let result = await bug.searchInProject(query, this.page.page, this.page.size)
       data.length = 0
       Object.assign(data, result.data)
-
+      loading.value = false
       return result
     },
     clearFeature() {
@@ -199,7 +202,7 @@ export default defineComponent({
           if (response.success) {
             this.dialogs.solve.toggle = false
             ElMessage.success('提交成功')
-            this.$router.go(0)
+            this.updateData()
           } else {
             ElMessage.error('提交失败')
           }
@@ -217,7 +220,7 @@ export default defineComponent({
               if (response.success) {
                 this.dialogs.comment.toggle = false
                 ElMessage.success('提交成功')
-                this.$router.go(0)
+                this.updateData()
               } else {
                 ElMessage.error('提交失败')
               }
@@ -230,33 +233,18 @@ export default defineComponent({
     },
     handleSubmitToggle() {
       if (this.selectedItem) {
-        if (this.selectedItem.status.name == '已关闭') {
-          bug.open(
-              this.selectedItem.id,
-              this.dialogs.toggle.comment
-          ).then((response) => {
-            if (response.success) {
-              this.dialogs.toggle.toggle = false
-              ElMessage.success('提交成功')
-              this.$router.go(0)
-            } else {
-              ElMessage.error('提交失败')
-            }
-          })
-        } else {
-          bug.close(
-              this.selectedItem.id,
-              this.dialogs.toggle.comment
-          ).then((response) => {
-            if (response.success) {
-              this.dialogs.toggle.toggle = false
-              ElMessage.success('提交成功')
-              this.$router.go(0)
-            } else {
-              ElMessage.error('提交失败')
-            }
-          })
-        }
+        (this.selectedItem.status.name == '已关闭' ?
+            bug.open(this.selectedItem.id, this.dialogs.toggle.comment) :
+                bug.close(this.selectedItem.id, this.dialogs.toggle.comment)
+        ).then((response) => {
+          if (response.success) {
+            this.dialogs.toggle.toggle = false
+            ElMessage.success('提交成功')
+            this.updateData()
+          } else {
+            ElMessage.error('提交失败')
+          }
+        })
       }
     },
     handleAllBugs() {
@@ -438,7 +426,7 @@ export default defineComponent({
         <span>列表信息</span>
       </div>
     </template>
-    <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录">
+    <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录" v-loading="loading">
       <el-table-column align="center" type="index" label="序号" width="80"/>
       <el-table-column align="center" prop="name" label="Bug 标题"/>
       <el-table-column align="center" prop="grade.name" label="Bug 等级">

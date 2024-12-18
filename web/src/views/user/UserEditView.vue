@@ -16,27 +16,14 @@ const formData = reactive({
   email: ''
 })
 const roles = reactive([])
+const loading = ref(true)
 const formDataRef = ref()
 
 export default {
   components: {EditPen, BreadCrumbNav},
   setup() {
-    user.getRoles().then(response => {
-      roles.length = 0
-      Object.assign(roles, utils.toOptions(response, true))
-    })
-
-    let route = useRoute()
-    formData.id = route.query.id ? route.query.id.toString() : ''
-    user.get(formData.id).then(userInfo => {
-      if (userInfo) {
-        formData.username = userInfo.username
-        formData.realName = userInfo.realName
-        formData.role = String(userInfo.role.id)
-        formData.email = userInfo.email
-      }
-    })
     return {
+      loading,
       roles,
       formData: formData,
       formDataRef: formDataRef,
@@ -73,6 +60,24 @@ export default {
       })
     }
   },
+  mounted() {
+    loading.value = true
+    user.getRoles().then(response => {
+      roles.length = 0
+      Object.assign(roles, utils.toOptions(response, true))
+    })
+
+    formData.id = this.$route.query.id ? this.$route.query.id.toString() : ''
+    user.get(formData.id).then(userInfo => {
+      if (userInfo) {
+        formData.username = userInfo.username
+        formData.realName = userInfo.realName
+        formData.role = String(userInfo.role.id)
+        formData.email = userInfo.email
+      }
+      loading.value = false
+    })
+  },
   methods: {
     handleSubmit() {
       try {
@@ -100,7 +105,7 @@ export default {
 
 <template>
   <BreadCrumbNav :page-paths="['用户管理', '用户列表', '用户修改']"></BreadCrumbNav>
-  <el-card class="info-card" shadow="never">
+  <el-card class="info-card" shadow="never" v-loading="loading">
     <template #header>
       <div class="card-header">
         <el-icon>

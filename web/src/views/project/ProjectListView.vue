@@ -6,6 +6,7 @@ import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import Pagination from "@/components/Pagination.vue"
 import project from '@/api/project.ts'
 
+const loading = ref(true)
 const query = reactive({
   keyword: ''
 })
@@ -29,7 +30,8 @@ export default defineComponent({
   components: { Pagination, List, Delete, Edit, Operation, BreadCrumbNav, Search },
   setup() {
     return {
-      page: ref()
+      loading,
+      page: ref(),
     }
   },
   data() {
@@ -44,9 +46,11 @@ export default defineComponent({
   },
   methods: {
     async updateData() {
+      loading.value = true
       let result = await project.search(this.query.keyword, this.page.page, this.page.size)
       this.data.length = 0
       Object.assign(this.data, result.data)
+      loading.value = false
       return result
     },
     handleSearch() {
@@ -70,7 +74,7 @@ export default defineComponent({
         project.remove(this.selectedItem.id).then(response => {
           if (response.success) {
             ElMessage.success('删除成功')
-            this.$router.go(0)
+            this.updateData()
           } else {
             ElMessage.error('删除失败')
           }
@@ -111,7 +115,7 @@ export default defineComponent({
         <span>列表信息</span>
       </div>
     </template>
-    <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录">
+    <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录" v-loading="loading">
       <el-table-column align="center" type="index" label="序号" width="80"/>
       <el-table-column align="center" prop="keyword" label="项目关键字"/>
       <el-table-column align="center" prop="name" label="项目名称"/>

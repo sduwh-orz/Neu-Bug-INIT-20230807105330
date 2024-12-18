@@ -18,24 +18,17 @@ const formData = reactive({
   feature: '',
   description: '',
 })
+const loading = ref(true)
 const formDataRef = ref()
 const nowProject = reactive(project.empty)
 
 export default {
   components: {EditPen, BreadCrumbNav},
   setup() {
-    id.value = useRoute().query.id ?.toString()
-    bug.getGrades().then((result) => {
-      grades.length = 0
-      Object.assign(grades, utils.toOptions(result, true))
-    })
-    project.get(id.value).then((result) => {
-      if (result)
-        Object.assign(nowProject, result)
-    })
     return {
-      formData: formData,
-      formDataRef: formDataRef,
+      loading,
+      formData,
+      formDataRef,
       formRules: reactive({
         name: [
           {
@@ -80,8 +73,19 @@ export default {
     }
   },
   mounted() {
+    loading.value = true
     Object.keys(formData).forEach(function(key) {
       formData[key] = ''
+    })
+    id.value = useRoute().query.id ?.toString()
+    bug.getGrades().then((result) => {
+      grades.length = 0
+      Object.assign(grades, utils.toOptions(result, true))
+    })
+    project.get(id.value).then((result) => {
+      if (result)
+        Object.assign(nowProject, result)
+      loading.value = false
     })
   },
   computed: {
@@ -123,7 +127,7 @@ export default {
 
 <template>
   <BreadCrumbNav :page-paths="['Bug 管理', '项目列表', 'Bug 列表', 'Bug 添加']"></BreadCrumbNav>
-  <el-card class="info-card" shadow="never">
+  <el-card class="info-card" shadow="never" v-loading="loading">
     <template #header>
       <div class="card-header">
         <el-icon>

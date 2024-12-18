@@ -6,12 +6,19 @@ import user from "@/api/user"
 import BreadCrumbNav from "@/components/BreadCrumbNav.vue"
 import { ArrowLeft, CircleCheck, FolderOpened } from "@element-plus/icons-vue"
 import { ElMessage, ElMessageBox } from "element-plus"
-import { reactive } from "vue"
+import {reactive, ref} from "vue"
 import { useRoute } from "vue-router"
+
+const loading = ref(true)
 
 export default {
   components: {
     BreadCrumbNav, FolderOpened, CircleCheck, ArrowLeft
+  },
+  setup() {
+    return {
+      loading
+    }
   },
   data() {
     const route = useRoute()
@@ -29,6 +36,7 @@ export default {
     }
   },
   mounted() {
+    loading.value = true
     user.getAllRealNames().then(names => {
       this.realNames.length = 0
       Object.assign(this.realNames, [{key: '', label: '请选择...', value: ''}].concat(names))
@@ -44,6 +52,7 @@ export default {
           }
         })
       })
+      loading.value = false
     })
   },
   methods: {
@@ -79,7 +88,7 @@ export default {
 
 <template>
   <BreadCrumbNav :page-paths="['任务分配', '项目列表', '任务分配']"></BreadCrumbNav>
-  <el-card class="info-card" shadow="never">
+  <el-card class="info-card" shadow="never" v-loading="loading">
     <template #header>
       <div class="module-card-header">
         <div class="module-card-header-left">

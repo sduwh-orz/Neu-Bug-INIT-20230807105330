@@ -5,6 +5,8 @@ import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import Pagination from "@/components/Pagination.vue"
 import task from '@/api/task.ts'
 
+const loading = ref(true)
+
 export default defineComponent({
   computed: {
     FolderChecked() {
@@ -17,6 +19,7 @@ export default defineComponent({
   },
   setup() {
     return {
+      loading,
       page: ref()
     }
   },
@@ -32,8 +35,10 @@ export default defineComponent({
   },
   methods: {
     async updateData() {
+      loading.value = true
       let result = await task.search(this.query.name, this.page.page, this.page.size)
       this.data = result.data
+      loading.value = false
       return result
     },
     handleSearch() {
@@ -75,7 +80,7 @@ export default defineComponent({
         <span>列表信息</span>
       </div>
     </template>
-    <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录">
+    <el-table :data="data" style="width: 100%" empty-text="没有找到匹配的记录" v-loading="loading">
       <el-table-column align="center" type="index" label="序号" width="80"/>
       <el-table-column align="center" prop="name" label="项目名称"/>
       <el-table-column align="center" prop="owner" label="项目负责人"/>

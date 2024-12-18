@@ -1,6 +1,5 @@
 <script lang="ts">
 import { reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { EditPen } from '@element-plus/icons-vue'
 import type { Module } from '@/types/module'
@@ -27,29 +26,16 @@ const module = reactive({
   id: ''
 })
 const id = ref('')
+const loading = ref(true)
 const formDataRef = ref()
 
 export default {
   components: {EditPen, BreadCrumbNav},
   setup() {
-    let params = useRoute().query
-    id.value = params.id ? params.id.toString() : ''
-    bug.getGrades().then((result) => {
-      grades.length = 0
-      Object.assign(grades, utils.toOptions(result, true))
-    })
-    bug.get(id.value).then((result) => {
-      Object.assign(project, result.feature.module.project)
-      Object.assign(module, result.feature.module)
-      formData.name = result.name
-      formData.grade = String(result.grade.id)
-      formData.module = result.feature.module.id
-      formData.feature = result.feature.id
-      formData.description = result.description
-    })
     return {
-      formData: formData,
-      formDataRef: formDataRef,
+      loading,
+      formData,
+      formDataRef,
       formRules: reactive({
         name: [
           {
@@ -85,6 +71,25 @@ export default {
         ],
       }),
     }
+  },
+  mounted () {
+    loading.value = true
+    let params = this.$route.query
+    id.value = params.id ? params.id.toString() : ''
+    bug.getGrades().then((result) => {
+      grades.length = 0
+      Object.assign(grades, utils.toOptions(result, true))
+    })
+    bug.get(id.value).then((result) => {
+      Object.assign(project, result.feature.module.project)
+      Object.assign(module, result.feature.module)
+      formData.name = result.name
+      formData.grade = String(result.grade.id)
+      formData.module = result.feature.module.id
+      formData.feature = result.feature.id
+      formData.description = result.description
+      loading.value = false
+    })
   },
   data() {
     return {
@@ -132,7 +137,7 @@ export default {
 
 <template>
   <BreadCrumbNav :page-paths="['Bug 管理', '项目列表', 'Bug 列表', 'Bug 修改']"></BreadCrumbNav>
-  <el-card class="info-card" shadow="never">
+  <el-card class="info-card" shadow="never" v-loading="loading">
     <template #header>
       <div class="card-header">
         <el-icon>

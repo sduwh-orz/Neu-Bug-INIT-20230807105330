@@ -13,17 +13,15 @@ const formData = reactive({
   description: '',
   owner: ''
 })
+const loading = ref(true)
 const formDataRef = ref()
 const users = reactive([])
 
 export default {
   components: {EditPen, BreadCrumbNav},
   setup() {
-    user.all().then(data => {
-      users.length = 0
-      Object.assign(users, data)
-    })
     return {
+      loading,
       users,
       formData: formData,
       formDataRef: formDataRef,
@@ -61,6 +59,12 @@ export default {
     Object.keys(formData).forEach(function(key) {
       formData[key] = ''
     })
+    loading.value = true
+    user.all().then(data => {
+      users.length = 0
+      Object.assign(users, data)
+      loading.value = false
+    })
   },
   methods: {
     handleSubmit() {
@@ -89,7 +93,7 @@ export default {
 
 <template>
   <BreadCrumbNav :page-paths="['项目管理', '项目列表', '项目添加']"></BreadCrumbNav>
-  <el-card class="info-card" shadow="never">
+  <el-card class="info-card" shadow="never" v-loading="loading">
     <template #header>
       <div class="card-header">
         <el-icon>

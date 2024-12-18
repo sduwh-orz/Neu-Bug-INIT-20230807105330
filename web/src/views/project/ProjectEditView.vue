@@ -1,12 +1,12 @@
 <script lang="ts">
 import { reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { EditPen } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import user from '@/api/user.ts'
 import project from '@/api/project.ts'
 
+const loading = ref(true)
 const moduleName = 'project'
 const formData = reactive({
   id: '',
@@ -21,24 +21,11 @@ const users = reactive([])
 export default {
   components: {EditPen, BreadCrumbNav},
   setup() {
-    let route = useRoute()
-    formData.id = route.query.id ? route.query.id.toString() : ''
-    project.get(formData.id).then(projectInfo => {
-      if (projectInfo) {
-        formData.name = projectInfo.name
-        formData.keyword = projectInfo.keyword
-        formData.description = projectInfo.description
-        formData.owner = projectInfo.owner.id
-      }
-    })
-    user.all().then(data => {
-      users.length = 0
-      Object.assign(users, data)
-    })
     return {
+      loading,
       users,
-      formData: formData,
-      formDataRef: formDataRef,
+      formData,
+      formDataRef,
       formRules: reactive({
         name: [
           {
@@ -69,6 +56,23 @@ export default {
       }),
     }
   },
+  mounted() {
+    loading.value = true
+    formData.id = this.$route.query.id ? this.$route.query.id.toString() : ''
+    user.all().then(data => {
+      users.length = 0
+      Object.assign(users, data)
+    })
+    project.get(formData.id).then(projectInfo => {
+      if (projectInfo) {
+        formData.name = projectInfo.name
+        formData.keyword = projectInfo.keyword
+        formData.description = projectInfo.description
+        formData.owner = projectInfo.owner.id
+      }
+      loading.value = false
+    })
+  },
   methods: {
     handleSubmit() {
       try {
@@ -96,7 +100,7 @@ export default {
 
 <template>
   <BreadCrumbNav :page-paths="['项目管理', '项目列表', '项目修改']"></BreadCrumbNav>
-  <el-card class="info-card" shadow="never">
+  <el-card class="info-card" shadow="never" v-loading="loading">
     <template #header>
       <div class="card-header">
         <el-icon>

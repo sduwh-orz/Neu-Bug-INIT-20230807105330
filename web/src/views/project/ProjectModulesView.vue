@@ -9,6 +9,7 @@ import module from '@/api/module'
 import project from '@/api/project'
 import feature from '@/api/feature'
 
+const loading = ref(true)
 const refModuleCreate = ref()
 const refModifyModule = ref()
 const refFeatureCreate = ref()
@@ -31,17 +32,15 @@ export default {
   },
   setup() {
     return {
-      refModuleCreate: refModuleCreate,
-      refModifyModule: refModifyModule,
-      refFeatureCreate: refFeatureCreate,
-      refFeatureModify: refFeatureModify,
+      loading,
+      refModuleCreate,
+      refModifyModule,
+      refFeatureCreate,
+      refFeatureModify,
     }
   },
   mounted() {
-    this.id = this.$route.query.id ?.toString()
-    project.get(this.id).then(response => {
-      this.currentProject = response
-    })
+    this.updateData()
   },
   data() {
     return {
@@ -112,6 +111,14 @@ export default {
     }
   },
   methods: {
+    async updateData() {
+      loading.value = true
+      this.id = this.$route.query.id ?.toString()
+      project.get(this.id).then(response => {
+        this.currentProject = response
+        loading.value = false
+      })
+    },
     goBack() {
       this.$router.push('/project/list')
     },
@@ -291,7 +298,7 @@ export default {
 
 <template>
   <BreadCrumbNav :page-paths="['项目管理', '项目列表', '模块管理']"></BreadCrumbNav>
-  <el-card class="info-card" shadow="never">
+  <el-card class="info-card" shadow="never" v-loading="loading">
     <template #header>
       <div class="module-card-header">
         <div class="module-card-header-left">

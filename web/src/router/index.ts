@@ -4,7 +4,7 @@ import { Operation, OfficeBuilding, List, Aim, Avatar } from '@element-plus/icon
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: '/user/info',
+    component: () => import('@/views/HomeView.vue'),
   },
   {
     path: '/login',

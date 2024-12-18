@@ -15,16 +15,14 @@ const formData = reactive({
   email: ''
 })
 const roles = reactive([])
+const loading = ref(true)
 const formDataRef = ref()
 
 export default {
   components: {EditPen, BreadCrumbNav},
   setup() {
-    user.getRoles().then(response => {
-      roles.length = 0
-      Object.assign(roles, utils.toOptions(response, true))
-    })
     return {
+      loading,
       roles,
       formData: formData,
       formDataRef: formDataRef,
@@ -74,6 +72,12 @@ export default {
     Object.keys(formData).forEach(function(key) {
       formData[key] = ''
     })
+    loading.value = true
+    user.getRoles().then(response => {
+      roles.length = 0
+      Object.assign(roles, utils.toOptions(response, true))
+      loading.value = false
+    })
   },
   methods: {
     handleSubmit() {
@@ -102,7 +106,7 @@ export default {
 
 <template>
   <BreadCrumbNav :page-paths="['用户管理', '用户列表', '用户添加']"></BreadCrumbNav>
-  <el-card class="info-card" shadow="never">
+  <el-card class="info-card" shadow="never" v-loading="loading">
     <template #header>
       <div class="card-header">
         <el-icon>

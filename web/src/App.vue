@@ -21,11 +21,11 @@ export default {
       if (route.matched.length > 0)
         if (route.matched[0].meta.requiresLeader)
           if (store.state.user?.leader === false && store.state.user?.role?.name !== '管理员')
-            router.push('/user/info')
+            router.push('/')
         else if (route.matched[0].meta.requiresAdmin && store.state.user?.role?.name !== '管理员')
-            router.push('/user/info')
+            router.push('/')
       if (route.meta.notLoggedIn && store.state.user)
-        router.push('/user/info')
+        router.push('/')
 
       if (!store.state.user) {
         localStorage.removeItem('isLoggedIn')

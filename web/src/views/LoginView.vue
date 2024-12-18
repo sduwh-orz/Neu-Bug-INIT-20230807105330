@@ -43,7 +43,7 @@ export default {
   },
   mounted() {
     if (this.loggedInUser) {
-      this.$router.push('/user/info')
+      this.$router.push('/')
     }
   },
   methods: {
@@ -56,13 +56,13 @@ export default {
                 user.getLoggedInUser().then(user => {
                   localStorage.setItem('loggedIn', 'ok')
                   this.$store.commit('setUser', user)
-                  this.$router.push('/user/info')
+                  this.$router.push('/')
                   ElMessage.success('登录成功')
                 })
               } else {
                 ElMessage.error(response.message)
                 if (response.message == '已登录') {
-                  this.$router.push('/project/list')
+                  this.$router.push('/')
                 }
               }
             }).catch(() => {
