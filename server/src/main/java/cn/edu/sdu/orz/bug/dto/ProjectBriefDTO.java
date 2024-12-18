@@ -1,16 +1,16 @@
 package cn.edu.sdu.orz.bug.dto;
 
-
-import cn.edu.sdu.orz.bug.entity.User;
+import cn.edu.sdu.orz.bug.entity.Project;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 
-public class UserBriefDTO implements Serializable {
+public class ProjectBriefDTO implements Serializable {
     private static final long serialVersionUID = 1L;
+
     private String id;
 
-    private String realName;
+    private String name;
 
     public String getId() {
         return id;
@@ -20,16 +20,16 @@ public class UserBriefDTO implements Serializable {
         this.id = id;
     }
 
-    public String getRealName() {
-        return realName;
+    public String getName() {
+        return name;
     }
 
-    public void setRealName(String realName) {
-        this.realName = realName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public static UserBriefDTO toDTO(User original) {
-        UserBriefDTO bean = new UserBriefDTO();
+    public static ProjectBriefDTO toDTO(Project original) {
+        ProjectBriefDTO bean = new ProjectBriefDTO();
         BeanUtils.copyProperties(original, bean);
         return bean;
     }
