@@ -1,9 +1,6 @@
 package cn.edu.sdu.orz.bug.controller;
 
-import cn.edu.sdu.orz.bug.dto.ProjectDTO;
-import cn.edu.sdu.orz.bug.dto.ProjectInBugListDTO;
-import cn.edu.sdu.orz.bug.dto.ProjectInTaskListDTO;
-import cn.edu.sdu.orz.bug.dto.Response;
+import cn.edu.sdu.orz.bug.dto.*;
 import cn.edu.sdu.orz.bug.service.ProjectService;
 import cn.edu.sdu.orz.bug.vo.*;
 import jakarta.servlet.http.HttpSession;
@@ -39,9 +36,14 @@ public class ProjectController {
         projectService.update(id, vO);
     }
 
+//    @GetMapping("/{id}")
+//    public ProjectDTO getById(@PathVariable("id") String id) {
+//        return projectService.getById(id);
+//    }
+
     @GetMapping("/{id}")
-    public ProjectDTO getById(@PathVariable("id") String id) {
-        return projectService.getById(id);
+    public ProjectBriefDTO getProjectDetails(@PathVariable("id") String id) {
+        return projectService.getProjectDetails(id);
     }
 
     @GetMapping
@@ -76,7 +78,7 @@ public class ProjectController {
         return new Response(projectService.modify(id, vO, httpSession));
     }
 
-    @PostMapping("/remove/{id}")
+    @GetMapping("/remove/{id}")
     public Response remove(@PathVariable("id") String id, HttpSession httpSession) {
         return new Response(projectService.remove(id, httpSession));
     }

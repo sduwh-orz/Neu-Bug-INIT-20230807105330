@@ -27,11 +27,6 @@ public class UserController {
         return userService.getById(id);
     }
 
-    @GetMapping("/me")
-    public UserDTO myInfo(HttpSession session) {
-        return userService.myInfo(session);
-    }
-
     @PostMapping("/search")
     public Map<String, Object> search(@RequestBody UserQueryVO vO) {
         return userService.search(vO);
