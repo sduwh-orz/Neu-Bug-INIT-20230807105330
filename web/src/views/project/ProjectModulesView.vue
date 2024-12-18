@@ -60,7 +60,17 @@ export default {
           toggle: false,
           rules: {
             name: [
-              { required: true, message: '请输入模块名', trigger: 'blur' }
+              { required: true, message: '请输入模块名', trigger: 'blur' },
+              {
+                validator: (_rule: any, value: string, callback: any) => {
+                  if (value.length > 50) {
+                    callback(new Error('模块名称不能超过50个字'))
+                  } else {
+                    callback();
+                  }
+                },
+                trigger: 'blur',
+              }
             ]
           }
         },
@@ -69,7 +79,17 @@ export default {
           toggle: false,
           rules: {
             name: [
-              { required: true, message: '请输入模块名', trigger: 'blur' }
+              { required: true, message: '请输入模块名', trigger: 'blur' },
+              {
+                validator: (_rule: any, value: string, callback: any) => {
+                  if (value.length > 50) {
+                    callback(new Error('模块名称不能超过50个字'))
+                  } else {
+                    callback();
+                  }
+                },
+                trigger: 'blur',
+              }
             ]
           }
         },
@@ -79,7 +99,17 @@ export default {
           toggle: false,
           rules: {
             name: [
-              { required: true, message: '请输入功能名', trigger: 'blur' }
+              { required: true, message: '请输入功能名', trigger: 'blur' },
+              {
+                validator: (_rule: any, value: string, callback: any) => {
+                  if (value.length > 50) {
+                    callback(new Error('功能名称不能超过50个字'))
+                  } else {
+                    callback();
+                  }
+                },
+                trigger: 'blur',
+              }
             ],
             hours: [
               { required: true, message: '请选择该功能的计划耗时', trigger: 'blur'},
@@ -92,7 +122,17 @@ export default {
           toggle: false,
           rules: {
             name: [
-              { required: true, message: '请输入功能名', trigger: 'blur' }
+              { required: true, message: '请输入功能名', trigger: 'blur' },
+              {
+                validator: (_rule: any, value: string, callback: any) => {
+                  if (value.length > 50) {
+                    callback(new Error('功能名称不能超过50个字'))
+                  } else {
+                    callback();
+                  }
+                },
+                trigger: 'blur',
+              }
             ],
             hours: [
               { required: true, message: '请选择该功能的计划耗时', trigger: 'blur'},
@@ -485,8 +525,8 @@ export default {
         <el-form-item label="功能名" prop="name">
           <el-input v-model="dialogs.featureCreate.name" placeholder="请输入功能名" style="width: 300px" />
         </el-form-item>
-        <el-form-item label="计划耗时" prop="hours">
-          <el-input-number v-model="dialogs.featureCreate.hours" :precision="1" :step="0.1" :min="0" :max="114514" />
+        <el-form-item label="计划耗时（小时）" prop="hours">
+          <el-input-number v-model="dialogs.featureCreate.hours" :min="0" :max="114514" />
         </el-form-item>
       </el-form>
     </div>
@@ -518,8 +558,8 @@ export default {
         <el-form-item label="功能名" prop="name">
           <el-input v-model="dialogs.featureModify.name" placeholder="请输入功能名" style="width: 300px" />
         </el-form-item>
-        <el-form-item label="计划耗时" prop="hours">
-          <el-input-number v-model="dialogs.featureModify.hours" :precision="1" :step="0.1" :min="0" :max="114514" />
+        <el-form-item label="计划耗时（小时）" prop="hours">
+          <el-input-number v-model="dialogs.featureModify.hours" :min="0" :max="114514" />
         </el-form-item>
       </el-form>
     </div>
