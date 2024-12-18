@@ -48,6 +48,16 @@ export default {
             required: true,
             message: '请选择真实姓名',
             trigger: 'blur'
+          },
+          {
+            validator: (_rule: any, value: string, callback: any) => {
+              if (value.length > 30) {
+                callback(new Error('真实姓名长度不能超过30个字'))
+              } else {
+                callback();
+              }
+            },
+            trigger: 'blur',
           }
         ],
         role: [
@@ -57,6 +67,18 @@ export default {
             trigger: 'blur'
           }
         ],
+        email: [
+          {
+            validator: (_rule: any, value: string, callback: any) => {
+              if (value.length > 50) {
+                callback(new Error('邮箱长度不能超过50个字符'))
+              } else {
+                callback();
+              }
+            },
+            trigger: 'blur',
+          }
+        ]
       })
     }
   },
