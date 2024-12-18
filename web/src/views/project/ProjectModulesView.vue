@@ -4,6 +4,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowLeft, CirclePlus, FolderOpened, Delete, Edit, Plus } from '@element-plus/icons-vue'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import type { Module } from '@/types/module'
+import type { Feature } from '@/types/feature'
 import module from '@/api/module'
 import project from '@/api/project'
 import feature from '@/api/feature'
@@ -95,7 +96,7 @@ export default {
         },
         featureCreate: {
           name: '',
-          hours: 0.0,
+          hours: undefined,
           toggle: false,
           rules: {
             name: [
@@ -112,13 +113,13 @@ export default {
               }
             ],
             hours: [
-              { required: true, message: '请选择该功能的计划耗时', trigger: 'blur'},
+              { required: true, message: '计划时间不可以为空', trigger: 'blur'},
             ]
           }
         },
         featureModify: {
           name: '',
-          hours: 0.0,
+          hours: undefined,
           toggle: false,
           rules: {
             name: [
@@ -135,14 +136,15 @@ export default {
               }
             ],
             hours: [
-              { required: true, message: '请选择该功能的计划耗时', trigger: 'blur'},
+              { required: true, message: '计划时间不可以为空', trigger: 'blur'},
             ]
           }
         },
       }),
-      selectedItem: {
-        id: ''
-      },
+      selectedItem: reactive({
+        id: '',
+        features: [] as Feature[]
+      }),
     }
   },
   methods: {
@@ -165,6 +167,10 @@ export default {
     },
     handleModuleDelete(_: number, row: any) {
       this.selectedItem = row
+      if (this.selectedItem.features.length > 0) {
+        ElMessage.error('模块已创建功能不可以删除')
+        return
+      }
       ElMessageBox.confirm(
           '确定要删除模块吗？',
           '删除模块',
