@@ -1,7 +1,9 @@
 package cn.edu.sdu.orz.bug.service;
 
+import cn.edu.sdu.orz.bug.dto.UserBriefDTO;
 import cn.edu.sdu.orz.bug.dto.UserDTO;
 import cn.edu.sdu.orz.bug.entity.User;
+import cn.edu.sdu.orz.bug.entity.UserRole;
 import cn.edu.sdu.orz.bug.repository.UserRepository;
 import cn.edu.sdu.orz.bug.repository.UserRoleRepository;
 import cn.edu.sdu.orz.bug.utils.Utils;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -32,6 +35,11 @@ public class UserService {
     public Map<String, Object> search(UserQueryVO vO) {
         User example = new User();
         BeanUtils.copyProperties(vO, example);
+        if (vO.getRole() != null)
+            example.setRole(new UserRole(vO.getRole()));
+        example.setDeleted(0);
+
+        System.out.println(example);
 
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withMatcher("username", contains().ignoreCase())
@@ -47,8 +55,12 @@ public class UserService {
     }
 
     public UserDTO getById(String id) {
-        User original = requireOne(id);
+        User original = userRepository.findById(id).orElse(null);
         return toDTO(original);
+    }
+
+    public List<UserBriefDTO> all() {
+        return userRepository.findAllyByDeletedFalse().stream().map(UserService::toBriefDTO).toList();
     }
 
     public boolean create(UserCreateVO vO, HttpSession session) {
@@ -67,11 +79,11 @@ public class UserService {
         return true;
     }
 
-    public boolean modify(String id, UserUpdateVO vO, HttpSession session) {
+    public boolean modify(UserUpdateVO vO, HttpSession session) {
         if (isLoggedInUserNotAdmin(session))
             return false;
         try {
-            User bean = requireOne(id);
+            User bean = requireOne(vO.getId());
             BeanUtils.copyProperties(vO, bean, Utils.getNullPropertyNames(vO));
             userRepository.save(bean);
         } catch (Exception e) {
@@ -106,6 +118,13 @@ public class UserService {
         return true;
     }
 
+    public UserDTO myInfo(HttpSession session) {
+        User user = getLoggedInUser(session);
+        if (user == null)
+            return null;
+        return toDTO(user);
+    }
+
     public User getByUsername(String username) {
         return userRepository.findByUsernameAndDeletedFalse(username);
     }
@@ -121,8 +140,7 @@ public class UserService {
         if (user == null)
             return null;
         String password = session.getAttribute("password").toString();
-        String afterMD5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
-        if (!user.getPassword().equals(afterMD5)) {
+        if (!user.getPassword().equals(password)) {
             session.removeAttribute("id");
             session.removeAttribute("password");
             return null;
@@ -142,7 +160,7 @@ public class UserService {
         User user = getLoggedInUser(session);
         if (user == null)
             return false;
-        return user.getRole().equals("管理员");
+        return user.getRole().getName().equals("管理员");
     }
 
     public boolean isLoggedInUserNotAdmin(HttpSession session) {
@@ -162,7 +180,7 @@ public class UserService {
             if (!user.getPassword().equals(afterMD5)) {
                 return false;
             } else {
-                session.setAttribute("user", user.getId());
+                session.setAttribute("id", user.getId());
                 session.setAttribute("password", user.getPassword());
                 return true;
             }
@@ -184,12 +202,20 @@ public class UserService {
     }
 
     private static UserDTO toDTO(User original) {
+        if (original == null)
+            return null;
         UserDTO bean = new UserDTO();
         BeanUtils.copyProperties(original, bean);
         return bean;
     }
 
-    private User requireOne(String id) {
+    private static UserBriefDTO toBriefDTO(User original) {
+        UserBriefDTO bean = new UserBriefDTO();
+        BeanUtils.copyProperties(original, bean);
+        return bean;
+    }
+
+    public User requireOne(String id) {
         return userRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new NoSuchElementException("Resource not found: " + id));
     }

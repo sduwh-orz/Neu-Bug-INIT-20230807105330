@@ -1,5 +1,7 @@
 package cn.edu.sdu.orz.bug.controller;
 
+import cn.edu.sdu.orz.bug.dto.Response;
+import cn.edu.sdu.orz.bug.dto.UserBriefDTO;
 import cn.edu.sdu.orz.bug.dto.UserDTO;
 import cn.edu.sdu.orz.bug.service.UserService;
 import cn.edu.sdu.orz.bug.vo.*;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Validated
@@ -24,6 +27,11 @@ public class UserController {
         return userService.getById(id);
     }
 
+    @GetMapping("/me")
+    public UserDTO myInfo(HttpSession session) {
+        return userService.myInfo(session);
+    }
+
     @PostMapping("/search")
     public Map<String, Object> search(@RequestBody UserQueryVO vO) {
         return userService.search(vO);
@@ -35,12 +43,11 @@ public class UserController {
         return new Response(userService.create(vO, session));
     }
 
-    @PostMapping("/modify/{id}")
-    public Response modify(@PathVariable("id") String id,
-                           @RequestBody UserUpdateVO vO,
+    @PostMapping("/modify")
+    public Response modify(@RequestBody UserUpdateVO vO,
                            HttpSession session
     ) {
-        return new Response(userService.modify(id, vO, session));
+        return new Response(userService.modify(vO, session));
     }
 
     @GetMapping("/remove/{id}")
@@ -72,5 +79,10 @@ public class UserController {
     public Response password(@RequestBody UserPasswordVO vO,
                              HttpSession session) {
         return new Response(userService.password(vO, session));
+    }
+
+    @GetMapping("/all")
+    public List<UserBriefDTO> all() {
+        return userService.all();
     }
 }

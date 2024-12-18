@@ -80,7 +80,7 @@ public class ProjectService {
 //        }
         try {
             Project bean = new Project();
-            BeanUtils.copyProperties(projectCreateVO, bean, Utils.getNullPropertyNames(projectCreateVO));
+            BeanUtils.copyProperties(projectCreateVO, bean);
             bean.setId(newID());
             bean.setName(projectCreateVO.getName());
             bean.setKeyword(projectCreateVO.getKeyword());
