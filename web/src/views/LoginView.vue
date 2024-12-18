@@ -1,8 +1,10 @@
 <script lang="ts">
-import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import {reactive, ref} from 'vue'
 import { ElMessage } from 'element-plus'
 import user from '@/api/user.ts'
+
+const formDataRef = ref()
+
 export default {
   computed: {
     loggedInUser() {
@@ -16,32 +18,64 @@ export default {
     })
     return {
       form,
+      formDataRef,
+      rules: reactive({
+        username: [
+          {
+            required: true,
+            message: '请输入用户名',
+            trigger: 'blur'
+          },
+          { max: 30, message: '用户名长度最多为30位', trigger: 'blur' },
+          { pattern: /^[a-zA-Z0-9]+$/, message: '用户名仅能包含字母和数字', trigger: 'blur' },
+        ],
+        password: [
+          {
+            required: true,
+            message: '请输入密码',
+            trigger: 'blur'
+          },
+          { max: 20, message: '密码长度最多为20位', trigger: 'blur' },
+          { min: 6, message: '密码长度至少为6位', trigger: 'blur' },
+        ],
+      })
     }
   },
   mounted() {
+    console.log(this.loggedInUser)
     if (this.loggedInUser) {
-      useRouter().push('/project/list')
+      this.$router.push('/user/info')
     }
   },
   methods: {
     login() {
-        user.login(this.form.username, this.form.password).then(response => {
-        if (response.success) {
-          user.getLoggedInUser().then(user => {
-            localStorage.setItem('loggedIn', 'ok')
-            this.$store.commit('setUser', user)
-            this.$router.push('/project/list')
-            ElMessage.success('登录成功')
-          })
-        } else {
-          ElMessage.error(response.message)
-          if (response.message == '已登录') {
-            this.$router.push('/project/list')
+      try {
+        formDataRef.value.validate((valid: any) => {
+          if (valid) {
+            user.login(this.form.username, this.form.password).then(response => {
+              if (response.success) {
+                user.getLoggedInUser().then(user => {
+                  localStorage.setItem('loggedIn', 'ok')
+                  this.$store.commit('setUser', user)
+                  this.$router.push('/user/info')
+                  ElMessage.success('登录成功')
+                })
+              } else {
+                ElMessage.error(response.message)
+                if (response.message == '已登录') {
+                  this.$router.push('/project/list')
+                }
+              }
+            }).catch(() => {
+              ElMessage.error('未知错误')
+            })
+          } else {
+            ElMessage.error('请检查输入')
           }
-        }
-      }).catch(() => {
-        ElMessage.error('未知错误')
-      })
+        })
+      } catch (error) {
+        ElMessage.error('请检查输入')
+      }
     }
   }
 }
@@ -57,14 +91,14 @@ export default {
         <el-main style="max-width: 300px; margin-left: 10px">
           <el-text tag="b">系统登录</el-text>
           <el-divider />
-          <el-form :model="form" label-width="auto">
-            <el-form-item label="用户名">
+          <el-form ref="formDataRef" :model="form" :rules="rules" label-width="auto" hide-required-asterisk>
+            <el-form-item label="用户名" prop="username">
               <el-input
                   v-model="form.username"
                   @keyup.enter="login"
               />
             </el-form-item>
-            <el-form-item label="密码">
+            <el-form-item label="密码" prop="password">
               <el-input
                   v-model="form.password"
                   type="password"

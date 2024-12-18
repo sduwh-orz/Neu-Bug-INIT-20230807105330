@@ -10,7 +10,7 @@ const formData = reactive({
   newPassword: '',
   confirmPassword: '',
 })
-const formDataRef = ref();
+const formDataRef = ref()
 export default {
   components: {EditPen, BreadCrumbNav},
   setup() {
@@ -19,14 +19,19 @@ export default {
       formDataRef: formDataRef,
       formRules: reactive({
         oldPassword: [
-          { required: true, message: '请输入原密码', trigger: 'blur' }
+          { required: true, message: '请输入原密码', trigger: 'blur' },
+          { max: 20, message: '密码长度最多为20位', trigger: 'blur' },
+          { min: 6, message: '密码长度至少为6位', trigger: 'blur' },
         ],
         newPassword: [
           { required: true, message: '请输入新密码', trigger: 'blur' },
+          { max: 20, message: '密码长度最多为20位', trigger: 'blur' },
           { min: 6, message: '密码长度至少为6位', trigger: 'blur' },
         ],
         confirmPassword: [
           { required: true, message: '请确认新密码', trigger: 'blur' },
+          { max: 20, message: '密码长度最多为20位', trigger: 'blur' },
+          { min: 6, message: '密码长度至少为6位', trigger: 'blur' },
           {
             validator: (_rule: any, value: string, callback: any) => {
               if (value !== formData.newPassword) {
@@ -62,11 +67,11 @@ export default {
                   formDataRef.value.resetFields()
                   this.$router.push('/login')
                 } else {
-                  ElMessage.error('旧密码不正确')
+                  ElMessage.error(response.message ? response.message : '修改失败')
                   return false
                 }
               })
-            }).catch((error) => {
+            }).catch(() => {
               ElMessage.info('已取消密码修改')
             });
           } else {

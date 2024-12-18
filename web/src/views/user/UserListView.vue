@@ -176,7 +176,7 @@ export default defineComponent({
       </el-table-column>
     </el-table>
     <template #footer>
-      <Pagination ref="page" :update-data="updateData" :query="query" module="user" path="list" />
+      <Pagination ref="page" :update-data="updateData" :query="query" module="user_manage" path="list" />
     </template>
   </el-card>
   <el-dialog

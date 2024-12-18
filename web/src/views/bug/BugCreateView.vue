@@ -42,7 +42,11 @@ export default {
             required: true,
             message: '请输入 Bug 标题',
             trigger: 'blur'
-          }
+          },
+          { max: 50, message: 'Bug 标题不能超过50个字', trigger: 'blur' },
+        ],
+        description: [
+          { max: 500, message: 'Bug 详情不能超过500个字', trigger: 'blur' },
         ],
         grade: [
           {
@@ -76,6 +80,9 @@ export default {
     }
   },
   mounted() {
+    Object.keys(formData).forEach(function(key) {
+      formData[key] = ''
+    })
   },
   computed: {
     features() {
@@ -166,7 +173,7 @@ export default {
         </el-select>
       </el-form-item>
       <el-form-item label="Bug 详情" prop="description">
-        <el-input v-model="formData.description" type="textarea"/>
+        <el-input v-model="formData.description" type="textarea" maxlength="500" show-word-limit/>
       </el-form-item>
     </el-form>
     <template #footer>

@@ -126,7 +126,7 @@ export default defineComponent({
             ],
           }),
         },
-        close: {
+        toggle: {
           comment: '',
           toggle: false,
         },
@@ -147,7 +147,8 @@ export default defineComponent({
       query,
       project: nowProject,
       selectedItem: {
-        id: ''
+        id: '',
+        status: utils.emptyType
       },
     }
   },
@@ -185,8 +186,8 @@ export default defineComponent({
       this.dialogs.comment.toggle = true
       this.selectedItem = row
     },
-    handleClose(_: number, row: any) {
-      this.dialogs.close.toggle = true
+    handleToggle(_: number, row: any) {
+      this.dialogs.toggle.toggle = true
       this.selectedItem = row
     },
     handleSubmitSolve() {
@@ -228,20 +229,35 @@ export default defineComponent({
         }
       }
     },
-    handleSubmitClose() {
+    handleSubmitToggle() {
       if (this.selectedItem) {
-        bug.close(
-            this.selectedItem.id,
-            this.dialogs.close.comment
-        ).then((response) => {
-          if (response.success) {
-            this.dialogs.close.toggle = false
-            ElMessage.success('提交成功')
-            this.$router.go(0)
-          } else {
-            ElMessage.error('提交失败')
-          }
-        })
+        if (this.selectedItem.status.name == '已关闭') {
+          bug.open(
+              this.selectedItem.id,
+              this.dialogs.toggle.comment
+          ).then((response) => {
+            if (response.success) {
+              this.dialogs.toggle.toggle = false
+              ElMessage.success('提交成功')
+              this.$router.go(0)
+            } else {
+              ElMessage.error('提交失败')
+            }
+          })
+        } else {
+          bug.close(
+              this.selectedItem.id,
+              this.dialogs.toggle.comment
+          ).then((response) => {
+            if (response.success) {
+              this.dialogs.toggle.toggle = false
+              ElMessage.success('提交成功')
+              this.$router.go(0)
+            } else {
+              ElMessage.error('提交失败')
+            }
+          })
+        }
       }
     },
     handleAllBugs() {
@@ -407,6 +423,7 @@ export default defineComponent({
     <template #footer>
       <el-row class="row-bg" justify="end">
         <div class="flex-grow" />
+        <el-button @click="$router.push('/bug/list')" round>返回项目列表</el-button>
         <el-button type="primary" @click="handleSearch" round>查询</el-button>
         <el-button type="primary" @click="handleAllBugs" round>全部 Bug</el-button>
         <el-button type="primary" @click="handleMyBugs" round>我开发的 Bug</el-button>
@@ -460,6 +477,7 @@ export default defineComponent({
                 size="small"
                 type="primary"
                 @click="handleEdit(scope.$index, scope.row)"
+                :disabled="scope.row.status.name=='已关闭'"
                 circle
             />
           </el-tooltip>
@@ -473,6 +491,7 @@ export default defineComponent({
                 size="small"
                 type="success"
                 @click="handleSolve(scope.$index, scope.row)"
+                :disabled="scope.row.status.name=='已关闭'"
                 circle
             />
           </el-tooltip>
@@ -486,19 +505,20 @@ export default defineComponent({
                 size="small"
                 type="warning"
                 @click="handleComment(scope.$index, scope.row)"
+                :disabled="scope.row.status.name=='已关闭'"
                 circle
             />
           </el-tooltip>
           <el-tooltip
               class="box-item"
-              content="关闭"
+              :content="scope.row.status.name=='已关闭' ? '打开' : '关闭'"
               placement="top"
           >
             <el-button
                 :icon="SwitchButton"
                 size="small"
-                type="danger"
-                @click="handleClose(scope.$index, scope.row)"
+                :type="scope.row.status.name=='已关闭' ? 'success' : 'danger'"
+                @click="handleToggle(scope.$index, scope.row)"
                 circle
             />
           </el-tooltip>
@@ -561,16 +581,16 @@ export default defineComponent({
       </div>
     </template>
   </el-dialog>
-  <el-dialog v-model="dialogs.close.toggle" title="关闭 Bug" width="500">
-    <el-form :model="dialogs.close" status-icon>
+  <el-dialog v-model="dialogs.toggle.toggle" :title="selectedItem?.status?.name == '已关闭' ? '打开 Bug' : '关闭 Bug'" width="500">
+    <el-form :model="dialogs.toggle" status-icon>
       <el-form-item label="备注" label-width="100" prop="comment">
-        <el-input v-model="dialogs.close.comment" type="textarea"/>
+        <el-input v-model="dialogs.toggle.comment" type="textarea"/>
       </el-form-item>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="dialogs.close.toggle = false">关闭</el-button>
-        <el-button type="primary" @click="handleSubmitClose()">保存</el-button>
+        <el-button @click="dialogs.toggle.toggle = false">关闭</el-button>
+        <el-button type="primary" @click="handleSubmitToggle()">保存</el-button>
       </div>
     </template>
   </el-dialog>

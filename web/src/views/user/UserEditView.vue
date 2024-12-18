@@ -7,7 +7,7 @@ import { ElMessage } from 'element-plus';
 import user from '@/api/user.ts'
 import utils from '@/api/utils.ts'
 
-const moduleName = 'user'
+const moduleName = 'user_manage'
 const formData = reactive({
   id: '',
   username: '',
@@ -46,14 +46,10 @@ export default {
             required: true,
             message: '请输入用户名',
             trigger: 'blur'
-          }
-        ],
-        password: [
-          {
-            required: true,
-            message: '请输入密码',
-            trigger: 'blur'
-          }
+          },
+          { max: 30, message: '用户名长度最多为30位', trigger: 'blur' },
+          { min: 6, message: '用户名长度至少为6位', trigger: 'blur' },
+          { pattern: /^[a-zA-Z0-9]+$/, message: '用户名仅能包含字母和数字', trigger: 'blur' },
         ],
         realName: [
           {
@@ -61,16 +57,7 @@ export default {
             message: '请选择真实姓名',
             trigger: 'blur'
           },
-          {
-            validator: (_rule: any, value: string, callback: any) => {
-              if (value.length > 30) {
-                callback(new Error('真实姓名长度不能超过30个字'))
-              } else {
-                callback();
-              }
-            },
-            trigger: 'blur',
-          }
+          { max: 30, message: '真实姓名长度不能超过30个字', trigger: 'blur' },
         ],
         role: [
           {
@@ -80,19 +67,16 @@ export default {
           }
         ],
         email: [
-          {
-            validator: (_rule: any, value: string, callback: any) => {
-              if (value.length > 50) {
-                callback(new Error('邮箱长度不能超过50个字符'))
-              } else {
-                callback();
-              }
-            },
-            trigger: 'blur',
-          }
+          { max: 50, message: '邮箱长度不能超过50个字符', trigger: 'blur' },
+          { pattern: /^[A-Za-zd]+([-_.][A-Za-zd]+)*@([A-Za-zd]+[-.])+[A-Za-zd]{2,5}$/, message: '邮箱格式错误', trigger: 'blur' },
         ]
       })
     }
+  },
+  mounted() {
+    Object.keys(formData).forEach(function(key) {
+      formData[key] = ''
+    })
   },
   methods: {
     handleSubmit() {
@@ -104,7 +88,7 @@ export default {
               formDataRef.value.resetFields()
               this.$router.push('/' + moduleName + '/list')
             } else {
-              ElMessage.error('修改失败')
+              ElMessage.error(response.message ? response.message : '添加失败')
             }
           })
         })

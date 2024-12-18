@@ -93,6 +93,14 @@ export default {
       id, solveType, comment
     })).data
   },
+  open: async function(
+    id: string,
+    comment: string,
+  ) {
+    return (await $axios.post('/bug/open', {
+      id, comment
+    })).data
+  },
   close: async function(
     id: string,
     comment: string,

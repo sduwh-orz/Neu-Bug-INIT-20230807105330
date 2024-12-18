@@ -33,14 +33,19 @@ export default {
             required: true,
             message: '请输入项目名称',
             trigger: 'blur'
-          }
+          },
+          { max: 50, message: '项目名称不能超过50个字', trigger: 'blur' },
+        ],
+        description: [
+          { max: 200, message: '项目描述不能超过200个字', trigger: 'blur' },
         ],
         keyword: [
           {
             required: true,
             message: '请输入项目关键字',
             trigger: 'blur'
-          }
+          },
+          { max: 20, message: '项目关键字不能超过20个字', trigger: 'blur' },
         ],
         owner: [
           {
@@ -51,6 +56,11 @@ export default {
         ]
       }),
     }
+  },
+  mounted() {
+    Object.keys(formData).forEach(function(key) {
+      formData[key] = ''
+    })
   },
   methods: {
     handleSubmit() {
@@ -102,7 +112,7 @@ export default {
         <el-input v-model="formData.keyword"/>
       </el-form-item>
       <el-form-item label="项目描述信息" prop="description">
-        <el-input v-model="formData.description" type="textarea"/>
+        <el-input v-model="formData.description" type="textarea" maxlength="200" show-word-limit/>
       </el-form-item>
       <el-form-item label="项目负责人" prop="owner">
         <el-select v-model="formData.owner" placeholder="请选择..." no-data-text="暂无用户">

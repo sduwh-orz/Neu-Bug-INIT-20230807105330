@@ -1,119 +1,222 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { Operation, OfficeBuilding, List, Aim, Avatar } from '@element-plus/icons-vue'
+
+const routes: RouteRecordRaw[] = [
+  {
+    path: '/',
+    redirect: '/user/info',
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/LoginView.vue'),
+    meta: {
+      notLoggedIn: true,
+    }
+  },
+  {
+    path: '/logout',
+    component: () => import('@/views/LogoutView.vue'),
+    meta: {
+      notLoggedIn: true,
+    }
+  },
+  {
+    path: '/user',
+    redirect: 'list',
+    meta: {
+      title: '我的面板',
+      icon: Operation,
+      hidden: false,
+    },
+    children: [
+      {
+        path: 'info',
+        component: () => import('@/views/user/UserInfoView.vue'),
+        meta: {
+          title: '用户信息',
+          hidden: false
+        },
+      },
+      {
+        path: 'password',
+        component: () => import('@/views/user/UserPasswordView.vue'),
+        meta: {
+          title: '修改密码',
+          hidden: false
+        }
+      },
+    ],
+  },
+  {
+    path: '/project',
+    redirect: 'list',
+    meta: {
+      title: '项目管理',
+      icon: OfficeBuilding,
+      hidden: false,
+      requiresLeader: true
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/project/ProjectListView.vue'),
+        meta: {
+          title: '项目管理',
+          hidden: false,
+          needPermission: true,
+        }
+      },
+      {
+        path: 'create',
+        component: () => import('@/views/project/ProjectCreateView.vue'),
+        meta: {
+          title: '项目添加',
+          needPermission: true,
+        }
+      },
+      {
+        path: 'modules',
+        component: () => import('@/views/project/ProjectModulesView.vue'),
+        meta: {
+          title: '模块管理',
+          needPermission: true,
+        }
+      },
+      {
+        path: 'edit',
+        component: () => import('@/views/project/ProjectEditView.vue'),
+        meta: {
+          title: '项目修改',
+          needPermission: true,
+        }
+      },
+    ]
+  },
+  {
+    path: '/task',
+    redirect: 'list',
+    meta: {
+      title: '任务分配',
+      icon: List,
+      hidden: false,
+      requiresLeader: true
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/task/TaskListView.vue'),
+        meta: {
+          title: '任务分配',
+          hidden: false,
+          needPermission: true,
+        }
+      },
+      {
+        path: 'edit',
+        component: () => import('@/views/task/TaskEditView.vue'),
+        meta: {
+          title: '任务分配',
+          needPermission: true,
+        }
+      },
+    ]
+  },
+  {
+    path: '/bug',
+    redirect: 'list',
+    meta: {
+      title: 'Bug 管理',
+      icon: Aim,
+      hidden: false,
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/bug/BugProjectListView.vue'),
+        meta: {
+          title: 'Bug 管理',
+          hidden: false
+        }
+      },
+      {
+        path: 'stats',
+        component: () => import('@/views/bug/BugStatsView.vue'),
+        meta: {
+          title: 'Bug 统计',
+        }
+      },
+      {
+        path: 'bugs',
+        component: () => import('@/views/bug/BugListView.vue'),
+        meta: {
+          title: 'Bug 管理',
+        }
+      },
+      {
+        path: 'create',
+        component: () => import('@/views/bug/BugCreateView.vue'),
+        meta: {
+          title: 'Bug 添加',
+        }
+      },
+      {
+        path: 'edit',
+        component: () => import('@/views/bug/BugEditView.vue'),
+        meta: {
+          title: 'Bug 修改',
+        }
+      },
+      {
+        path: 'info',
+        component: () => import('@/views/bug/BugInfoView.vue'),
+        meta: {
+          title: 'Bug 查看',
+        }
+      }
+    ]
+  },
+  {
+    path: '/user_manage',
+    redirect: 'list',
+    meta: {
+      title: '用户管理',
+      icon: Avatar,
+      hidden: false,
+      requiresAdmin: true
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/user/UserListView.vue'),
+        meta: {
+          title: '用户管理',
+          hidden: false,
+          needPermission: true,
+        }
+      },
+      {
+        path: 'create',
+        component: () => import('@/views/user/UserCreateView.vue'),
+        meta: {
+          title: '用户添加',
+          needPermission: true,
+        }
+      },
+      {
+        path: 'edit',
+        component: () => import('@/views/user/UserEditView.vue'),
+        meta: {
+          title: '用户修改',
+          needPermission: true,
+        }
+      },
+    ]
+  }
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      redirect: '/project/list',
-    },
-    {
-      path: '/login',
-      component: () => import('@/views/LoginView.vue'),
-      meta: {
-        notLoggedIn: true,
-      }
-    },
-    {
-      path: '/logout',
-      component: () => import('@/views/LogoutView.vue'),
-      meta: {
-        notLoggedIn: true,
-      }
-    },
-    {
-      path: '/user',
-      redirect: 'list',
-      children: [
-        {
-          path: 'info',
-          component: () => import('@/views/user/UserInfoView.vue'),
-        },
-        {
-          path: 'password',
-          component: () => import('@/views/user/UserPasswordView.vue'),
-        },
-        {
-          path: 'list',
-          component: () => import('@/views/user/UserListView.vue'),
-        },
-        {
-          path: 'create',
-          component: () => import('@/views/user/UserCreateView.vue'),
-        },
-        {
-          path: 'edit',
-          component: () => import('@/views/user/UserEditView.vue'),
-        },
-      ]
-    },
-    {
-      path: '/project',
-      redirect: 'list',
-      children: [
-        {
-          path: 'list',
-          component: () => import('@/views/project/ProjectListView.vue'),
-        },
-        {
-          path: 'create',
-          component: () => import('@/views/project/ProjectCreateView.vue'),
-        },
-        {
-          path: 'modules',
-          component: () => import('@/views/project/ProjectModulesView.vue'),
-        },
-        {
-          path: 'edit',
-          component: () => import('@/views/project/ProjectEditView.vue'),
-        },
-      ]
-    },
-    {
-      path: '/task',
-      redirect: 'list',
-      children: [
-        {
-          path: 'list',
-          component: () => import('@/views/task/TaskListView.vue'),
-        },
-        {
-          path: 'edit',
-          component: () => import('@/views/task/TaskEditView.vue'),
-        },
-      ]
-    },
-    {
-      path: '/bug',
-      redirect: 'list',
-      children: [
-        {
-          path: 'list',
-          component: () => import('@/views/bug/BugProjectListView.vue'),
-        },
-        {
-          path: 'stats',
-          component: () => import('@/views/bug/BugStatsView.vue'),
-        },
-        {
-          path: 'bugs',
-          component: () => import('@/views/bug/BugListView.vue'),
-        },
-        {
-          path: 'create',
-          component: () => import('@/views/bug/BugCreateView.vue'),
-        },
-        {
-          path: 'edit',
-          component: () => import('@/views/bug/BugEditView.vue'),
-        },
-        {
-          path: 'info',
-          component: () => import('@/views/bug/BugInfoView.vue'),
-        }
-      ]
-    },
-  ],
+  routes: routes,
 })
 
 router.beforeEach((to, from, next) => {
@@ -129,3 +232,4 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
+export { routes }

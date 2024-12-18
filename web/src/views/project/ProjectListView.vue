@@ -21,7 +21,10 @@ export default defineComponent({
     },
     Edit() {
       return Edit
-    }
+    },
+    loggedInUser() {
+      return this.$store.state.user
+    },
   },
   components: { Pagination, List, Delete, Edit, Operation, BreadCrumbNav, Search },
   setup() {
@@ -97,7 +100,7 @@ export default defineComponent({
       <el-row class="row-bg" justify="end">
         <div class="flex-grow" />
         <el-button type="primary" @click="handleSearch" round>查询</el-button>
-        <el-button type="primary" @click="handleCreate" round>添加</el-button>
+        <el-button v-if="loggedInUser?.role?.name=='管理员'" type="primary" @click="handleCreate" round>添加</el-button>
       </el-row>
     </template>
   </el-card>
@@ -146,6 +149,7 @@ export default defineComponent({
               class="box-item"
               content="删除"
               placement="top"
+              v-if="loggedInUser.role.name=='管理员'"
           >
             <el-button
                 :icon="Delete"

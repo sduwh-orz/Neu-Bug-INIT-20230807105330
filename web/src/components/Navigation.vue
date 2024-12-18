@@ -1,10 +1,34 @@
 <script lang="ts">
 import { RouterLink } from 'vue-router'
 import { Aim, Avatar, Expand, Fold, List, OfficeBuilding, Operation } from '@element-plus/icons-vue'
+import { routes } from '@/router'
 
 export default {
   name: "Navigation",
   components: {Expand, Fold, Avatar, Aim, List, OfficeBuilding, Operation, RouterLink },
+  computed: {
+    loggedInUser() {
+      return this.$store.state.user
+    },
+    filteredRoutes() {
+      return routes.filter(route => route.meta?.hidden === false)
+    },
+    getActiveRoute() {
+      let nowPath = this.$route.path
+      for (let route of routes) {
+        if (route.children)
+          for (let sub of route.children) {
+            if (route.path + '/' + sub.path == nowPath) {
+              if (sub.meta?.hidden === false) {
+                return nowPath
+              } else {
+                return route.path + '/list'
+              }
+            }
+          }
+      }
+    }
+  },
   data() {
     return {
       isNavCollapsed: false,
@@ -20,7 +44,8 @@ export default {
 
 <template>
   <el-menu
-      :default-active="$route.path"
+      ref="menu"
+      :default-active="getActiveRoute"
       :router="true"
       :collapse="isNavCollapsed"
       active-text-color="#ffd04b"
@@ -29,41 +54,12 @@ export default {
       text-color="#fff"
       style="height: 100%"
   >
-    <el-sub-menu index="me">
+    <el-sub-menu v-for="route in filteredRoutes" :index="route.meta.title">
       <template #title>
-        <el-icon><Operation /></el-icon>
-        <span>我的面板</span>
+        <el-icon v-if="route.meta.icon"><component :is="route.meta.icon" /></el-icon>
+        <span>{{ route.meta.title }}</span>
       </template>
-      <el-menu-item index="/user/info">用户信息</el-menu-item>
-      <el-menu-item index="/user/password">修改密码</el-menu-item>
-    </el-sub-menu>
-    <el-sub-menu index="project">
-      <template #title>
-        <el-icon><OfficeBuilding /></el-icon>
-        <span>项目管理</span>
-      </template>
-      <el-menu-item index="/project/list">项目管理</el-menu-item>
-    </el-sub-menu>
-    <el-sub-menu index="task">
-      <template #title>
-        <el-icon><List /></el-icon>
-        <span>任务分配</span>
-      </template>
-      <el-menu-item index="/task/list">任务分配</el-menu-item>
-    </el-sub-menu>
-    <el-sub-menu index="bug">
-      <template #title>
-        <el-icon><Aim /></el-icon>
-        <span>Bug 管理</span>
-      </template>
-      <el-menu-item index="/bug/list">Bug 管理</el-menu-item>
-    </el-sub-menu>
-    <el-sub-menu index="user">
-      <template #title>
-        <el-icon><Avatar /></el-icon>
-        <span>用户管理</span>
-      </template>
-      <el-menu-item index="/user/list">用户管理</el-menu-item>
+      <el-menu-item v-for="sub in route.children.filter(i => i.meta?.hidden === false)" :index="route.path + '/' + sub.path">{{ sub.meta.title }}</el-menu-item>
     </el-sub-menu>
     <el-menu-item index="" @click="toggleNavCollapse()">
       <el-icon>
