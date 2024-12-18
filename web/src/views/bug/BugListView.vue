@@ -42,7 +42,6 @@ export default defineComponent({
     },
     features() {
       if (this.query.module) {
-        console.log(this.project)
         let nowModule = this.project.modules.find((m: any) => { return m.id == this.query.module })
         if (nowModule)
           return utils.toOptions(nowModule?.features)

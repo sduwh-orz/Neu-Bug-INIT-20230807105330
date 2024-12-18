@@ -42,7 +42,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.loggedInUser)
     if (this.loggedInUser) {
       this.$router.push('/user/info')
     }

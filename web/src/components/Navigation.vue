@@ -11,7 +11,10 @@ export default {
       return this.$store.state.user
     },
     filteredRoutes() {
-      return routes.filter(route => route.meta?.hidden === false)
+      return routes.filter(route => route.meta?.hidden === false
+          && (!route.meta.requiresLeader || this.loggedInUser?.leader || this.loggedInUser?.role?.name == '管理员')
+          && (!route.meta.requiresAdmin || this.loggedInUser?.role?.name == '管理员')
+      )
     },
     getActiveRoute() {
       let nowPath = this.$route.path

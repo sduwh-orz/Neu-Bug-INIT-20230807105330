@@ -69,11 +69,6 @@ export default {
       }),
     }
   },
-  mounted() {
-    Object.keys(formData).forEach(function(key) {
-      formData[key] = ''
-    })
-  },
   methods: {
     handleSubmit() {
       try {

@@ -7,5 +7,5 @@ export interface User {
   realName: string
   role: Type
   email: string
-  isLeader?: boolean
+  leader?: boolean
 }

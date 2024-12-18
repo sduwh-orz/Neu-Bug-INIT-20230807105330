@@ -18,9 +18,12 @@ export default {
     const route = useRoute()
     const router = useRouter()
     store.dispatch('fetchUser').then(() => {
-      if (route.meta.needPermission)
-        if (!store.state.user.isLeader && store.state.user?.role?.name != '管理员')
-          router.push('/user/info')
+      if (route.matched.length > 0)
+        if (route.matched[0].meta.requiresLeader)
+          if (store.state.user?.leader === false && store.state.user?.role?.name !== '管理员')
+            router.push('/user/info')
+        else if (route.matched[0].meta.requiresAdmin && store.state.user?.role?.name !== '管理员')
+            router.push('/user/info')
       if (route.meta.notLoggedIn && store.state.user)
         router.push('/user/info')
 

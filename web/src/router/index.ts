@@ -63,7 +63,6 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: '项目管理',
           hidden: false,
-          needPermission: true,
         }
       },
       {
@@ -71,7 +70,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/project/ProjectCreateView.vue'),
         meta: {
           title: '项目添加',
-          needPermission: true,
         }
       },
       {
@@ -79,7 +77,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/project/ProjectModulesView.vue'),
         meta: {
           title: '模块管理',
-          needPermission: true,
         }
       },
       {
@@ -87,7 +84,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/project/ProjectEditView.vue'),
         meta: {
           title: '项目修改',
-          needPermission: true,
         }
       },
     ]
@@ -108,7 +104,6 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: '任务分配',
           hidden: false,
-          needPermission: true,
         }
       },
       {
@@ -116,7 +111,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/task/TaskEditView.vue'),
         meta: {
           title: '任务分配',
-          needPermission: true,
         }
       },
     ]
@@ -191,7 +185,6 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: '用户管理',
           hidden: false,
-          needPermission: true,
         }
       },
       {
@@ -199,7 +192,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/user/UserCreateView.vue'),
         meta: {
           title: '用户添加',
-          needPermission: true,
         }
       },
       {
@@ -207,7 +199,6 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/user/UserEditView.vue'),
         meta: {
           title: '用户修改',
-          needPermission: true,
         }
       },
     ]
