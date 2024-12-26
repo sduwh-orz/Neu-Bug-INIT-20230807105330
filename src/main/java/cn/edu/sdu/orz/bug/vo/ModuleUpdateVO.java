@@ -25,4 +25,11 @@ public class ModuleUpdateVO extends ModuleVO {
         this.id = projectId;
     }
 
+    public ModuleUpdateVO() {
+        super();
+    }
+
+    public ModuleUpdateVO(String id) {
+        setId(id);
+    }
 }

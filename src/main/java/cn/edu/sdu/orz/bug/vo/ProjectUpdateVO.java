@@ -24,4 +24,13 @@ public class ProjectUpdateVO extends ProjectCreateVO {
     public void setId(String id) {
         this.id = id;
     }
+
+    public ProjectUpdateVO() {
+        super();
+    }
+
+    public ProjectUpdateVO(String keyword, String description, String owner, String id) {
+        super(keyword, description, owner);
+        setId(id);
+    }
 }

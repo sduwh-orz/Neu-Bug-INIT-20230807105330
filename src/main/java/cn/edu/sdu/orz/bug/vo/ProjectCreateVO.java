@@ -63,4 +63,23 @@ public class ProjectCreateVO extends ProjectVO {
     public void setOwner(String owner) {
         this.owner = owner;
     }
+
+    public ProjectCreateVO() {
+        super();
+    }
+
+    public ProjectCreateVO(String keyword, String description, String owner) {
+        setKeyword(keyword);
+        setDescription(description);
+        setOwner(owner);
+    }
+
+    @Override
+    public String toString() {
+        return "ProjectCreateVO{" +
+                "keyword='" + getKeyword() + '\'' +
+                ", description='" + getDescription() + '\'' +
+                ", owner='" + getOwner() + '\'' +
+                '}';
+    }
 }

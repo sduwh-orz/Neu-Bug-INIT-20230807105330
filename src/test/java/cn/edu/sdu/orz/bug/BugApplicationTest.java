@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 /**
  * BugApplication test.
@@ -30,7 +31,11 @@ public class BugApplicationTest {
     @Test
     void testEntities() {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        User user = new User();
+        UserRole userRole = new UserRole();
+        User user = new User(
+                "37A89B5A9D864C7482476CAA52758AC9", "test", "e10adc3949ba59abbe56e057f20f883e",
+                "Test User", userRole, "test@example.com", 0, List.of()
+        );
         Project project = new Project(
                 "37A89B5A9D864C7482476CAA52758AC9", "Project Test",
                 "test", "Project Test Description", user, timestamp, List.of()
@@ -49,23 +54,68 @@ public class BugApplicationTest {
     @Test
     void testVOs() {
         System.out.println(new BugVO());
-        System.out.println(new BugVO(null, null, null));
+        System.out.println(new BugVO("", 0, ""));
 
         System.out.println(new BugCreateVO());
-        System.out.println(new BugCreateVO(null));
+        System.out.println(new BugCreateVO(""));
 
         System.out.println(new BugQueryVO());
-        System.out.println(new BugQueryVO(null, null, null, null, null,
-                null, null, null));
+        System.out.println(new BugQueryVO("", "", "", "",
+                0, 0, 0, 0));
 
         System.out.println(new BugUpdateVO());
-        System.out.println(new BugUpdateVO(null, null, null, null, null));
+        System.out.println(new BugUpdateVO("", "", 0, 0, ""));
 
         System.out.println(new FeatureVO());
-        System.out.println(new FeatureVO(null, null));
+        System.out.println(new FeatureVO("", BigDecimal.ZERO));
+
+        System.out.println(new FeatureCreateVO());
+        System.out.println(new FeatureCreateVO("", BigDecimal.ZERO, ""));
+
+        System.out.println(new FeatureUpdateVO());
+        System.out.println(new FeatureUpdateVO("", BigDecimal.ZERO, "", ""));
 
         System.out.println(new ModuleCreateVO());
-        System.out.println(new ModuleCreateVO(null, null));
+        System.out.println(new ModuleCreateVO("", ""));
+
+        System.out.println(new ProjectVO());
+        System.out.println(new ProjectVO(""));
+
+        System.out.println(new ProjectCreateVO());
+        System.out.println(new ProjectCreateVO("", "", ""));
+
+        System.out.println(new ProjectQueryVO());
+        System.out.println(new ProjectQueryVO(0, 0));
+
+        System.out.println(new ProjectUpdateVO());
+        System.out.println(new ProjectUpdateVO("", "", "", ""));
+
+        System.out.println(new ModuleUpdateVO());
+        System.out.println(new ModuleUpdateVO(""));
+
+        System.out.println(new TaskAssignVO());
+        System.out.println(new TaskAssignVO("", Map.of()));
+
+        System.out.println(new TaskAssignFeatureVO());
+        System.out.println(new TaskAssignFeatureVO("", ""));
+
+        System.out.println(new UserVO());
+        System.out.println(new UserVO("", "", 0, ""));
+
+        System.out.println(new UserCreateVO());
+        System.out.println(new UserCreateVO(""));
+
+        System.out.println(new UserLoginVO());
+        System.out.println(new UserLoginVO("", ""));
+
+        System.out.println(new UserPasswordVO());
+        System.out.println(new UserPasswordVO("", ""));
+
+        System.out.println(new UserQueryVO());
+        System.out.println(new UserQueryVO(0, 0));
+
+        System.out.println(new UserUpdateVO());
+        System.out.println(new UserUpdateVO("", "", 0, "", ""));
     }
 
     private static Bug getBug(Module module, User user, Timestamp timestamp) {

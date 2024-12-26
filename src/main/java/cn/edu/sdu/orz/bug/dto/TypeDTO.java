@@ -4,7 +4,7 @@ package cn.edu.sdu.orz.bug.dto;
 import org.springframework.beans.BeanUtils;
 
 /**
- * The type Type dto.
+ * The Type dto.
  */
 public class TypeDTO {
     private Integer id;

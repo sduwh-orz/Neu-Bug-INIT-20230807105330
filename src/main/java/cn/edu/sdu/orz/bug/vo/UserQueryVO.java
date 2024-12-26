@@ -45,4 +45,13 @@ public class UserQueryVO extends UserVO {
     public void setSize(Integer size) {
         this.size = size;
     }
+
+    public UserQueryVO() {
+        super();
+    }
+
+    public UserQueryVO(Integer page, Integer size) {
+        setPage(page);
+        setSize(size);
+    }
 }

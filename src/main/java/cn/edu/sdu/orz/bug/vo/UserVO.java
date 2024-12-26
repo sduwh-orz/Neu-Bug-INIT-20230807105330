@@ -85,4 +85,25 @@ public class UserVO {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public UserVO() {
+        super();
+    }
+
+    public UserVO(String username, String realName, Integer role, String email) {
+        setUsername(username);
+        setRealName(realName);
+        setRole(role);
+        setEmail(email);
+    }
+
+    @Override
+    public String toString() {
+        return "UserVO{" +
+                "username='" + getUsername() + '\'' +
+                ", realName='" + getRealName() + '\'' +
+                ", role=" + getRole() +
+                ", email='" + getEmail() + '\'' +
+                '}';
+    }
 }

@@ -45,4 +45,13 @@ public class UserLoginVO {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public UserLoginVO() {
+        super();
+    }
+
+    public UserLoginVO(String username, String password) {
+        setUsername(username);
+        setPassword(password);
+    }
 }

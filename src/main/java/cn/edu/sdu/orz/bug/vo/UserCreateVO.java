@@ -25,4 +25,12 @@ public class UserCreateVO extends UserVO {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public UserCreateVO() {
+        super();
+    }
+
+    public UserCreateVO(String password) {
+        setPassword(password);
+    }
 }

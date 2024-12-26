@@ -23,4 +23,12 @@ public class ProjectVO {
     public void setName(String name) {
         this.name = name;
     }
+
+    public ProjectVO() {
+        super();
+    }
+
+    public ProjectVO(String name) {
+        this.name = name;
+    }
 }

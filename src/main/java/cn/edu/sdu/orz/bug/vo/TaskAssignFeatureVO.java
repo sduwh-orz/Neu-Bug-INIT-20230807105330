@@ -44,4 +44,21 @@ public class TaskAssignFeatureVO {
     public void setOwner(String owner) {
         this.owner = owner;
     }
+
+    public TaskAssignFeatureVO() {
+        super();
+    }
+
+    public TaskAssignFeatureVO(String id, String owner) {
+        setId(id);
+        setOwner(owner);
+    }
+
+    @Override
+    public String toString() {
+        return "TaskAssignFeatureVO{" +
+                "id='" + getId() + '\'' +
+                ", owner='" + getOwner() + '\'' +
+                '}';
+    }
 }
