@@ -25,10 +25,18 @@ public class BugCreateVO extends BugVO {
         this.description = description;
     }
 
+    /**
+     * Instantiates a new Bug create vo.
+     */
     public BugCreateVO() {
         super();
     }
 
+    /**
+     * Instantiates a new Bug create vo.
+     *
+     * @param description the description
+     */
     public BugCreateVO(String description) {
         setDescription(description);
     }

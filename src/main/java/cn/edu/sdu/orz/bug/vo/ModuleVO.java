@@ -3,7 +3,6 @@ package cn.edu.sdu.orz.bug.vo;
 /**
  * The type Module vo.
  */
-@SuppressWarnings("unused")
 public class ModuleVO {
     private String name;
 

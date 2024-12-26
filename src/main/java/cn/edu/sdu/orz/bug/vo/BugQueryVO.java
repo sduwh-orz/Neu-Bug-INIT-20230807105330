@@ -22,10 +22,25 @@ public class BugQueryVO extends BugVO {
 
     private Integer size;
 
+    /**
+     * Instantiates a new Bug query vo.
+     */
     public BugQueryVO() {
         super();
     }
 
+    /**
+     * Instantiates a new Bug query vo.
+     *
+     * @param id        the id
+     * @param module    the module
+     * @param developer the developer
+     * @param reporter  the reporter
+     * @param status    the status
+     * @param solveType the solve type
+     * @param page      the page
+     * @param size      the size
+     */
     public BugQueryVO(String id, String module, String developer, String reporter, Integer status, Integer solveType,
                       Integer page, Integer size) {
         setId(id);

@@ -4,10 +4,7 @@ import cn.edu.sdu.orz.bug.entity.*;
 import cn.edu.sdu.orz.bug.entity.Module;
 import cn.edu.sdu.orz.bug.repository.BugRepository;
 import cn.edu.sdu.orz.bug.repository.ModuleRepository;
-import cn.edu.sdu.orz.bug.vo.BugCreateVO;
-import cn.edu.sdu.orz.bug.vo.BugQueryVO;
-import cn.edu.sdu.orz.bug.vo.BugUpdateVO;
-import cn.edu.sdu.orz.bug.vo.BugVO;
+import cn.edu.sdu.orz.bug.vo.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -46,6 +43,9 @@ public class BugApplicationTest {
         Mockito.when(bugRepository.findAll()).thenReturn(List.of(bug));
     }
 
+    /**
+     * Test VOs.
+     */
     @Test
     void testVOs() {
         System.out.println(new BugVO());
@@ -60,6 +60,12 @@ public class BugApplicationTest {
 
         System.out.println(new BugUpdateVO());
         System.out.println(new BugUpdateVO(null, null, null, null, null));
+
+        System.out.println(new FeatureVO());
+        System.out.println(new FeatureVO(null, null));
+
+        System.out.println(new ModuleCreateVO());
+        System.out.println(new ModuleCreateVO(null, null));
     }
 
     private static Bug getBug(Module module, User user, Timestamp timestamp) {

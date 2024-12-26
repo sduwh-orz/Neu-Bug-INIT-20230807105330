@@ -106,10 +106,22 @@ public class BugUpdateVO extends BugVO {
         this.comment = comment;
     }
 
+    /**
+     * Instantiates a new Bug update vo.
+     */
     public BugUpdateVO() {
         super();
     }
 
+    /**
+     * Instantiates a new Bug update vo.
+     *
+     * @param id          the id
+     * @param description the description
+     * @param status      the status
+     * @param solveType   the solve type
+     * @param comment     the comment
+     */
     public BugUpdateVO(String id, String description, Integer status, Integer solveType, String comment) {
         setId(id);
         setDescription(description);
