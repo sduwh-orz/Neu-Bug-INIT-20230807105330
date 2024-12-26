@@ -250,42 +250,4 @@ public class Bug {
     public void setRecords(List<BugRecord> records) {
         this.records = records;
     }
-
-    /**
-     * Instantiates a new Bug.
-     *
-     * @param id          the id
-     * @param name        the name
-     * @param description the description
-     * @param grade       the grade
-     * @param reporter    the reporter
-     * @param status      the status
-     * @param solveType   the solve type
-     * @param created     the created
-     * @param modified    the modified
-     * @param feature     the feature
-     * @param records     the records
-     */
-    public Bug(String id, String name, String description, BugGrade grade, User reporter,
-               BugStatus status, BugSolveType solveType, Timestamp created, Timestamp modified,
-               Feature feature, List<BugRecord> records) {
-        setId(id);
-        setName(name);
-        setGrade(grade);
-        setReporter(reporter);
-        setStatus(status);
-        setSolveType(solveType);
-        setCreated(created);
-        setModified(modified);
-        setFeature(feature);
-        setDescription(description);
-        setRecords(records);
-    }
-
-    /**
-     * Instantiates a new Bug.
-     */
-    public Bug() {
-        super();
-    }
 }

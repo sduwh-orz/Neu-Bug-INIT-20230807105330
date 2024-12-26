@@ -38,35 +38,6 @@ public class Project {
     private List<Module> modules;
 
     /**
-     * Instantiates a new Project.
-     */
-    public Project() {
-        super();
-    }
-
-    /**
-     * Instantiates a new Project.
-     *
-     * @param id          the id
-     * @param name        the name
-     * @param keyword     the keyword
-     * @param description the description
-     * @param owner       the owner
-     * @param created     the created
-     * @param modules     the modules
-     */
-    public Project(String id, String name, String keyword, String description, User owner, Timestamp created,
-                   List<Module> modules) {
-        setId(id);
-        setName(name);
-        setKeyword(keyword);
-        setDescription(description);
-        setOwner(owner);
-        setCreated(created);
-        setModules(modules);
-    }
-
-    /**
      * Sets id.
      *
      * @param id the id
