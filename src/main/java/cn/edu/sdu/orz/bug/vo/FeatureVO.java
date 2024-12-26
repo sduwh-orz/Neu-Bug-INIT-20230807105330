@@ -1,17 +1,12 @@
 package cn.edu.sdu.orz.bug.vo;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
-
 
 /**
  * The type Feature vo.
  */
-public class FeatureVO implements Serializable {
-
+public class FeatureVO {
     private String name;
-
-    private String module;
 
     private BigDecimal hours;
 
@@ -31,24 +26,6 @@ public class FeatureVO implements Serializable {
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * Gets module.
-     *
-     * @return the module
-     */
-    public String getModule() {
-        return module;
-    }
-
-    /**
-     * Sets module.
-     *
-     * @param module the module
-     */
-    public void setModule(String module) {
-        this.module = module;
     }
 
     /**
