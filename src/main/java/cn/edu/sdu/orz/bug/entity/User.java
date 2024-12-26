@@ -221,17 +221,4 @@ public class User {
     public void setFeatures(List<Feature> features) {
         this.features = features;
     }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id='" + getId() + '\'' +
-                ", username='" + getUsername() + '\'' +
-                ", realName='" + getRealName() + '\'' +
-                ", role=" + getRole().getName() +
-                ", email='" + getEmail() + '\'' +
-                ", deleted=" + getDeleted() +
-                ", features=" + getFeatures() +
-                '}';
-    }
 }

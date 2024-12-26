@@ -201,17 +201,4 @@ public class Project {
     public boolean hasNoPerm(User user) {
         return !owner.getId().equals(user.getId()) && !user.isAdmin();
     }
-
-    @Override
-    public String toString() {
-        return "Project{" +
-                "id=" + getId() + '\'' +
-                "name=" + getName() + '\'' +
-                "keyword=" + getKeyword() + '\'' +
-                "description=" + getDescription() + '\'' +
-                "owner=" + getOwner() + '\'' +
-                "created=" + getCreated() + '\'' +
-                "modules=" + getModules() + '\'' +
-                '}';
-    }
 }

@@ -178,16 +178,4 @@ public class Feature {
     public boolean hasNoPerm(User user) {
         return module.hasNoPerm(user);
     }
-
-    @Override
-    public String toString() {
-        return "Feature{" +
-                "id=" + getId() + '\'' +
-                "name=" + getName() + '\'' +
-                "module=" + (module != null ? module.getId() : null) + '\'' +
-                "hours=" + getHours() + '\'' +
-                "owner=" + (owner != null ? owner.getId() : null) + '\'' +
-                "bugs=" + getBugs() +
-                '}';
-    }
 }
