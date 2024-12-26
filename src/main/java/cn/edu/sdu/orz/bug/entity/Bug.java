@@ -288,21 +288,4 @@ public class Bug {
     public Bug() {
         super();
     }
-
-    @Override
-    public String toString() {
-        return "Bug{" +
-                "id='" + getId() + '\'' +
-                ", name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", grade=" + getGrade().getName() +
-                ", reporter=" + getReporter().getRealName() +
-                ", status=" + getStatus().getName() +
-                ", solveType=" + getSolveType().getName() +
-                ", created=" + getCreated() +
-                ", modified=" + getModified() +
-                ", feature=" + getFeature().getName() +
-                ", records=" + getRecords() +
-                '}';
-    }
 }
