@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.Optional;
 
 public class UserDTO implements Serializable {
-    private static final long serialVersionUID = 1L;
     private String id;
 
     private String username;
@@ -19,7 +18,7 @@ public class UserDTO implements Serializable {
 
     private String email;
 
-    private Optional<Boolean> isLeader;
+    private Boolean isLeader;
 
     public String getId() {
         return id;
@@ -62,11 +61,11 @@ public class UserDTO implements Serializable {
     }
 
     public Optional<Boolean> isLeader() {
-        return isLeader;
+        return Optional.ofNullable(isLeader);
     }
 
     public void setLeader(Boolean leader) {
-        isLeader = Optional.ofNullable(leader);
+        isLeader = leader;
     }
 
     public static UserDTO toDTO(User original) {

@@ -11,7 +11,6 @@ import java.io.Serializable;
 @Table(name = "user_role")
 public class UserRole implements Serializable {
 
-    private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -21,7 +20,7 @@ public class UserRole implements Serializable {
     private String name;
 
     public UserRole() {
-
+        super();
     }
 
     public UserRole(Integer id) {
