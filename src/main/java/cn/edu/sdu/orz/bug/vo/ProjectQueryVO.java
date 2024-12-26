@@ -3,6 +3,7 @@ package cn.edu.sdu.orz.bug.vo;
 /**
  * The type Project query vo.
  */
+@SuppressWarnings("unused")
 public class ProjectQueryVO extends ProjectVO {
 
     private Integer page;
@@ -43,14 +44,5 @@ public class ProjectQueryVO extends ProjectVO {
      */
     public void setSize(Integer size) {
         this.size = size;
-    }
-
-    public ProjectQueryVO() {
-        super();
-    }
-
-    public ProjectQueryVO(Integer page, Integer size) {
-        setPage(page);
-        setSize(size);
     }
 }

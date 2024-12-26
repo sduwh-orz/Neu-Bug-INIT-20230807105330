@@ -4,6 +4,7 @@ package cn.edu.sdu.orz.bug.vo;
 /**
  * The type User login vo.
  */
+@SuppressWarnings("unused")
 public class UserLoginVO {
 
     private String username;
@@ -44,14 +45,5 @@ public class UserLoginVO {
      */
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public UserLoginVO() {
-        super();
-    }
-
-    public UserLoginVO(String username, String password) {
-        setUsername(username);
-        setPassword(password);
     }
 }

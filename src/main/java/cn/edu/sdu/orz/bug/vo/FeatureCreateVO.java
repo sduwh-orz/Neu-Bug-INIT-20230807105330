@@ -1,10 +1,9 @@
 package cn.edu.sdu.orz.bug.vo;
 
-import java.math.BigDecimal;
-
 /**
  * The type Feature vo.
  */
+@SuppressWarnings("unused")
 public class FeatureCreateVO extends FeatureVO {
 
     private String module;
@@ -25,14 +24,5 @@ public class FeatureCreateVO extends FeatureVO {
      */
     public void setModule(String module) {
         this.module = module;
-    }
-
-    public FeatureCreateVO() {
-        super();
-    }
-
-    public FeatureCreateVO(String name, BigDecimal hours, String module) {
-        super(name, hours);
-        setModule(module);
     }
 }

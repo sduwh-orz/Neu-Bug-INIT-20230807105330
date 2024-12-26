@@ -3,6 +3,7 @@ package cn.edu.sdu.orz.bug.vo;
 /**
  * The type Project vo.
  */
+@SuppressWarnings("unused")
 public class ProjectVO {
     private String name;
 
@@ -21,14 +22,6 @@ public class ProjectVO {
      * @param name the name
      */
     public void setName(String name) {
-        this.name = name;
-    }
-
-    public ProjectVO() {
-        super();
-    }
-
-    public ProjectVO(String name) {
         this.name = name;
     }
 }

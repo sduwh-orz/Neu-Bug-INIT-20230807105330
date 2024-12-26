@@ -1,11 +1,11 @@
 package cn.edu.sdu.orz.bug.dto;
 
-
 import org.springframework.beans.BeanUtils;
 
 /**
  * The Type dto.
  */
+@SuppressWarnings("unused")
 public class TypeDTO {
     private Integer id;
 

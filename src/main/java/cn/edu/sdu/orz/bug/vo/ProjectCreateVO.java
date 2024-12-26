@@ -3,6 +3,7 @@ package cn.edu.sdu.orz.bug.vo;
 /**
  * The type Project create vo.
  */
+@SuppressWarnings("unused")
 public class ProjectCreateVO extends ProjectVO {
     private String keyword;
 
@@ -62,24 +63,5 @@ public class ProjectCreateVO extends ProjectVO {
      */
     public void setOwner(String owner) {
         this.owner = owner;
-    }
-
-    public ProjectCreateVO() {
-        super();
-    }
-
-    public ProjectCreateVO(String keyword, String description, String owner) {
-        setKeyword(keyword);
-        setDescription(description);
-        setOwner(owner);
-    }
-
-    @Override
-    public String toString() {
-        return "ProjectCreateVO{" +
-                "keyword='" + getKeyword() + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", owner='" + getOwner() + '\'' +
-                '}';
     }
 }

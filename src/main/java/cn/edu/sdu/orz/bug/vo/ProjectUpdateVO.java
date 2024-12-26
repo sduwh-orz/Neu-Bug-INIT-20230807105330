@@ -3,6 +3,7 @@ package cn.edu.sdu.orz.bug.vo;
 /**
  * The type Project update vo.
  */
+@SuppressWarnings("unused")
 public class ProjectUpdateVO extends ProjectCreateVO {
 
     private String id;
@@ -23,14 +24,5 @@ public class ProjectUpdateVO extends ProjectCreateVO {
      */
     public void setId(String id) {
         this.id = id;
-    }
-
-    public ProjectUpdateVO() {
-        super();
-    }
-
-    public ProjectUpdateVO(String keyword, String description, String owner, String id) {
-        super(keyword, description, owner);
-        setId(id);
     }
 }

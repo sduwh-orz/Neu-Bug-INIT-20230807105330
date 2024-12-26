@@ -4,6 +4,7 @@ package cn.edu.sdu.orz.bug.vo;
 /**
  * The type User query vo.
  */
+@SuppressWarnings("unused")
 public class UserQueryVO extends UserVO {
 
     private Integer page;
@@ -44,14 +45,5 @@ public class UserQueryVO extends UserVO {
      */
     public void setSize(Integer size) {
         this.size = size;
-    }
-
-    public UserQueryVO() {
-        super();
-    }
-
-    public UserQueryVO(Integer page, Integer size) {
-        setPage(page);
-        setSize(size);
     }
 }

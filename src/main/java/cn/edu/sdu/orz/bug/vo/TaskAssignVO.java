@@ -5,6 +5,7 @@ import java.util.Map;
 /**
  * The type Task assign vo.
  */
+@SuppressWarnings("unused")
 public class TaskAssignVO {
 
     private String projectId;
@@ -45,22 +46,5 @@ public class TaskAssignVO {
      */
     public void setModules(Map<String, Map<String, TaskAssignFeatureVO>> modules) {
         this.modules = modules;
-    }
-
-    public TaskAssignVO() {
-        super();
-    }
-
-    public TaskAssignVO(String projectId, Map<String, Map<String, TaskAssignFeatureVO>> modules) {
-        setProjectId(projectId);
-        setModules(modules);
-    }
-
-    @Override
-    public String toString() {
-        return "TaskAssignVO{" +
-                "projectId='" + getProjectId() + '\'' +
-                ", modules=" + getModules() +
-                '}';
     }
 }

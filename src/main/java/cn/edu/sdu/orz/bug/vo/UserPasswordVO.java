@@ -4,6 +4,7 @@ package cn.edu.sdu.orz.bug.vo;
 /**
  * The type User password vo.
  */
+@SuppressWarnings("unused")
 public class UserPasswordVO {
 
     private String previous;
@@ -44,14 +45,5 @@ public class UserPasswordVO {
      */
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public UserPasswordVO() {
-        super();
-    }
-
-    public UserPasswordVO(String previous, String password) {
-        setPrevious(previous);
-        setPassword(password);
     }
 }

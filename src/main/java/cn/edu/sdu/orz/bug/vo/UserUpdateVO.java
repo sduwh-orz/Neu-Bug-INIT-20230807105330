@@ -4,6 +4,7 @@ package cn.edu.sdu.orz.bug.vo;
 /**
  * The type User update vo.
  */
+@SuppressWarnings("unused")
 public class UserUpdateVO extends UserVO {
 
     private String id;
@@ -24,14 +25,5 @@ public class UserUpdateVO extends UserVO {
      */
     public void setId(String id) {
         this.id = id;
-    }
-
-    public UserUpdateVO() {
-        super();
-    }
-
-    public UserUpdateVO(String username, String realName, Integer role, String email, String id) {
-        super(username, realName, role, email);
-        setId(id);
     }
 }

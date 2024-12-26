@@ -1,10 +1,9 @@
 package cn.edu.sdu.orz.bug.vo;
 
-import java.math.BigDecimal;
-
 /**
  * The type Feature update vo.
  */
+@SuppressWarnings("unused")
 public class FeatureUpdateVO extends FeatureVO {
 
     private String id;
@@ -45,15 +44,5 @@ public class FeatureUpdateVO extends FeatureVO {
      */
     public void setOwner(String owner) {
         this.owner = owner;
-    }
-
-    public FeatureUpdateVO() {
-        super();
-    }
-
-    public FeatureUpdateVO(String name, BigDecimal hours, String id, String owner) {
-        super(name, hours);
-        setId(id);
-        setOwner(owner);
     }
 }
