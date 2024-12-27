@@ -13,5 +13,5 @@ public class ProjectVO {
     /**
      * The Name.
      */
-    private String name;
+    protected String name;
 }
