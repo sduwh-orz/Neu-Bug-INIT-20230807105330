@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Bug Application class
  */
 @SpringBootApplication
-@SuppressWarnings("unused")
 public class BugApplication {
     /**
      * Entry point of application.
