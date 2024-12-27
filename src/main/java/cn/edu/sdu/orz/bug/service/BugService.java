@@ -334,37 +334,39 @@ public class BugService {
             return null;
         List<Bug> bugs = bugRepository.findByFeature_Module_Project_Id(projectId);
         Map<String, Object> result = new HashMap<>();
+
         Map<String, Object> grade = bugGradeRepository.findAll().stream()
                 .collect(Collectors.toMap(BugGrade::getName, k -> 0));
         grade.putAll(bugs.stream().collect(Collectors.groupingBy(
                 bug -> bug.getGrade().getName(),
                 Collectors.counting()
         )));
-        result.put("grade", grade.entrySet().stream().map(entry ->
-                new StatsDTO(entry.getKey(), entry.getValue().toString())
-        ).collect(Collectors.toList()));
+        result.put("grade", collect(grade));
+
         Map<String, Object> status = bugStatusRepository.findAll().stream()
                 .collect(Collectors.toMap(BugStatus::getName, k -> 0));
         status.putAll(bugs.stream().collect(Collectors.groupingBy(
                 bug -> bug.getStatus().getName(),
                 Collectors.counting()
         )));
-        result.put("status", status.entrySet().stream().map(entry ->
-                new StatsDTO(entry.getKey(), entry.getValue().toString())
-        ).collect(Collectors.toList()));
-        result.put("developers", bugs.stream().collect(Collectors.groupingBy(
+        result.put("status", collect(status));
+
+        result.put("developers", collect(bugs.stream().collect(Collectors.groupingBy(
                 bug -> bug.getFeature().getOwner().getRealName(),
                 Collectors.counting()
-        )).entrySet().stream().map(entry ->
-                new StatsDTO(entry.getKey(), entry.getValue().toString())
-        ).collect(Collectors.toList()));
-        result.put("reporters", bugs.stream().collect(Collectors.groupingBy(
+        ))));
+
+        result.put("reporters", collect(bugs.stream().collect(Collectors.groupingBy(
                 bug -> bug.getReporter().getRealName(),
                 Collectors.counting()
-        )).entrySet().stream().map(entry ->
-                new StatsDTO(entry.getKey(), entry.getValue().toString())
-        ).collect(Collectors.toList()));
+        ))));
         return result;
+    }
+
+    private <T> List<StatsDTO> collect(Map<String, T> map) {
+        return map.entrySet().stream().map(entry ->
+                new StatsDTO(entry.getKey(), entry.getValue().toString())
+        ).toList();
     }
 
     /**
