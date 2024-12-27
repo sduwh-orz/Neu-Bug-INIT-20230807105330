@@ -10,5 +10,7 @@ import jakarta.persistence.Table;
 @Table(name = "bug_solve_type")
 @SuppressWarnings("unused")
 public class BugSolveType extends Type {
-
+    public BugSolveType() {
+        super();
+    }
 }

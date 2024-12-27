@@ -81,5 +81,4 @@ public class BugRecord {
         setUser(user);
         setTime(time);
     }
-
 }

@@ -10,5 +10,7 @@ import jakarta.persistence.Table;
 @Table(name = "bug_status")
 @SuppressWarnings("unused")
 public class BugStatus extends Type {
-
+    public BugStatus() {
+        super();
+    }
 }
