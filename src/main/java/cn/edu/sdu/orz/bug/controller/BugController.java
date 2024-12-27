@@ -27,6 +27,12 @@ public class BugController {
     @Autowired
     private BugService bugService;
 
+    /**
+     * Gets by Bug id.
+     *
+     * @param id the id
+     * @return the Bug
+     */
     @GetMapping("/{id}")
     public BugDTO getById(@PathVariable("id") String id) {
         return bugService.getById(id);
