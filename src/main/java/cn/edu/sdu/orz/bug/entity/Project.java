@@ -14,6 +14,7 @@ import java.util.List;
 @Table(name = "project")
 @Getter
 @Setter
+@SuppressWarnings("unused")
 public class Project {
     @Id
     @Column(name = "id", nullable = false)

@@ -7,8 +7,9 @@ import lombok.Setter;
 /**
  * The type User vo.
  */
-@Setter
 @Getter
+@Setter
+@SuppressWarnings("unused")
 public class UserVO {
     protected String username;
 

@@ -12,6 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @MappedSuperclass
+@SuppressWarnings("unused")
 public class Type {
     @Id
     @Column(name = "id", nullable = false)

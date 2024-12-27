@@ -13,6 +13,7 @@ import java.util.Optional;
  */
 @Getter
 @Setter
+@SuppressWarnings("unused")
 public class UserDTO extends UserBriefDTO {
     private String username;
 

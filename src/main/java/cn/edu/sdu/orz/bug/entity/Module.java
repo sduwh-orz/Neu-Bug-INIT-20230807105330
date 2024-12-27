@@ -13,6 +13,7 @@ import java.util.List;
 @Table(name = "module")
 @Getter
 @Setter
+@SuppressWarnings("unused")
 public class Module {
     @Id
     @Column(name = "id", nullable = false)

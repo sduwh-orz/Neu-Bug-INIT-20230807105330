@@ -6,8 +6,9 @@ import lombok.Setter;
 /**
  * The type Project update vo.
  */
-@Setter
 @Getter
+@Setter
+@SuppressWarnings("unused")
 public class ProjectUpdateVO extends ProjectCreateVO {
     private String id;
 }

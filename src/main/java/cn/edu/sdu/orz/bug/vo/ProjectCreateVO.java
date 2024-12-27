@@ -6,8 +6,9 @@ import lombok.Setter;
 /**
  * The type Project create vo.
  */
-@Setter
 @Getter
+@Setter
+@SuppressWarnings("unused")
 public class ProjectCreateVO extends ProjectVO {
     protected String keyword;
 

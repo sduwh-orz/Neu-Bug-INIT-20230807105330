@@ -8,6 +8,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuppressWarnings("unused")
 public class ProjectInTaskListDTO extends BaseDTO {
     private String owner;
 

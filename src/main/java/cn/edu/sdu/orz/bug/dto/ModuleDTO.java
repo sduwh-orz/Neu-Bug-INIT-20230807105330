@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
  */
 @Getter
 @Setter
+@SuppressWarnings("unused")
 public class ModuleDTO extends BaseDTO {
     private BigDecimal featureHoursSum;
 

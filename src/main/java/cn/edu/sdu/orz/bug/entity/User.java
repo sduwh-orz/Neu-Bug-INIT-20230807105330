@@ -13,6 +13,7 @@ import java.util.List;
 @Table(name = "user")
 @Getter
 @Setter
+@SuppressWarnings("unused")
 public class User {
     @Id
     @Column(name = "id", nullable = false)

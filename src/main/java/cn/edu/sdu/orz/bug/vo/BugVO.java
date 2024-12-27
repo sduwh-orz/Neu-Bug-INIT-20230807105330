@@ -6,8 +6,9 @@ import lombok.Setter;
 /**
  * The type Bug vo.
  */
-@Setter
 @Getter
+@Setter
+@SuppressWarnings("unused")
 public class BugVO {
     protected String name;
 

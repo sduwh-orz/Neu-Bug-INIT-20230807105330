@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 @Table(name = "bug_record")
 @Getter
 @Setter
+@SuppressWarnings("unused")
 public class BugRecord {
     @Id
     @Column(name = "id", nullable = false)

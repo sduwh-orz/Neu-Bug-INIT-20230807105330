@@ -6,8 +6,9 @@ import lombok.Setter;
 /**
  * The type Module vo.
  */
-@Setter
 @Getter
+@Setter
+@SuppressWarnings("unused")
 public class ModuleVO {
     protected String name;
 }

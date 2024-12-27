@@ -14,6 +14,7 @@ import java.util.List;
 @Table(name = "feature")
 @Getter
 @Setter
+@SuppressWarnings("unused")
 public class Feature {
     @Id
     @Column(name = "id", nullable = false)

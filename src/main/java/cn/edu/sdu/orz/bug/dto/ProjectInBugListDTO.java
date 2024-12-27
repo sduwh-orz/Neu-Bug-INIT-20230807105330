@@ -8,6 +8,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@SuppressWarnings("unused")
 public class ProjectInBugListDTO extends BaseDTO {
     private String owner;
     private Long bugs;

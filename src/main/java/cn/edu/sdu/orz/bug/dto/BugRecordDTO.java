@@ -13,6 +13,7 @@ import java.sql.Timestamp;
  */
 @Getter
 @Setter
+@SuppressWarnings("unused")
 public class BugRecordDTO {
     private String id;
 

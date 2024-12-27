@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
  */
 @Getter
 @Setter
+@SuppressWarnings("unused")
 public class BugModuleDTO extends BaseDTO {
     private ProjectDTO project;
 

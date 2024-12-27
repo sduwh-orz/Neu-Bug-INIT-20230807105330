@@ -9,6 +9,7 @@ import org.springframework.data.util.Pair;
  */
 @Getter
 @Setter
+@SuppressWarnings("unused")
 public class Response {
     /**
      * The Success.

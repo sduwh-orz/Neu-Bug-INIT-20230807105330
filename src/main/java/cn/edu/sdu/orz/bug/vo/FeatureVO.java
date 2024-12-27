@@ -8,8 +8,9 @@ import java.math.BigDecimal;
 /**
  * The type Feature vo.
  */
-@Setter
 @Getter
+@Setter
+@SuppressWarnings("unused")
 public class FeatureVO {
     protected String name;
 

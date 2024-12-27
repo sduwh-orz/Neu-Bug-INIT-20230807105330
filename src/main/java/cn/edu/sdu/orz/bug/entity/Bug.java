@@ -14,6 +14,7 @@ import java.util.List;
 @Table(name = "bug")
 @Getter
 @Setter
+@SuppressWarnings("unused")
 public class Bug {
     @Id
     @Column(name = "id", nullable = false)
