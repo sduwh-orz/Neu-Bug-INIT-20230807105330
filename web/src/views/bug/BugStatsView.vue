@@ -46,6 +46,7 @@ export default {
     id.value = route.query.id ? route.query.id.toString() : ''
     let response = await project.get(id.value)
     Object.assign(nowProject, response)
+    console.log(nowProject)
     let nowStats = await bug.stats(id.value)
     Object.assign(stats, nowStats)
     loading.value = false
@@ -56,7 +57,7 @@ export default {
         return ''
       }
       if (row.bugs)
-        return row.bugs.length
+        return row.bugs
       return 0
     },
     handleBack: function() {
