@@ -13,12 +13,12 @@ public class BaseDTO {
     /**
      * The ID.
      */
-    protected String id;
+    private String id;
 
     /**
      * The Name.
      */
-    protected String name;
+    private String name;
 
     /**
      * To dto base dto.

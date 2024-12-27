@@ -15,12 +15,12 @@ public class UserBriefDTO {
     /**
      * The Id.
      */
-    protected String id;
+    private String id;
 
     /**
      * The Real name.
      */
-    protected String realName;
+    private String realName;
 
     /**
      * To dto user brief dto.

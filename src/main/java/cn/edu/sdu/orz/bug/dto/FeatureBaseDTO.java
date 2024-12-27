@@ -16,12 +16,12 @@ public class FeatureBaseDTO extends BaseDTO {
     /**
      * The Hours.
      */
-    protected BigDecimal hours;
+    private BigDecimal hours;
 
     /**
      * The Owner.
      */
-    protected UserBriefDTO owner;
+    private UserBriefDTO owner;
 
     /**
      * Sets owner.
