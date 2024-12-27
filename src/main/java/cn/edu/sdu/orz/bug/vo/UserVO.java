@@ -9,7 +9,6 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-@SuppressWarnings("unused")
 public class UserVO {
     protected String username;
 

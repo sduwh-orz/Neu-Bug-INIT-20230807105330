@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 /**
  * Feature Repository
  */
-@SuppressWarnings("unused")
 public interface FeatureRepository extends JpaRepository<Feature, String>, JpaSpecificationExecutor<Feature> {
 
 }

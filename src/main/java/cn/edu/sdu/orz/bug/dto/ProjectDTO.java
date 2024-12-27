@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
  */
 @Getter
 @Setter
-@SuppressWarnings("unused")
 public class ProjectDTO extends BaseDTO {
     private String keyword;
 

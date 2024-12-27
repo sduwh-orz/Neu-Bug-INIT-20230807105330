@@ -8,7 +8,6 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@SuppressWarnings("unused")
 public class StatsDTO {
     private String name;
     private String count;

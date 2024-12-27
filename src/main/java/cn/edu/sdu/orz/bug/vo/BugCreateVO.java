@@ -8,7 +8,6 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-@SuppressWarnings("unused")
 public class BugCreateVO extends BugVO {
     private String description;
 }

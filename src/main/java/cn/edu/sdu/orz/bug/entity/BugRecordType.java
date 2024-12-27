@@ -14,7 +14,6 @@ import lombok.Setter;
 @Table(name = "bug_record_type")
 @Getter
 @Setter
-@SuppressWarnings("unused")
 public class BugRecordType {
     @Id
     @Column(name = "id", nullable = false)

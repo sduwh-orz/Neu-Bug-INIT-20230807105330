@@ -9,7 +9,6 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-@SuppressWarnings("unused")
 public class UserUpdateVO extends UserVO {
     private String id;
 }

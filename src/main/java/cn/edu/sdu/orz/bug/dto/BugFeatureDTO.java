@@ -11,7 +11,6 @@ import org.springframework.beans.BeanUtils;
  */
 @Getter
 @Setter
-@SuppressWarnings("unused")
 public class BugFeatureDTO extends FeatureBaseDTO {
     private BugModuleDTO module;
 

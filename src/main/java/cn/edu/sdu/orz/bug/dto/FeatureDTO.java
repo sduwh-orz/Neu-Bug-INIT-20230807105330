@@ -14,7 +14,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@SuppressWarnings("unused")
 public class FeatureDTO extends FeatureBaseDTO {
     private String module;
 

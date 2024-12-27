@@ -10,7 +10,6 @@ import java.util.Map;
  */
 @Setter
 @Getter
-@SuppressWarnings("unused")
 public class TaskAssignVO {
     private String projectId;
 

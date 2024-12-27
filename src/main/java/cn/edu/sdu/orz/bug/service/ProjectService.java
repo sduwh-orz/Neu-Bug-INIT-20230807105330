@@ -27,7 +27,6 @@ import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatc
  * Project Service
  */
 @Service
-@SuppressWarnings("unused")
 public class ProjectService {
 
     @Autowired

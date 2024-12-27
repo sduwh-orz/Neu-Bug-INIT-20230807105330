@@ -9,7 +9,6 @@ import java.util.Optional;
 /**
  * Bug status Repository
  */
-@SuppressWarnings("unused")
 public interface BugStatusRepository extends JpaRepository<BugStatus, Integer>, JpaSpecificationExecutor<BugStatus> {
     /**
      * Find by name optional.

@@ -10,7 +10,6 @@ import java.math.BigDecimal;
  */
 @Setter
 @Getter
-@SuppressWarnings("unused")
 public class FeatureVO {
     protected String name;
 

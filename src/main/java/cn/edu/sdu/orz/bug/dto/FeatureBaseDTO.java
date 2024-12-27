@@ -11,7 +11,6 @@ import java.math.BigDecimal;
  */
 @Getter
 @Setter
-@SuppressWarnings("unused")
 public class FeatureBaseDTO extends BaseDTO {
     /**
      * The Hours.

@@ -10,7 +10,6 @@ import java.util.Optional;
 /**
  * User Repository
  */
-@SuppressWarnings("unused")
 public interface UserRepository extends JpaRepository<User, String>, JpaSpecificationExecutor<User> {
 
     /**

@@ -17,7 +17,6 @@ import java.util.NoSuchElementException;
  * Module Service
  */
 @Service
-@SuppressWarnings("unused")
 public class ModuleService {
 
     @Autowired

@@ -9,7 +9,6 @@ import org.springframework.beans.BeanUtils;
  */
 @Getter
 @Setter
-@SuppressWarnings("unused")
 public class TypeDTO {
     private Integer id;
 
