@@ -12,7 +12,13 @@ import java.math.BigDecimal;
 @Setter
 @SuppressWarnings("unused")
 public class FeatureVO {
+    /**
+     * The Name.
+     */
     protected String name;
 
+    /**
+     * The Hours.
+     */
     protected BigDecimal hours;
 }
